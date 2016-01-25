@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>0</key>
+	<string>enews.SendAddress.config.5.xml</string>
+	<key>1</key>
+	<string>enews.Category.config.2.xml</string>
+	<key>2</key>
+	<string>enews.Importance.config.2.xml</string>
+</dict>
+</plist>
