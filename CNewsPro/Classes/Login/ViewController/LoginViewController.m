@@ -264,7 +264,7 @@ static const CGFloat kDown = 110;
             //创建用户文件
             [self createFile];
             //同步获取userInfo
-            [Utility InitializeUserInfo];
+            [Utility initializeUserInfo];
             
             //检测登录用户名是否拥有系统稿签，如无则为其自动添加
             [self addSystemTemplate];
@@ -302,7 +302,7 @@ static const CGFloat kDown = 110;
             UserDB *userDB = [[UserDB alloc] init];
             if ([userDB getUserAndPassword:self.textUserName.text password:self.textPassword.text]) {
                 [self createFile];
-                [Utility InitializeUserInfo];
+                [Utility initializeUserInfo];
                 [USERDEFAULTS setObject:@"" forKey:SESSION_ID];
                 [USERDEFAULTS setObject:self.textUserName.text forKey:LOGIN_NAME];
                 [USERDEFAULTS setObject:self.textPassword.text forKey:PASSWORD];

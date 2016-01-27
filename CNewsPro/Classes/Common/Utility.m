@@ -25,6 +25,7 @@
 #import "User.h"
 #import "SendToAddress.h"
 #import "SendToAddressDB.h"
+#import "NSData+LTExtension.h"
 
 #define FILE_PATH_INPHONE [[NSHomeDirectory() stringByAppendingPathComponent:@"Documents"] stringByAppendingPathComponent:[USERDEFAULTS objectForKey:LOGIN_NAME]]
 
@@ -331,7 +332,11 @@
 }
 
 
-
++ (NSString*)getFileMD5ByPath:(NSString*)filePath
+{
+    NSData *fileData = [NSData dataWithContentsOfFile:filePath];
+    return [fileData MD5];
+}
 
 
 

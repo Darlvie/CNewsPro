@@ -54,6 +54,8 @@
 
 + (NSUInteger)getFileLengthByPath:(NSString*)filePath;
 
++ (NSString*)getFileMD5ByPath:(NSString*)filePath;
+
 + (NSData *)subDataWithRange:(NSRange)range filePath:(NSString*)filePath;
 
 /**

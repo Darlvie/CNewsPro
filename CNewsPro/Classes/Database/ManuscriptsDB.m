@@ -7,7 +7,7 @@
 //
 
 #import "ManuscriptsDB.h"
-#import "ScriptCell.h"
+#import "ScriptItem.h"
 #import "ManuscriptTemplate.h"
 
 @implementation ManuscriptsDB

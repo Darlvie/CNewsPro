@@ -7,6 +7,11 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		1B10953C1C58699D00465235 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 1B10953B1C58699D00465235 /* libz.tbd */; };
+		1B10953E1C5869AA00465235 /* libsqlite3.0.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 1B10953D1C5869AA00465235 /* libsqlite3.0.tbd */; };
+		1B1095401C5869B600465235 /* libxml2.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 1B10953F1C5869B600465235 /* libxml2.tbd */; };
+		1B1095431C586F8F00465235 /* ManuscriptsDB.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B1095421C586F8F00465235 /* ManuscriptsDB.m */; };
+		1B1095461C58716F00465235 /* ScriptItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B1095451C58716F00465235 /* ScriptItem.m */; };
 		1B33EA091C525DDD00223AFF /* AccessoriesDB.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B33EA081C525DDD00223AFF /* AccessoriesDB.m */; };
 		1B33EA0C1C5260DD00223AFF /* UploadMaker.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B33EA0B1C5260DD00223AFF /* UploadMaker.m */; };
 		1B33EA151C5329F500223AFF /* SendToAddressDB.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B33EA141C5329F500223AFF /* SendToAddressDB.m */; };
@@ -14,7 +19,6 @@
 		2713AF9E1C4C8217006AA96D /* NetworkManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 2713AF9D1C4C8217006AA96D /* NetworkManager.m */; };
 		2713AFA11C4C89F3006AA96D /* UploadQueue.m in Sources */ = {isa = PBXBuildFile; fileRef = 2713AFA01C4C89F3006AA96D /* UploadQueue.m */; };
 		2713AFAD1C4CEB11006AA96D /* NSData+LTExtension.m in Sources */ = {isa = PBXBuildFile; fileRef = 2713AFAC1C4CEB11006AA96D /* NSData+LTExtension.m */; };
-		2713AFB01C507D42006AA96D /* ManuscriptsDB.m in Sources */ = {isa = PBXBuildFile; fileRef = 2713AFAF1C507D42006AA96D /* ManuscriptsDB.m */; };
 		2713AFB31C50C0EF006AA96D /* CommonClient.m in Sources */ = {isa = PBXBuildFile; fileRef = 2713AFB21C50C0EF006AA96D /* CommonClient.m */; };
 		2713AFB61C51C88A006AA96D /* BasicInfoUtility.m in Sources */ = {isa = PBXBuildFile; fileRef = 2713AFB51C51C88A006AA96D /* BasicInfoUtility.m */; };
 		2713AFB91C51F8CC006AA96D /* ManuscriptTemplateDB.m in Sources */ = {isa = PBXBuildFile; fileRef = 2713AFB81C51F8CC006AA96D /* ManuscriptTemplateDB.m */; };
@@ -185,6 +189,13 @@
 
 /* Begin PBXFileReference section */
 		0EB46AFD6717CD40C21788CE /* Pods.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.release.xcconfig; path = "Pods/Target Support Files/Pods/Pods.release.xcconfig"; sourceTree = "<group>"; };
+		1B10953B1C58699D00465235 /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = usr/lib/libz.tbd; sourceTree = SDKROOT; };
+		1B10953D1C5869AA00465235 /* libsqlite3.0.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libsqlite3.0.tbd; path = usr/lib/libsqlite3.0.tbd; sourceTree = SDKROOT; };
+		1B10953F1C5869B600465235 /* libxml2.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libxml2.tbd; path = usr/lib/libxml2.tbd; sourceTree = SDKROOT; };
+		1B1095411C586F8F00465235 /* ManuscriptsDB.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ManuscriptsDB.h; sourceTree = "<group>"; };
+		1B1095421C586F8F00465235 /* ManuscriptsDB.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ManuscriptsDB.m; sourceTree = "<group>"; };
+		1B1095441C58716F00465235 /* ScriptItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScriptItem.h; sourceTree = "<group>"; };
+		1B1095451C58716F00465235 /* ScriptItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScriptItem.m; sourceTree = "<group>"; };
 		1B33EA071C525DDD00223AFF /* AccessoriesDB.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AccessoriesDB.h; sourceTree = "<group>"; };
 		1B33EA081C525DDD00223AFF /* AccessoriesDB.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AccessoriesDB.m; sourceTree = "<group>"; };
 		1B33EA0A1C5260DD00223AFF /* UploadMaker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UploadMaker.h; sourceTree = "<group>"; };
@@ -199,8 +210,6 @@
 		2713AFA01C4C89F3006AA96D /* UploadQueue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UploadQueue.m; sourceTree = "<group>"; };
 		2713AFAB1C4CEB11006AA96D /* NSData+LTExtension.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSData+LTExtension.h"; sourceTree = "<group>"; };
 		2713AFAC1C4CEB11006AA96D /* NSData+LTExtension.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSData+LTExtension.m"; sourceTree = "<group>"; };
-		2713AFAE1C507D42006AA96D /* ManuscriptsDB.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ManuscriptsDB.h; sourceTree = "<group>"; };
-		2713AFAF1C507D42006AA96D /* ManuscriptsDB.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ManuscriptsDB.m; sourceTree = "<group>"; };
 		2713AFB11C50C0EF006AA96D /* CommonClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CommonClient.h; sourceTree = "<group>"; };
 		2713AFB21C50C0EF006AA96D /* CommonClient.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CommonClient.m; sourceTree = "<group>"; };
 		2713AFB41C51C88A006AA96D /* BasicInfoUtility.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BasicInfoUtility.h; sourceTree = "<group>"; };
@@ -411,6 +420,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1B1095401C5869B600465235 /* libxml2.tbd in Frameworks */,
+				1B10953E1C5869AA00465235 /* libsqlite3.0.tbd in Frameworks */,
+				1B10953C1C58699D00465235 /* libz.tbd in Frameworks */,
 				F84121DC539A18C431868CB8 /* libPods.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -435,6 +447,9 @@
 		0B13DE097ED11BE393A92DD4 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				1B10953F1C5869B600465235 /* libxml2.tbd */,
+				1B10953D1C5869AA00465235 /* libsqlite3.0.tbd */,
+				1B10953B1C58699D00465235 /* libz.tbd */,
 				C01C5E65FB34BB55FD65BD95 /* libPods.a */,
 			);
 			name = Frameworks;
@@ -470,6 +485,8 @@
 			children = (
 				2713AFE81C56153A006AA96D /* ScriptCell.h */,
 				2713AFE91C56153A006AA96D /* ScriptCell.m */,
+				1B1095441C58716F00465235 /* ScriptItem.h */,
+				1B1095451C58716F00465235 /* ScriptItem.m */,
 			);
 			path = SendedScript;
 			sourceTree = "<group>";
@@ -547,10 +564,10 @@
 				278D927B1C488CC90017415B /* Basic */,
 				278D927F1C489D3F0017415B /* UserDB.h */,
 				278D92801C489D3F0017415B /* UserDB.m */,
+				1B1095411C586F8F00465235 /* ManuscriptsDB.h */,
+				1B1095421C586F8F00465235 /* ManuscriptsDB.m */,
 				278D92891C48D4C80017415B /* ServerAddressDB.h */,
 				278D928A1C48D4C80017415B /* ServerAddressDB.m */,
-				2713AFAE1C507D42006AA96D /* ManuscriptsDB.h */,
-				2713AFAF1C507D42006AA96D /* ManuscriptsDB.m */,
 				2713AFB71C51F8CC006AA96D /* ManuscriptTemplateDB.h */,
 				2713AFB81C51F8CC006AA96D /* ManuscriptTemplateDB.m */,
 				1B33EA071C525DDD00223AFF /* AccessoriesDB.h */,
@@ -1182,7 +1199,6 @@
 				2713AFA11C4C89F3006AA96D /* UploadQueue.m in Sources */,
 				2713AFB91C51F8CC006AA96D /* ManuscriptTemplateDB.m in Sources */,
 				2713AFB31C50C0EF006AA96D /* CommonClient.m in Sources */,
-				2713AFB01C507D42006AA96D /* ManuscriptsDB.m in Sources */,
 				278D927E1C488CF80017415B /* BasicDatabase.m in Sources */,
 				2713B01B1C585C63006AA96D /* Place.m in Sources */,
 				27A83E3F1C4790CA0055502E /* LoginViewController.m in Sources */,
@@ -1203,6 +1219,7 @@
 				2713AFBF1C5214F8006AA96D /* OpenUDID.m in Sources */,
 				2713B0201C585C63006AA96D /* User.m in Sources */,
 				2713AFD31C55C61B006AA96D /* PlaceDB.m in Sources */,
+				1B1095461C58716F00465235 /* ScriptItem.m in Sources */,
 				278D928B1C48D4C80017415B /* ServerAddressDB.m in Sources */,
 				27A83E301C473C060055502E /* UploadManager.m in Sources */,
 				2713B01D1C585C63006AA96D /* Region.m in Sources */,
@@ -1213,6 +1230,7 @@
 				2713AFD01C55C401006AA96D /* RegionDB.m in Sources */,
 				2713AFCA1C55C16C006AA96D /* LanguageDB.m in Sources */,
 				278D92901C48DFBE0017415B /* UIDevice+IdentifierAddition.m in Sources */,
+				1B1095431C586F8F00465235 /* ManuscriptsDB.m in Sources */,
 				2713AFD91C55C907006AA96D /* ComeFromAddressDB.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1349,6 +1367,18 @@
 			baseConfigurationReference = A722D560414E2B7AA882522C /* Pods.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				HEADER_SEARCH_PATHS = (
+					"\"$(SDKROOT)/usr/include/libxml2\"",
+					"$(SDKROOT)/usr/include/libxml2",
+					"$(inherited)",
+					"\"${PODS_ROOT}/Headers/Public\"",
+					"\"${PODS_ROOT}/Headers/Public/ASIHTTPRequest\"",
+					"\"${PODS_ROOT}/Headers/Public/JSONKit\"",
+					"\"${PODS_ROOT}/Headers/Public/KissXML\"",
+					"\"${PODS_ROOT}/Headers/Public/Reachability\"",
+					"\"${PODS_ROOT}/Headers/Public/SVProgressHUD\"",
+					"/usr/include/libxml2/**",
+				);
 				INFOPLIST_FILE = CNewsPro/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -1363,6 +1393,18 @@
 			baseConfigurationReference = 0EB46AFD6717CD40C21788CE /* Pods.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				HEADER_SEARCH_PATHS = (
+					"\"$(SDKROOT)/usr/include/libxml2\"",
+					"$(SDKROOT)/usr/include/libxml2",
+					"$(inherited)",
+					"\"${PODS_ROOT}/Headers/Public\"",
+					"\"${PODS_ROOT}/Headers/Public/ASIHTTPRequest\"",
+					"\"${PODS_ROOT}/Headers/Public/JSONKit\"",
+					"\"${PODS_ROOT}/Headers/Public/KissXML\"",
+					"\"${PODS_ROOT}/Headers/Public/Reachability\"",
+					"\"${PODS_ROOT}/Headers/Public/SVProgressHUD\"",
+					"/usr/include/libxml2/**",
+				);
 				INFOPLIST_FILE = CNewsPro/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";

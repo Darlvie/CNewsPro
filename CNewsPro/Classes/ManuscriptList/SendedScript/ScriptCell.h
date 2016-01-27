@@ -23,12 +23,3 @@
 
 @end
 
-
-@interface ScriptItem : Manuscripts
-@property (nonatomic,assign) BOOL checked;
-@property (nonatomic,strong) UIImage *image;
-@property (nonatomic,assign) NSInteger indexPath;
-
-+ (ScriptItem *)scriptItem;
-
-@end

@@ -122,7 +122,7 @@
                     [USERDEFAULTS setObject:userName forKey:LOGIN_NAME];
                     [USERDEFAULTS synchronize];
                     
-                    [Utility InitializeUserInfo];
+                    [Utility initializeUserInfo];
                     [NSThread detachNewThreadSelector:@selector(sendTaskToQueue) toTarget:self withObject:nil];
                 } else {
                     [self pushLoginViewController];
@@ -180,7 +180,7 @@
     [RequestMaker keepAlive];
     
    //获取userInfo
-    [Utility InitializeUserInfo];
+    [Utility initializeUserInfo];
 }
 
 - (void)checkNetwork {
