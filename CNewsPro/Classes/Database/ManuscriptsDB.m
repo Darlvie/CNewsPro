@@ -122,10 +122,66 @@
 }
 
 
+- (BOOL)updateManuscriptNewsIdAndStatus:(NSString *)newsId m_id:(NSString *)m_id scriptStatus:(NSString *)scriptStatus {
+    if ([self openDatabase]==FALSE) {
+        return FALSE;
+    }
+    
+    NSString *sql = @"UPDATE ManuScripts SET newsid=?,manuscriptsStatus=? Where m_id=?";
+    sqlite3_stmt *statement = nil;
+    int success = [self prepareSQL:sql SQLStatement:&statement];
+    if (success != SQLITE_OK) {
+        NSLog(@"Error: failed to prepare");
+        return FALSE;
+    }
+    
+    //绑定参数
+    sqlite3_bind_text(statement, 1, [newsId UTF8String], -1, NULL);
+    sqlite3_bind_text(statement, 2, [scriptStatus UTF8String], -1, NULL);
+    sqlite3_bind_text(statement, 3, [m_id UTF8String], -1, NULL);
+    
+    success = sqlite3_step(statement);
+    if (success == SQLITE_ERROR) {
+        NSLog(@"Error: failed to update record");
+        sqlite3_finalize(statement);
+        sqlite3_close(database);
+        return FALSE;
+    }
+    sqlite3_finalize(statement);
+    sqlite3_close(database);
+    
+    return YES;
 
+}
 
-
-
+//根据稿件的guid，更新稿件发送成功的时间
+- (BOOL)updateSendToTime:(NSString *)senttime m_id:(NSString *)m_id {
+    if ([self openDatabase]==FALSE) {
+        return FALSE;
+    }
+    NSString *sql = @"UPDATE ManuScripts SET senttime=? Where m_id=?";
+    sqlite3_stmt *statement = nil;
+    int success = [self prepareSQL:sql SQLStatement:&statement];
+    if (success != SQLITE_OK) {
+        NSLog(@"Error: failed to prepare");
+        return FALSE;
+    }
+    //绑定参数
+    sqlite3_bind_text(statement, 1, [senttime UTF8String], -1, NULL);
+    sqlite3_bind_text(statement, 2, [m_id UTF8String], -1, NULL);
+    
+    success = sqlite3_step(statement);
+    if (success == SQLITE_ERROR) {
+        NSLog(@"Error: failed to update record");
+        sqlite3_finalize(statement);
+        sqlite3_close(database);
+        return FALSE;
+    }
+    sqlite3_finalize(statement);
+    sqlite3_close(database);
+    
+    return YES;
+}
 
 
 

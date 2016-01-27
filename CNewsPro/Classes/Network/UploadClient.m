@@ -16,6 +16,7 @@
 #import "ASIHTTPRequest.h"
 #import "ASIFormDataRequest.h"
 #import "NSData+LTExtension.h"
+#import "ManuscriptsDB.h"
 
 typedef NS_ENUM(NSUInteger,UploadType)
 {
@@ -43,6 +44,8 @@ typedef NS_ENUM(NSUInteger,UploadType)
 @property (nonatomic,assign) NSInteger reloadCount;
 /** 上一块的大小 */
 @property (nonatomic,assign) NSInteger lastUploadBlockSize;
+
+@property (nonatomic,assign) double blockTime;
 
 @end
 @implementation UploadClient
@@ -308,14 +311,14 @@ typedef NS_ENUM(NSUInteger,UploadType)
  *  发送文件步骤三：确认整个文件已完全传输
  *
  */
--(void)uploadConfirmFileWithServerFileID:(NSString*)fid length:(int)length checkCode:(NSString*)checkCode checkFlag:(int)checkFlag
+-(void)uploadConfirmFileWithServerFileID:(NSString*)fid length:(NSUInteger)length checkCode:(NSString*)checkCode checkFlag:(int)checkFlag
                             compressFlag:(int)compressFlag encryptFlag:(int)encryptFlag {
     NSString *url=[NSString stringWithFormat:@"%@%@",MITI_IP,@"mServices!uploadComplete.action"];
-    NSString *bodyStr = [NSString stringWithFormat:@"ua=%@&sss=%@&fid=%@&len=%d&checkCode=%@&checkFlag=%d&compressFlag=%d&encryptFlag=%d",
+    NSString *bodyStr = [NSString stringWithFormat:@"ua=%@&sss=%@&fid=%@&len=%lu&checkCode=%@&checkFlag=%d&compressFlag=%d&encryptFlag=%d",
                          @"file.upconfirm",
                          [USERDEFAULTS objectForKey:@"session_id"],
                          fid,
-                         length,
+                         (unsigned long)length,
                          checkCode,
                          checkFlag,
                          compressFlag,
@@ -357,21 +360,246 @@ typedef NS_ENUM(NSUInteger,UploadType)
     }
 }
 
-
+//网络请求成功回调
 - (void)requestFinished:(ASIHTTPRequest *)request {
-    
+    NSData *responseData = [request responseData];
+    NSString *responseStr = [[NSString alloc] initWithData:responseData encoding:NSUTF8StringEncoding];
+    if (responseData) {
+        if (request.tag == UploadTypeWhole) {
+            self.dataClient = nil;
+            if ([responseStr componentsSeparatedByString:@"||"].count > 1) {
+                NSString *status = [[responseStr componentsSeparatedByString:@"||"] objectAtIndex:0];
+                if ([status isEqualToString:@"0"]) {
+                    self.xmlServerFileID = [[[[responseStr componentsSeparatedByString:@"||"] objectAtIndex:1] componentsSeparatedByString:@"^"]objectAtIndex:0];
+                    [self saveNews];
+                }
+            }
+        } else if (request.tag == UploadTypeEmptyNew) {
+            self.client = nil;
+            if ([responseStr componentsSeparatedByString:@"||"].count > 1) {
+                NSString *status = [[responseStr componentsSeparatedByString:@"||"] objectAtIndex:0];
+                if ([status isEqualToString:@"0"]) {
+                    self.serverFileID = [[[[responseStr componentsSeparatedByString:@"||"] objectAtIndex:1]
+                                          componentsSeparatedByString:@"^"] objectAtIndex:0];
+                    NSRange range;
+                    if (self.fileLength <= BLOCK_SIZE) { //若文件小于10k，直接上传
+                        range = NSMakeRange(0, self.fileLength);
+                    } else {
+                        //若文件大于10k，分块上传
+                        range = NSMakeRange(0, BLOCK_SIZE);
+                    }
+                    [self uploadPartFileWithServerFileID:self.serverFileID range:range];
+                    [self.uploadInfo setObject:@"" forKey:REQUEST_STATUS];
+                } else {
+                    self.filePosition = 0;
+                    self.paused = YES;
+                    [self.uploadInfo setObject:LAST_FAIL forKey:REQUEST_STATUS];
+                    [NOTIFICATION_CENTER postNotificationName:UPDATE_UPLOAD_PROGRESS_NOTIFICATION object:self];
+                    [self.delegate performSelector:@selector(fileDidUpload:) withObject:self.uploadInfo];
+                }
+            } else {
+                NSLog(@"数据错误");
+            }
+        } else if (request.tag == UploadTypePart) {
+            self.dataClient = nil;
+            double nowTime = [[NSDate date] timeIntervalSince1970] * 1000.f;
+            self.blockTime = nowTime - self.beginUp;
+            
+            if ([responseStr componentsSeparatedByString:@"||"].count > 1) {
+                NSString *status = [[responseStr componentsSeparatedByString:@"||"] objectAtIndex:0];
+                if ([status isEqualToString:@"0"]) {
+                    self.filePosition += self.lastUploadBlockSize;
+                    if (self.filePosition >= self.fileLength) {
+                        self.filePosition = self.fileLength;
+                        NSString *fileMD5 = [Utility getFileMD5ByPath:[self.uploadInfo objectForKey:FILE_PATH]];
+                        [self uploadConfirmFileWithServerFileID:self.serverFileID length:self.fileLength checkCode:fileMD5 checkFlag:1 compressFlag:0 encryptFlag:0];
+                    } else {
+                        //上传一个分块
+                        [self uploadPartFileWithServerFileID:self.serverFileID range:NSMakeRange(self.filePosition, BLOCK_SIZE)];
+                    }
+                    
+                    //计算上传完成进度
+                    self.progress = self.filePosition / self.fileLength;
+                    //发出更新进度通知，更新界面显示
+                    [NOTIFICATION_CENTER postNotificationName:UPDATE_UPLOAD_PROGRESS_NOTIFICATION object:self];
+                } else {
+                    if (self.filePosition >= self.lastUploadBlockSize) {
+                        //失败后重传这个分块
+                        self.filePosition = self.filePosition - self.lastUploadBlockSize;
+                    }
+                    [self.uploadInfo setObject:REQUEST_FAIL forKey:REQUEST_STATUS];
+                    [self.delegate performSelector:@selector(fileDidUpload:) withObject:self.uploadInfo];
+                    [NOTIFICATION_CENTER postNotificationName:UPDATE_UPLOAD_PROGRESS_NOTIFICATION object:self];
+                }
+            }
+        } else if (request.tag == UploadTypeConfirm) {
+            self.client = nil;
+            if ([responseStr componentsSeparatedByString:@"||"].count > 1) {
+                NSString *status = [[responseStr componentsSeparatedByString:@"||"] objectAtIndex:0];
+                if ([status isEqualToString:@"0"]) {
+                    [self uploadXML];
+                } else {
+                    self.progress = 0;
+                    self.filePosition = 0;
+                    self.paused = YES;
+                    
+                    [self.uploadInfo setObject:LAST_FAIL forKey:REQUEST_STATUS];
+                    [NOTIFICATION_CENTER postNotificationName:UPDATE_UPLOAD_PROGRESS_NOTIFICATION object:self];
+                    [self.delegate performSelector:@selector(fileDidUpload:) withObject:self.uploadInfo];
+                }
+            }
+        } else if (request.tag == UploadTypeXML) {
+            self.dataClient = nil;
+            self.xmlServerFileID = [[[[responseStr componentsSeparatedByString:@"||"] objectAtIndex:1] componentsSeparatedByString:@"^"] objectAtIndex:0];
+            if ([responseStr componentsSeparatedByString:@"||"].count > 1) {
+                NSString *status = [[responseStr componentsSeparatedByString:@"||"] objectAtIndex:0];
+                if ([status isEqualToString:@"0"]) {
+                    [self saveNews];
+                } else {
+                    [self.uploadInfo setObject:LAST_FAIL forKey:REQUEST_STATUS];
+                    [self.delegate performSelector:@selector(fileDidUpload:) withObject:self.uploadInfo];
+                    [NOTIFICATION_CENTER postNotificationName:UPDATE_UPLOAD_PROGRESS_NOTIFICATION object:self];
+                }
+            }
+        } else if (request.tag == UploadTypeSaveFile) {
+            self.client = nil;
+            if ([responseStr componentsSeparatedByString:@"||"].count > 1) {
+                NSString *status = [[responseStr componentsSeparatedByString:@"||"] objectAtIndex:0];
+                if ([status isEqualToString:@"0"]) {
+                    NSLog(@"文件提交数据库成功");
+                }
+            }
+        } else if (request.tag == UploadTypeSaveNews) {
+            self.client = nil;
+            if ([responseStr componentsSeparatedByString:@"||"].count >1) {
+                NSString *status = [[responseStr componentsSeparatedByString:@"||"] objectAtIndex:0];
+                //回传的稿件ID
+                NSString *newsId = [[[[responseStr componentsSeparatedByString:@"||"] objectAtIndex:1] componentsSeparatedByString:@"^"] objectAtIndex:0];
+                if ([status isEqualToString:@"0"]) {
+                    [self deleteXmlAndUpdate:newsId];
+                    [self.uploadInfo setObject:LAST_FAIL forKey:REQUEST_STATUS];
+                    [self.uploadInfo setObject:newsId forKey:RE_NEWS_ID];
+                } else {
+                    self.filePosition = 0;
+                    self.paused = YES;
+                    [self.uploadInfo setObject:LAST_FAIL forKey:REQUEST_STATUS];
+                }
+                [self.delegate performSelector:@selector(fileDidUpload:) withObject:self.uploadInfo];
+            } else {
+                self.filePosition = 0;
+                self.paused = YES;
+                [self.uploadInfo setObject:LAST_FAIL forKey:REQUEST_STATUS];
+                [self.delegate performSelector:@selector(fileDidUpload:) withObject:self.uploadInfo];
+                [NOTIFICATION_CENTER postNotificationName:UPDATE_UPLOAD_PROGRESS_NOTIFICATION object:self];
+            }
+        }
+    } else {
+        if (request.tag == UploadTypePart) {
+            
+            [self.uploadInfo setObject:REQUEST_FAIL forKey:REQUEST_STATUS];
+        } else {
+            [self.uploadInfo setObject:LAST_FAIL forKey:REQUEST_STATUS];
+        }
+        [NOTIFICATION_CENTER postNotificationName:UPDATE_UPLOAD_PROGRESS_NOTIFICATION object:self];
+        [self.delegate performSelector:@selector(fileDidUpdate:) withObject:self.uploadInfo];
+    }
 }
 
 
+- (void)requestFailed:(ASIHTTPRequest *)request {
+    if (request.tag == UploadTypePart || request.tag == UploadTypeWhole || request.tag == UploadTypeXML) {
+        self.dataClient = nil;
+    } else {
+        self.client = nil;
+    }
+    
+    if (request.tag == UploadTypePart) {
+        [self.uploadInfo setObject:REQUEST_FAIL forKey:REQUEST_STATUS];
+        self.paused = YES;
+        self.running = NO;
+    } else {
+        [self.uploadInfo setObject:LAST_FAIL forKey:REQUEST_STATUS];
+        self.paused = YES;
+        self.running = NO;
+    }
+    
+    if (self.filePosition > self.lastUploadBlockSize) {
+        self.filePosition = self.filePosition - self.lastUploadBlockSize;
+    }
+    
+    [[AppDelegate getAppDelegate] alert:AlertTypeError message:@"请求服务器超时，可以减少分块大小重试！"];
+    [NOTIFICATION_CENTER postNotificationName:UPDATE_UPLOAD_PROGRESS_NOTIFICATION object:self];
+}
+
+//提交稿件
+- (void)saveNews {
+    NSString *url = [NSString stringWithFormat:@"%@%@",MITI_IP,@"mServices!saveNews.action"];
+    NSString *serverFileName = [NSString stringWithFormat:@"%@_%@",[USERDEFAULTS objectForKey:SESSION_ID],self.serverFileID];
+    NSString *xmlServerFileName = [NSString stringWithFormat:@"%@_%@",[USERDEFAULTS objectForKey:SESSION_ID],self.xmlServerFileID];
+    NSString *bodyStr = [NSString stringWithFormat:@"sss=%@&fid_xml=%@&fid_attachlist=%@&vMainApp=%@&vDbDesign=%@&vDbConfig=%@",
+                         [USERDEFAULTS objectForKey:SESSION_ID],
+                         [NSString stringWithFormat:@"%lu/%@",self.xmlLength,xmlServerFileName],
+                         [NSString stringWithFormat:@"%lu/%d/%@",self.fileLength,1,serverFileName],
+                         [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleShortVersionString"],
+                         @"1.101",@"1.101"];
+    if (self.xmlOnly) {
+        bodyStr = [NSString stringWithFormat:@"sss=%@&fid_xml=%@&fid_attachlist=%@&vMainApp=%@&vDbDesign=%@&vDbConfig=%@",
+                   [USERDEFAULTS objectForKey:SESSION_ID],
+                   [NSString stringWithFormat:@"%lu/%@",self.xmlLength,xmlServerFileName],
+                   @"",
+                   [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleShortVersionString"],
+                   @"1.101",@"1.101"];
+    }
+    
+    NSURL *requestUrl = [NSURL URLWithString:url];
+    self.client = [[ASIHTTPRequest alloc] initWithURL:requestUrl];
+    self.client.tag = UploadTypeSaveNews;
+    self.client.delegate = self;
+    self.client.timeOutSeconds = TIMEOUT_INTERVAL;
+    [self.client addRequestHeader:@"Content-Type" value:@"application/x-www-form-urlencoded"];
+    [self.client appendPostData:[bodyStr dataUsingEncoding:NSUTF8StringEncoding]];
+    [self.client setRequestMethod:POST];
+    [self.client startAsynchronous];
+}
 
 
+//上传xml
+- (void)uploadXML {
+    NSData *xmlData = [NSData dataWithContentsOfFile:[self.uploadInfo objectForKey:XML_PATH]];
+    NSString *rangeStr = [NSString stringWithFormat:@"0-%ld@%ld",self.xmlLength-1,self.xmlLength];
+    NSString *url = [NSString stringWithFormat:@"%@%@",MITI_IP,@"mServices!uploadWholeFile.action"];
+    
+    self.dataClient = [[ASIFormDataRequest alloc] initWithURL:[NSURL URLWithString:url]];
+    self.dataClient.tag = UploadTypeXML;
+    self.dataClient.delegate = self;
+    [self.dataClient setPostValue:[USERDEFAULTS objectForKey:SESSION_ID] forKey:@"sss"];
+    [self.dataClient setPostValue:[NSString stringWithFormat:@"%ld",self.xmlLength] forKey:@"len"];
+    [self.dataClient setPostValue:@"0" forKey:@"compressFlag"];
+    [self.dataClient setPostValue:@"0" forKey:@"encryptFlag"];
+    [self.dataClient setPostValue: [xmlData MD5]  forKey:@"checkCode"];
+    [self.dataClient setPostValue:@"1" forKey:@"checkFlag"];
+    [self.dataClient setData:xmlData
+                withFileName:@"file"
+              andContentType:[NSString stringWithFormat:@"%@",rangeStr]
+                      forKey:@"filedata"];
+    [self.dataClient startAsynchronous];
+}
 
-
-
-
-
-
-
+//上传成功后，删除xml文件，更新数据库标志位
+- (void)deleteXmlAndUpdate:(NSString *)newsId {
+    NSString *xmlPath = [self.uploadInfo objectForKey:XML_PATH];
+    if (![[NSFileManager defaultManager] removeItemAtPath:xmlPath error:nil]) {
+        NSLog(@"上传的xml文件删除成功");
+    }
+    //更新回传的稿件号及发送状态
+    Manuscripts *mscripts = [self.uploadInfo objectForKey:MANUSCRIPT_INFO];
+    mscripts.sentTime = [Utility getLogTimeStamp];
+    ManuscriptsDB *mDB = [[ManuscriptsDB alloc] init];
+    if ([mDB updateManuscriptNewsIdAndStatus:newsId m_id:mscripts.m_id scriptStatus:MANUSCRIPT_STATUS_SENT]) {
+        NSLog(@"更新成功！");
+    }
+    [mDB updateSendToTime:mscripts.sentTime m_id:mscripts.m_id];
+}
 
 
 

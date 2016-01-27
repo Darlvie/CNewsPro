@@ -18,4 +18,10 @@
  */
 - (NSMutableArray *)getManuscriptsByStatus:(NSString *)userName status:(NSString *)mStatus;
 
+//根据稿件的guid,更新回传稿号及稿件的状态
+- (BOOL)updateManuscriptNewsIdAndStatus:(NSString *)newsId m_id:(NSString *)m_id  scriptStatus:(NSString *)scriptStatus;
+
+//根据稿件的guid，更新稿件发送成功的时间
+- (BOOL)updateSendToTime:(NSString *)senttime m_id:(NSString *)m_id;
+
 @end
