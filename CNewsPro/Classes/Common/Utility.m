@@ -317,6 +317,19 @@
     return bRet;
 }
 
+//校验稿件的稿签信息是否完整
++ (NSString *)checkInfoIsCompleted:(Manuscripts *)mcripts {
+    if([[self trimBlankSpace:mcripts.mTemplate.address] isEqualToString:@""])
+        return @"信息不全:(稿签)发稿通道";
+    else
+        return @"";
+}
+
++ (NSString *)trimBlankSpace:(NSString *)inputStr
+{
+    return [inputStr stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
+}
+
 + (void)getTemplate {
     [RequestMaker getTemplate:[USERDEFAULTS objectForKey:LOGIN_NAME]
                     sessionid:[USERDEFAULTS objectForKey:SESSION_ID]

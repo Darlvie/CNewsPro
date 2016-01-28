@@ -15,6 +15,7 @@
 #import "UploadManager.h"
 #import "UploadClient.h"
 #import "SVProgressHUD.h"
+#import "UserGuideViewController.h"
 
 @interface AppDelegate () <UIAlertViewDelegate>
 @property (nonatomic,strong) UINavigationController *navi;
@@ -41,11 +42,20 @@
     
     [[UIApplication sharedApplication] setStatusBarHidden:NO
                                             withAnimation:UIStatusBarAnimationNone];
+
     
-    XinHuaManuscriptController *xinHuaVC = [[XinHuaManuscriptController alloc] initWithNibName:@"XinHuaManuscriptController" bundle:nil];
-    self.navi = [[UINavigationController alloc] initWithRootViewController:xinHuaVC];
+    if (![USERDEFAULTS boolForKey:@"firstLaunch"])
+    {
+        [USERDEFAULTS setBool:YES forKey:@"firstLaunch"];
+        UserGuideViewController *userGuideViewController=[[UserGuideViewController alloc] init];
+        self.window.rootViewController = userGuideViewController;
+    } else {
+        XinHuaManuscriptController *xinHuaVC = [[XinHuaManuscriptController alloc]
+                                                initWithNibName:@"XinHuaManuscriptController" bundle:nil];
+        self.navi = [[UINavigationController alloc] initWithRootViewController:xinHuaVC];
+        self.window.rootViewController = self.navi;
+    }
     
-    self.window.rootViewController = self.navi;
     [self.window makeKeyAndVisible];
     
     [self initializeBySetting];

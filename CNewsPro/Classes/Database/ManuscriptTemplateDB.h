@@ -15,4 +15,5 @@
 
 - (NSInteger)addManuscriptTemplate:(ManuscriptTemplate *)mtemplate;
 
+- (ManuscriptTemplate *)getDefaultManuscriptTemplate:(NSString *)type LoginName:(NSString *)loginName;
 @end

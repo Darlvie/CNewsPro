@@ -20,4 +20,7 @@
 
 #define FILE_PATH_IN_PHONE [[NSHomeDirectory() stringByAppendingPathComponent:@"Documents"] stringByAppendingPathComponent:[[NSUserDefaults standardUserDefaults] objectForKey:LOGIN_NAME]]
 
+#define SCREEN_WIDTH [UIScreen mainScreen].bounds.size.width
+#define SCREEN_HEIGHT [UIScreen mainScreen].bounds.size.height
+
 #endif /* PublicMacro_h */

@@ -31,9 +31,33 @@
     return self;
 }
 
+- (void)requestFinished:(ASIHTTPRequest *)request {
+    NSData *respData = [self responseData];
+    if (respData) {
+        [self.responseInfo setObject:REQUEST_SUCCESS forKey:REQUEST_STATUS];
+        [self.responseInfo setObject:respData forKey:RESPONSE_DATA];
+    } else {
+        NSLog(@"response data is null");
+    }
+    [self.callBack performSelector:@selector(requestDidFinish:) withObject:self.responseInfo];
+}
 
 
+- (void)requestFailed:(ASIHTTPRequest *)request {
+    @try {
+        [self.responseInfo setObject:REQUEST_FAIL forKey:REQUEST_STATUS];
+        [self.responseInfo setObject:@"服务器无响应" forKey:RESPONSE_ERROR];
+        NSLog(@"request failed");
+        [self.callBack performSelector:@selector(requestDidFinish:) withObject:self.responseInfo];
 
+    }
+    @catch (NSException *exception) {
+        
+    }
+    @finally {
+        
+    }
+}
 
 
 

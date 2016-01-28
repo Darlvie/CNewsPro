@@ -16,6 +16,7 @@
 @property (nonatomic,strong) UILabel *lbText2;
 @property (nonatomic,strong) UILabel *lbText3;
 @property (nonatomic,strong) UIImageView *accessaryView;
+@property(nonatomic,strong) UIImageView *checkImageView;
 
 - (void)updateCell;
 

@@ -21,6 +21,7 @@ static const CGFloat kTextWidth = 255;
 static const CGFloat kTextHeight = 71;
 static const CGFloat kDown = 110;
 
+
 @interface LoginViewController () <UITextFieldDelegate,UIAlertViewDelegate>
 
 @property (nonatomic,strong) UIButton *logoButton;
@@ -59,7 +60,7 @@ static const CGFloat kDown = 110;
     self.logoButton.titleLabel.font = [UIFont systemFontOfSize:26.0];
     [self.view addSubview:self.logoButton];
     
-    self.backView = [[UIView alloc] initWithFrame:CGRectMake(37, 200, kTextWidth, kTextHeight)];
+    self.backView = [[UIView alloc] initWithFrame:CGRectMake((SCREEN_WIDTH - kTextWidth) / 2, 200, kTextWidth, kTextHeight)];
     self.backView.backgroundColor = [UIColor whiteColor];
     [self.view addSubview:self.backView];
     
@@ -83,7 +84,7 @@ static const CGFloat kDown = 110;
     [self.backView addSubview:separateLine];
     
     UILabel *passwordLabel = [[UILabel alloc] initWithFrame:CGRectMake(CGRectGetMinX(userNameLabel.frame), CGRectGetHeight(self.backView.frame)-CGRectGetHeight(userNameLabel.frame), CGRectGetWidth(userNameLabel.frame), CGRectGetHeight(userNameLabel.frame))];
-    passwordLabel.text = @"密码:";
+    passwordLabel.text = @"密   码:";
     [passwordLabel setFont:[UIFont fontWithName:@"黑体-简 细体" size:16.0]];
     passwordLabel.backgroundColor = [UIColor clearColor];
     [self.backView addSubview:passwordLabel];
@@ -97,13 +98,14 @@ static const CGFloat kDown = 110;
     self.textPassword.delegate = self;
     [self.backView addSubview:self.textPassword];
     
-    self.loginButton = [[UIButton alloc] initWithFrame:CGRectMake(165, self.view.frame.size.height-kDown, 135, 35)];
+    CGFloat margin = (SCREEN_WIDTH - 135*2 - 20) / 2.0;
+    self.loginButton = [[UIButton alloc] initWithFrame:CGRectMake(margin + 155, SCREEN_HEIGHT - kDown, 135, 35)];
     [self.loginButton setTitle:@"登录" forState:UIControlStateNormal];
     [self.loginButton setBackgroundImage:[UIImage imageNamed:@"loginbtn"] forState:UIControlStateNormal];
     [self.loginButton addTarget:self action:@selector(loginAction:) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:self.loginButton];
     
-    UIButton *settingBtn = [[UIButton alloc] initWithFrame:CGRectMake(25, self.view.frame.size.height-kDown, 133, 35)];
+    UIButton *settingBtn = [[UIButton alloc] initWithFrame:CGRectMake(margin, SCREEN_HEIGHT - kDown, 135, 35)];
     [settingBtn setBackgroundImage:[UIImage imageNamed:@"SystemSet"] forState:UIControlStateNormal];
     [settingBtn setTitle:@"设置" forState:UIControlStateNormal];
     [settingBtn.titleLabel setBackgroundColor:[UIColor clearColor]];
@@ -372,7 +374,10 @@ static const CGFloat kDown = 110;
 }
 
 
-
+- (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event {
+    [super touchesBegan:touches withEvent:event];
+    [self.view endEditing:YES];
+}
 
 
 

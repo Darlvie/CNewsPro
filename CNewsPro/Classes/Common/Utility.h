@@ -8,7 +8,7 @@
 
 #import <Foundation/Foundation.h>
 
-@class User,ManuscriptTemplate;
+@class User,ManuscriptTemplate,Manuscripts;
 @interface Utility : NSObject
 
 @property (nonatomic,strong) NSArray *urlArray;
@@ -64,6 +64,8 @@
  */
 + (BOOL)checkSendToAddress:(User *)userInfo manuscriptTemplate:(ManuscriptTemplate *)manuTemplate;
 
+//检测稿签和稿件信息是否完整
++ (NSString *)checkInfoIsCompleted:(Manuscripts *)mcripts;
 
 /**
  *  将服务器上的稿签同步到手机

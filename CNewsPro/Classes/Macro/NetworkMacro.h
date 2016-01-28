@@ -11,7 +11,7 @@
 
 #define MAX_CLIENT_COUNT 2   //允许的最大上传进程数
 
-#define MITI_IP @"http://182.92.101.55:8080/cm/"  //天津正式服务器
+#define MITI_IP @"http://111.160.193.234/cm/"  //天津正式服务器
 
 #define GET_BASE_DATA_IP @"http://10.255.20.60:8080/enews/basedata/"////正式服务器－－－取文件的
 
