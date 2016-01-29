@@ -26,6 +26,9 @@
 		1B10956E1C59AB2300465235 /* MoreViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B10956D1C59AB2300465235 /* MoreViewController.m */; };
 		1B1095711C59ABD700465235 /* SystemManagerController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B1095701C59ABD700465235 /* SystemManagerController.m */; };
 		1B1095741C59AC7900465235 /* AuditNewsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B1095731C59AC7900465235 /* AuditNewsViewController.m */; };
+		1B1095771C59C00900465235 /* SendToAddressController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B1095761C59C00900465235 /* SendToAddressController.m */; };
+		1B10957A1C59FF3D00465235 /* EmployeeSendToAddressDB.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B1095791C59FF3D00465235 /* EmployeeSendToAddressDB.m */; };
+		1B10957D1C5A001700465235 /* EmployeeSendToAddress.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B10957C1C5A001700465235 /* EmployeeSendToAddress.m */; };
 		1B33EA091C525DDD00223AFF /* AccessoriesDB.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B33EA081C525DDD00223AFF /* AccessoriesDB.m */; };
 		1B33EA0C1C5260DD00223AFF /* UploadMaker.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B33EA0B1C5260DD00223AFF /* UploadMaker.m */; };
 		1B33EA151C5329F500223AFF /* SendToAddressDB.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B33EA141C5329F500223AFF /* SendToAddressDB.m */; };
@@ -140,6 +143,12 @@
 		1B1095701C59ABD700465235 /* SystemManagerController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SystemManagerController.m; sourceTree = "<group>"; };
 		1B1095721C59AC7900465235 /* AuditNewsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AuditNewsViewController.h; sourceTree = "<group>"; };
 		1B1095731C59AC7900465235 /* AuditNewsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AuditNewsViewController.m; sourceTree = "<group>"; };
+		1B1095751C59C00900465235 /* SendToAddressController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SendToAddressController.h; sourceTree = "<group>"; };
+		1B1095761C59C00900465235 /* SendToAddressController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SendToAddressController.m; sourceTree = "<group>"; };
+		1B1095781C59FF3D00465235 /* EmployeeSendToAddressDB.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EmployeeSendToAddressDB.h; sourceTree = "<group>"; };
+		1B1095791C59FF3D00465235 /* EmployeeSendToAddressDB.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EmployeeSendToAddressDB.m; sourceTree = "<group>"; };
+		1B10957B1C5A001700465235 /* EmployeeSendToAddress.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EmployeeSendToAddress.h; sourceTree = "<group>"; };
+		1B10957C1C5A001700465235 /* EmployeeSendToAddress.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EmployeeSendToAddress.m; sourceTree = "<group>"; };
 		1B33EA071C525DDD00223AFF /* AccessoriesDB.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AccessoriesDB.h; sourceTree = "<group>"; };
 		1B33EA081C525DDD00223AFF /* AccessoriesDB.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AccessoriesDB.m; sourceTree = "<group>"; };
 		1B33EA0A1C5260DD00223AFF /* UploadMaker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UploadMaker.h; sourceTree = "<group>"; };
@@ -331,6 +340,8 @@
 			children = (
 				1B1095651C59A8DE00465235 /* TemplateManageController.h */,
 				1B1095661C59A8DE00465235 /* TemplateManageController.m */,
+				1B1095751C59C00900465235 /* SendToAddressController.h */,
+				1B1095761C59C00900465235 /* SendToAddressController.m */,
 			);
 			path = TagManagement;
 			sourceTree = "<group>";
@@ -483,6 +494,8 @@
 				2713AFDB1C55CA00006AA96D /* ProvideTypeDB.m */,
 				2713AFDD1C55CABA006AA96D /* NewsPriorityDB.h */,
 				2713AFDE1C55CABA006AA96D /* NewsPriorityDB.m */,
+				1B1095781C59FF3D00465235 /* EmployeeSendToAddressDB.h */,
+				1B1095791C59FF3D00465235 /* EmployeeSendToAddressDB.m */,
 			);
 			path = Database;
 			sourceTree = "<group>";
@@ -529,6 +542,8 @@
 				2713B00F1C585C63006AA96D /* ServerAddress.m */,
 				2713B0101C585C63006AA96D /* User.h */,
 				2713B0111C585C63006AA96D /* User.m */,
+				1B10957B1C5A001700465235 /* EmployeeSendToAddress.h */,
+				1B10957C1C5A001700465235 /* EmployeeSendToAddress.m */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -884,6 +899,7 @@
 				2713AFCD1C55C313006AA96D /* NewTypeDB.m in Sources */,
 				27A83D661C4659BF0055502E /* RequestMaker.m in Sources */,
 				1B33EA091C525DDD00223AFF /* AccessoriesDB.m in Sources */,
+				1B1095771C59C00900465235 /* SendToAddressController.m in Sources */,
 				2713B01A1C585C63006AA96D /* NewsType.m in Sources */,
 				2713AFA11C4C89F3006AA96D /* UploadQueue.m in Sources */,
 				2713AFB91C51F8CC006AA96D /* ManuscriptTemplateDB.m in Sources */,
@@ -907,6 +923,7 @@
 				27A83E331C473DBE0055502E /* UploadClient.m in Sources */,
 				1B33EA151C5329F500223AFF /* SendToAddressDB.m in Sources */,
 				1B10954A1C58F96B00465235 /* UserGuideViewController.m in Sources */,
+				1B10957D1C5A001700465235 /* EmployeeSendToAddress.m in Sources */,
 				2713B0151C585C63006AA96D /* Language.m in Sources */,
 				2713AFD61C55C814006AA96D /* NewsCategoryDB.m in Sources */,
 				2713B0161C585C63006AA96D /* Manuscripts.m in Sources */,
@@ -922,6 +939,7 @@
 				1B10955D1C590E0300465235 /* TaskManagementViewController.m in Sources */,
 				1B1095711C59ABD700465235 /* SystemManagerController.m in Sources */,
 				2713B0141C585C63006AA96D /* CommonModel.m in Sources */,
+				1B10957A1C59FF3D00465235 /* EmployeeSendToAddressDB.m in Sources */,
 				2713AFDF1C55CABA006AA96D /* NewsPriorityDB.m in Sources */,
 				2713AFB61C51C88A006AA96D /* BasicInfoUtility.m in Sources */,
 				278D92811C489D3F0017415B /* UserDB.m in Sources */,
