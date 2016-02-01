@@ -58,6 +58,38 @@
 
 }
 
+//按id顺序查看稿件优先级列表
+- (NSMutableArray *)getNewsPriorityList {
+    
+    NSMutableArray *newsPriorityList = [[NSMutableArray alloc] init];
+    
+    if ([self openDatabase]==FALSE) {
+        return nil;
+    }
+    
+    NSString *sql = @"SELECT * FROM NewsPriority where language like 'zh-CN' order by np_id";
+    sqlite3_stmt *statement = nil;
+    int success = [self prepareSQL:sql SQLStatement:&statement];
+    if (success != SQLITE_OK) {
+        NSLog(@"Error:%d failed to prepare select",success);
+        return nil;
+    }
+    while (sqlite3_step(statement)==SQLITE_ROW) {
+        NewsPriority *newsPriority=[[NewsPriority alloc] init];
+        
+        newsPriority.np_id = sqlite3_column_int(statement, 0);
+        newsPriority.code = [NSString stringWithUTF8String:(char *)sqlite3_column_text(statement, 1)];
+        newsPriority.name = [NSString stringWithUTF8String:(char *)sqlite3_column_text(statement, 2)];
+        newsPriority.language = [NSString stringWithUTF8String:(char *)sqlite3_column_text(statement, 3)];
+        
+        [newsPriorityList addObject:newsPriority];
+    }
+    sqlite3_finalize(statement);
+    sqlite3_close(database);
+    
+    return newsPriorityList;
+}
+
 - (BOOL)deleteAll {
     if ([self openDatabase]==FALSE) {
         return FALSE;

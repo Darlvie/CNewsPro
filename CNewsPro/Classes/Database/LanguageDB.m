@@ -52,6 +52,38 @@
     return row;
 }
 
+//查看语种列表
+- (NSMutableArray*)getLanguageList {
+    NSMutableArray *languageList = [[NSMutableArray alloc] init];
+    
+    if ([self openDatabase]==FALSE) {
+        return nil;
+    }
+    
+    NSString *sql = @"SELECT * FROM Language order by l_id";
+    sqlite3_stmt *statement = nil;
+    int success = [self prepareSQL:sql SQLStatement:&statement];
+    if (success != SQLITE_OK) {
+        NSLog(@"Error:%d failed to prepare select",success);
+        return nil;
+    }
+    while (sqlite3_step(statement)==SQLITE_ROW) {
+        Language *language=[[Language alloc] init];
+        
+        language.l_id = [NSString stringWithUTF8String:(char *)sqlite3_column_text(statement, 0)];
+        language.code = [NSString stringWithUTF8String:(char *)sqlite3_column_text(statement, 1)];
+        language.name = [NSString stringWithUTF8String:(char *)sqlite3_column_text(statement, 2)];
+        language.language = [NSString stringWithUTF8String:(char *)sqlite3_column_text(statement, 3)];
+        language.order = [NSString stringWithUTF8String:(char *)sqlite3_column_text(statement, 4)];
+        [languageList addObject:language];
+        
+    }
+    sqlite3_finalize(statement);
+    sqlite3_close(database);
+    
+    return languageList;
+}
+
 - (BOOL)deleteAll {
     if ([self openDatabase] == FALSE) {
         return FALSE;

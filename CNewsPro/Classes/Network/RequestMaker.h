@@ -36,4 +36,8 @@
 //获取稿签
 + (void)getTemplate:(NSString *)loginName sessionid:(NSString *)sessionId delegate:(id)delegate;
 
++ (void)getSingleNewByID:(NSInteger)newsID delegate:(id)delegate;
+
++ (void)getAuditNewsByPageNum:(NSInteger )pageNum size:(NSInteger )pageSize delegate:(id)delegate;
+
 @end

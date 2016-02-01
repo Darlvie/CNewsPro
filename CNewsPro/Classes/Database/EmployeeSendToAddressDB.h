@@ -8,8 +8,13 @@
 
 #import "BasicDatabase.h"
 
+@class EmployeeSendToAddress;
 @interface EmployeeSendToAddressDB : BasicDatabase
 
+- (NSInteger)addESTAddress:(EmployeeSendToAddress*)estAddress;
+
 - (NSMutableArray*)getESTAddressListLoginName:(NSString*)loginName;
+
+- (BOOL)deleteAll;
 
 @end

@@ -155,8 +155,30 @@
     
 }
 
++ (void)getSingleNewByID:(NSInteger)newsID delegate:(id)delegate {
+    NSString *uurl = [NSString stringWithFormat:@"%@%@?NewsId=%ld",MITI_IP,@"auditService!getNewsById",newsID];
+    
+    NSMutableDictionary *requestInfo = [[NSMutableDictionary alloc]init];
+    [requestInfo setObject:uurl forKey:REQUEST_URL];
+    
+    [[NetworkManager sharedManager]requestDataWithDelegate:delegate info:requestInfo];
 
+}
 
+//获取审稿列表
++ (void)getAuditNewsByPageNum:(NSInteger)pageNum size:(NSInteger)pageSize delegate:(id)delegate {
+    NSString *uurl = [NSString stringWithFormat:@"%@%@",MITI_IP,@"auditService!getNews"];
+
+    NSString *bodyStr = [NSString stringWithFormat:@"currentPage=%ld&pageSize=%ld",pageNum,pageSize];
+
+    NSMutableDictionary *requestInfo = [[NSMutableDictionary alloc]init];
+    [requestInfo setObject:uurl forKey:REQUEST_URL];
+    [requestInfo setObject:POST forKey:REQUEST_METHOD];
+    [requestInfo setObject:bodyStr forKey:POST_BODY];
+    
+    [[NetworkManager sharedManager]requestDataWithDelegate:delegate info:requestInfo];
+
+}
 
 
 

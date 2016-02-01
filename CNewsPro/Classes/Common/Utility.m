@@ -26,7 +26,11 @@
 #import "SendToAddress.h"
 #import "SendToAddressDB.h"
 #import "NSData+LTExtension.h"
+#import "AuditNewsItem.h"
+#import "JSONKit.h"
 
+//定义的归档的文件名与关键字
+static NSString *kTemporaryTemplateFilename = @"temporaryTianJinTVArchive";
 #define FILE_PATH_INPHONE [[NSHomeDirectory() stringByAppendingPathComponent:@"Documents"] stringByAppendingPathComponent:[USERDEFAULTS objectForKey:LOGIN_NAME]]
 
 @implementation Utility
@@ -352,13 +356,72 @@
 }
 
 
++ (AuditNewsItem *)parseAuditNewsItemFromData:(NSData *)data {
+    if (data == nil) {
+        return nil;
+    }
+    
+    AuditNewsItem *auditNewsItem = [[AuditNewsItem alloc]init];
+    NSDictionary *auditDic = [[JSONDecoder decoder]objectWithData:data];
+    auditNewsItem.anAbstract = [auditDic objectForKey:AN_ABSTRCT];
+    auditNewsItem.auditNewsId = [[auditDic objectForKey:AUDIT_NEWS_ID]integerValue];
+    auditNewsItem.author = [auditDic objectForKey:AUTHOR];
+    auditNewsItem.channel = [auditDic objectForKey:CHANNEL];
+    auditNewsItem.content = [auditDic objectForKey:CONTENT];
+    auditNewsItem.createTime = [auditDic objectForKey:CREATE_TIME];
+    auditNewsItem.status = [auditDic objectForKey:STATUS];
+    auditNewsItem.title = [auditDic objectForKey:TITLE];
+    auditNewsItem.videoSrc = [auditDic objectForKey:VIDEO_SRC];
+    
+    return auditNewsItem;
 
+}
 
++ (NSMutableDictionary *)parseAuditNewsListFromData:(NSData *)data {
+    if (data == nil) {
+        return nil;
+    }
+    //data是一个字典类型，包含items、currentPage、totalCount三个字段。
+    NSDictionary *responseDic = [[JSONDecoder decoder] objectWithData:data];
+    
+    //返回这个解析之后的字典
+    NSMutableDictionary *auditNewsDic = [[NSMutableDictionary alloc]init];
+    NSMutableArray *auditNewsListArray = [[NSMutableArray alloc]init];
+    
+    NSMutableArray *tempArray = [responseDic objectForKey:@"items"];
+    
+    for (NSDictionary *tempDic in tempArray) {
+        AuditNewsItem *newsItem = [self parseAuditNewsItemFromDic:tempDic];
+        [auditNewsListArray addObject:newsItem];
+    }
+    [auditNewsDic setObject:auditNewsListArray forKey:@"items"];
+    
+    [auditNewsDic setObject:[responseDic objectForKey:@"currentPage"] forKey:@"currentPage"];
+    [auditNewsDic setObject:[responseDic objectForKey:@"totalCount"] forKey:@"totalCount"];
+    
+    return auditNewsDic;
+}
 
++ (AuditNewsItem *)parseAuditNewsItemFromDic:(NSDictionary *)auditDic
+{
+    AuditNewsItem *auditNewsItem = [[AuditNewsItem alloc]init];
+    auditNewsItem.anAbstract = [auditDic objectForKey:AN_ABSTRCT];
+    auditNewsItem.auditNewsId = [[auditDic objectForKey:AUDIT_NEWS_ID]integerValue];
+    auditNewsItem.author = [auditDic objectForKey:AUTHOR];
+    auditNewsItem.channel = [auditDic objectForKey:CHANNEL];
+    auditNewsItem.content = [auditDic objectForKey:CONTENT];
+    auditNewsItem.createTime = [auditDic objectForKey:CREATE_TIME];
+    auditNewsItem.status = [auditDic objectForKey:STATUS];
+    auditNewsItem.title = [auditDic objectForKey:TITLE];
+    auditNewsItem.videoSrc = [auditDic objectForKey:VIDEO_SRC];
+    
+    return auditNewsItem;
+}
 
-
-
-
++ (NSString *)temporaryTemplateFilePath {
+    NSString *tempPath = NSTemporaryDirectory();
+    return [tempPath stringByAppendingPathComponent:kTemporaryTemplateFilename];
+}
 
 
 

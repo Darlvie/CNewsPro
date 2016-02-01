@@ -96,9 +96,21 @@
     [self.uploadQueue addClient:client];
 }
 
+//暂停指定位置的client上传
+- (void)pauseUploadClientAtQueueIndex:(NSInteger)index {
+    UploadClient *client = [self.uploadQueue objectAtIndex:index];
+    if(client.running)
+    {
+        [client pauseUpload];
+    }
+}
 
-
-
+//将任务移除队列（在注销帐号时使用）
+-(void)removeClient:(int)index {
+    UploadClient *client = [self.uploadQueue objectAtIndex:index];
+    [client cancelUpload];
+    [self.uploadQueue removeObjectAtIndex:index];
+}
 
 
 

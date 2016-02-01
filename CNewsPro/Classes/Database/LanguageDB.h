@@ -12,6 +12,9 @@
 //批量添加
 - (NSInteger)addLanguageList:(NSMutableArray*)LanguageList;
 
+//查看语种列表
+- (NSMutableArray *)getLanguageList;
+
 - (BOOL)deleteAll;
 
 

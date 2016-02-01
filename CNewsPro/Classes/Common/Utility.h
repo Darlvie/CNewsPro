@@ -8,7 +8,7 @@
 
 #import <Foundation/Foundation.h>
 
-@class User,ManuscriptTemplate,Manuscripts;
+@class User,ManuscriptTemplate,Manuscripts,AuditNewsItem;
 @interface Utility : NSObject
 
 @property (nonatomic,strong) NSArray *urlArray;
@@ -67,10 +67,18 @@
 //检测稿签和稿件信息是否完整
 + (NSString *)checkInfoIsCompleted:(Manuscripts *)mcripts;
 
+//解析审批列表数据
++ (NSMutableDictionary *)parseAuditNewsListFromData:(NSData *)data;
+
++ (AuditNewsItem *)parseAuditNewsItemFromData:(NSData *)data;
+
 /**
  *  将服务器上的稿签同步到手机
  */
 + (void)getTemplate;
+
+//读取暂存稿签文件路径
++ (NSString *)temporaryTemplateFilePath;
 
 /**
  *  生成随机UUID

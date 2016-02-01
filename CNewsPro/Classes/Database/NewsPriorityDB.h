@@ -14,5 +14,7 @@
 
 - (BOOL)deleteAll;
 
+//按id顺序查看稿件优先级列表
+- (NSMutableArray *)getNewsPriorityList;
 
 @end

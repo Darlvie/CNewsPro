@@ -46,4 +46,11 @@
 //添加上传任务
 - (void)uploadWithInfo:(NSMutableDictionary*)uploadInfo;
 
+//暂停指定位置的client上传
+- (void)pauseUploadClientAtQueueIndex:(NSInteger)index;
+
+//将任务移除队列（在注销帐号时使用）
+- (void)removeClient:(int)index;
+
+
 @end

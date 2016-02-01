@@ -59,6 +59,47 @@
 }
 
 
+//按id顺序查看稿件分类列表
+- (NSMutableArray*)getNewsCategoryListBySupernewsCategory:(NewsCategory*)newsCategory Type:(NSInteger)newsCategoryType {
+    
+    NSMutableArray *newsCategoryList = [[NSMutableArray alloc] init];
+    NSString *string = nil;
+    if (newsCategoryType) {
+        string = [newsCategory.code  stringByAppendingString:@"___"];
+    }
+    else {
+        string = [newsCategory.code  stringByAppendingString:@"___"];
+    }
+    if ([self openDatabase]==FALSE) {
+        return nil;
+    }
+
+    NSString *sql = @"SELECT * FROM NewsCategory where  language like 'zh-CN' and code like ?";
+    sqlite3_stmt *statement = nil;
+    int success = [self prepareSQL:sql SQLStatement:&statement];
+    if (success != SQLITE_OK) {
+        NSLog(@"Error:%d failed to prepare select",success);
+        return nil;
+    }
+    //绑定参数
+    sqlite3_bind_text(statement, 1,[string UTF8String], -1, NULL);
+    while (sqlite3_step(statement)==SQLITE_ROW) {
+        NewsCategory *newsCategory=[[NewsCategory alloc] init];
+        
+        newsCategory.nc_id = sqlite3_column_int(statement, 0);
+        newsCategory.code =[NSString stringWithUTF8String:(char *)sqlite3_column_text(statement, 1)];
+        newsCategory.name=[NSString stringWithUTF8String:(char *)sqlite3_column_text(statement, 2)];
+        newsCategory.language=[NSString stringWithUTF8String:(char *)sqlite3_column_text(statement, 3)];
+        
+        [newsCategoryList addObject:newsCategory];
+        
+    }
+    sqlite3_finalize(statement);
+    sqlite3_close(database);
+    
+    return newsCategoryList;
+}
+
 - (BOOL)deleteAll {
     if ([self openDatabase]==FALSE) {
         return FALSE;

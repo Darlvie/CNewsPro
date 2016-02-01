@@ -188,13 +188,211 @@
     return manuscriptTemplate;
 }
 
+- (NSMutableArray *)getManuScriptTemplate:(NSString *)userName type:(NSString *)tagType {
+    
+    NSMutableArray *ManuScriptList = [[NSMutableArray alloc] init];
+    if ([self openDatabase]==FALSE) {
+        return nil;
+    }
+    
+    NSString *sql = @"SELECT * FROM ManuScriptTemplate where loginname=? and issystemoriginal=? order by CreateTime";
+    sqlite3_stmt *statement = nil;
+    int success = [self prepareSQL:sql SQLStatement:&statement];
+    if (success != SQLITE_OK) {
+        NSLog(@"Error:%d failed to prepare select",success);
+        return nil;
+    }
+    
+    //绑定参数
+    sqlite3_bind_text(statement, 1, [userName UTF8String], -1, NULL);
+    sqlite3_bind_text(statement, 2, [tagType UTF8String], -1, NULL);
+    
+    while (sqlite3_step(statement)==SQLITE_ROW) {
+        ManuscriptTemplate *manuscriptTemplate=[[ManuscriptTemplate alloc] init];
+        manuscriptTemplate.mt_id = [NSString stringWithUTF8String:(char *)sqlite3_column_text(statement, 0)];
+        manuscriptTemplate.name = [NSString stringWithUTF8String:(char *)sqlite3_column_text(statement, 1)];
+        manuscriptTemplate.loginName = [NSString stringWithUTF8String:(char *)sqlite3_column_text(statement, 2)];
+        manuscriptTemplate.comeFromDept = [NSString stringWithUTF8String:(char *)sqlite3_column_text(statement, 3)];
+        manuscriptTemplate.comeFromDeptID = [NSString stringWithUTF8String:(char *)sqlite3_column_text(statement, 4)];
+        manuscriptTemplate.region = [NSString stringWithUTF8String:(char *)sqlite3_column_text(statement,5)];
+        manuscriptTemplate.regionID = [NSString stringWithUTF8String:(char *)sqlite3_column_text(statement,6)];
+        manuscriptTemplate.docType = [NSString stringWithUTF8String:(char *)sqlite3_column_text(statement,7)];
+        manuscriptTemplate.docTypeID = [NSString stringWithUTF8String:(char *)sqlite3_column_text(statement,8)];
+        manuscriptTemplate.provType = [NSString stringWithUTF8String:(char *)sqlite3_column_text(statement,9)];
+        manuscriptTemplate.provTypeid = [NSString stringWithUTF8String:(char *)sqlite3_column_text(statement,10)];
+        manuscriptTemplate.keywords = [NSString stringWithUTF8String:(char *)sqlite3_column_text(statement,11)];
+        manuscriptTemplate.language = [NSString stringWithUTF8String:(char *)sqlite3_column_text(statement,12)];
+        manuscriptTemplate.languageID = [NSString stringWithUTF8String:(char *)sqlite3_column_text(statement,13)];
+        manuscriptTemplate.priority = [NSString stringWithUTF8String:(char *)sqlite3_column_text(statement,14)];
+        manuscriptTemplate.priorityID = [NSString stringWithUTF8String:(char *)sqlite3_column_text(statement,15)];
+        manuscriptTemplate.sendArea = [NSString stringWithUTF8String:(char *)sqlite3_column_text(statement,16)];
+        manuscriptTemplate.happenPlace = [NSString stringWithUTF8String:(char *)sqlite3_column_text(statement,17)];
+        manuscriptTemplate.reportPlace = [NSString stringWithUTF8String:(char *)sqlite3_column_text(statement,18)];
+        manuscriptTemplate.address = [NSString stringWithUTF8String:(char *)sqlite3_column_text(statement,19)];
+        manuscriptTemplate.addressID = [NSString stringWithUTF8String:(char *)sqlite3_column_text(statement,20)];
+        manuscriptTemplate.is3Tnews = [NSString stringWithUTF8String:(char *)sqlite3_column_text(statement,21)];
+        manuscriptTemplate.isDefault = [NSString stringWithUTF8String:(char *)sqlite3_column_text(statement,22)];
+        manuscriptTemplate.createTime = [NSString stringWithUTF8String:(char *)sqlite3_column_text(statement,23)];
+        manuscriptTemplate.reviewStatus = [NSString stringWithUTF8String:(char *)sqlite3_column_text(statement,24)];
+        manuscriptTemplate.defaultTitle = [NSString stringWithUTF8String:(char *)sqlite3_column_text(statement,25)];
+        manuscriptTemplate.defaultContents = [NSString stringWithUTF8String:(char *)sqlite3_column_text(statement,26)];
+        manuscriptTemplate.isSystemOriginal = [NSString stringWithUTF8String:(char *)sqlite3_column_text(statement,27)];
+        manuscriptTemplate.author = [NSString stringWithUTF8String:(char *)sqlite3_column_text(statement,28)];
+        [ManuScriptList addObject:manuscriptTemplate];    }
+    sqlite3_finalize(statement);
+    sqlite3_close(database);
+    
+    return ManuScriptList;
+}
 
+- (NSInteger)updateManuscriptTemplate:(ManuscriptTemplate *)mTemplate {
+    if ([self openDatabase]==FALSE) {
+        return -1;
+    }
+    
+    
+    NSString *sql=@"UPDATE ManuscriptTemplate SET  name = ?, loginname = ?, comefromDept = ?, comefromDeptID = ?, region = ?, regionID = ?, doctype = ?, doctypeID = ?, provtype = ?, provtypeid = ?, keywords = ?, language = ?, languageID = ?, priority = ?, priorityID = ?, sendarea = ?, happenplace = ?, reportplace = ?, address = ?, addressID = ?, is3Tnews = ?, isdefault = ?, createtime = ?, reviewstatus = ?, defaulttitle = ?, defaultcontents = ?, issystemoriginal = ? ,author = ? WHERE  mt_id = ?";
+    sqlite3_stmt *statement = nil;
+    int success = [self prepareSQL:sql SQLStatement:&statement];
+    if (success != SQLITE_OK) {
+        NSLog(@"Error:%d failed to prepare insert",success);
+        return -1;
+    }
+    
+    //绑定参数
+    sqlite3_bind_text(statement, 1, [mTemplate.name UTF8String], -1, NULL);
+    sqlite3_bind_text(statement, 2, [mTemplate.loginName UTF8String], -1, NULL);
+    sqlite3_bind_text(statement, 3, [mTemplate.comeFromDept UTF8String], -1, NULL);
+    sqlite3_bind_text(statement, 4, [mTemplate.comeFromDeptID UTF8String], -1, NULL);
+    sqlite3_bind_text(statement, 5, [mTemplate.region UTF8String], -1, NULL);
+    sqlite3_bind_text(statement, 6, [mTemplate.regionID UTF8String], -1, NULL);
+    sqlite3_bind_text(statement, 7, [mTemplate.docType UTF8String], -1, NULL);
+    sqlite3_bind_text(statement, 8, [mTemplate.docTypeID UTF8String], -1, NULL);
+    sqlite3_bind_text(statement, 9, [mTemplate.provType UTF8String], -1, NULL);
+    sqlite3_bind_text(statement, 10, [mTemplate.provTypeid UTF8String], -1, NULL);
+    sqlite3_bind_text(statement, 11, [mTemplate.keywords UTF8String], -1, NULL);
+    sqlite3_bind_text(statement, 12, [mTemplate.language UTF8String], -1, NULL);
+    sqlite3_bind_text(statement, 13, [mTemplate.languageID UTF8String], -1, NULL);
+    sqlite3_bind_text(statement, 14, [mTemplate.priority UTF8String], -1, NULL);
+    sqlite3_bind_text(statement, 15, [mTemplate.priorityID UTF8String], -1, NULL);
+    sqlite3_bind_text(statement, 16, [mTemplate.sendArea UTF8String], -1, NULL);
+    sqlite3_bind_text(statement, 17, [mTemplate.happenPlace UTF8String], -1, NULL);
+    sqlite3_bind_text(statement, 18, [mTemplate.reportPlace UTF8String], -1, NULL);
+    sqlite3_bind_text(statement, 19, [mTemplate.address UTF8String], -1, NULL);
+    sqlite3_bind_text(statement, 20, [mTemplate.addressID UTF8String], -1, NULL);
+    sqlite3_bind_text(statement, 21, [mTemplate.is3Tnews UTF8String], -1, NULL);
+    sqlite3_bind_text(statement, 22, [mTemplate.isDefault UTF8String], -1, NULL);
+    sqlite3_bind_text(statement, 23, [mTemplate.createTime UTF8String], -1, NULL);
+    sqlite3_bind_text(statement, 24, [mTemplate.reviewStatus UTF8String], -1, NULL);
+    sqlite3_bind_text(statement, 25, [mTemplate.defaultTitle UTF8String], -1, NULL);
+    sqlite3_bind_text(statement, 26, [mTemplate.defaultContents UTF8String], -1, NULL);
+    sqlite3_bind_text(statement, 27, [mTemplate.isSystemOriginal UTF8String], -1, NULL);
+    sqlite3_bind_text(statement, 28, [mTemplate.author UTF8String], -1, NULL);
+    sqlite3_bind_text(statement, 29, [mTemplate.mt_id UTF8String], -1, NULL);
+    
+    success = sqlite3_step(statement);
+    if (success == SQLITE_ERROR) {
+        NSLog(@"Error: failed to insert into the database");
+        sqlite3_finalize(statement);
+        sqlite3_close(database);
+        return -1;
+    }
+    sqlite3_finalize(statement);
+    sqlite3_close(database);
+    
+    return sqlite3_last_insert_rowid(database);
 
+}
 
+- (BOOL)deleteManuScriptTemplate:(NSString *)mt_id {
+    if ([self openDatabase]==FALSE) {
+        return FALSE;
+    }
+    
+    NSString *sql = @"DELETE FROM ManuscriptTemplate WHERE mt_id = ?";
+    sqlite3_stmt *statement = nil;
+    int success = [self prepareSQL:sql SQLStatement:&statement];
+    if (success != SQLITE_OK) {
+        NSLog(@"Error: failed to prepare");
+        return FALSE;
+    }
+    
+    //绑定参数
+    sqlite3_bind_text(statement, 1, [mt_id UTF8String], -1, NULL);
+    
+    success = sqlite3_step(statement);
+    if (success == SQLITE_ERROR) {
+        NSLog(@"Error: failed to delete record");
+        sqlite3_finalize(statement);
+        sqlite3_close(database);
+        return FALSE;
+    }
+    sqlite3_finalize(statement);
+    sqlite3_close(database);
+    
+    return YES;
 
+}
 
+//获取全部稿签模板
+- (NSMutableArray *)getAllTemplate:(NSString *)userName {
+    
+    NSMutableArray *ManuScriptList = [[NSMutableArray alloc] init];
+    
+    if ([self openDatabase]==FALSE) {
+        return nil;
+    }
+    NSString *sql = @"SELECT * FROM ManuScriptTemplate where loginname=? order by CreateTime";
+    sqlite3_stmt *statement = nil;
+    int success = [self prepareSQL:sql SQLStatement:&statement];
+    if (success != SQLITE_OK) {
+        NSLog(@"Error:%d failed to prepare select",success);
+        return nil;
+    }
+    
+    //绑定参数
+    
+    sqlite3_bind_text(statement, 1, [userName UTF8String], -1, NULL);
+    
+    while (sqlite3_step(statement)==SQLITE_ROW) {
+        ManuscriptTemplate *manuscriptTemplate=[[ManuscriptTemplate alloc] init];
+        manuscriptTemplate.mt_id = [NSString stringWithUTF8String:(char *)sqlite3_column_text(statement, 0)];
+        manuscriptTemplate.name =[NSString stringWithUTF8String:(char *)sqlite3_column_text(statement, 1)];
+        manuscriptTemplate.loginName=[NSString stringWithUTF8String:(char *)sqlite3_column_text(statement, 2)];
+        manuscriptTemplate.comeFromDept=[NSString stringWithUTF8String:(char *)sqlite3_column_text(statement, 3)];
+        manuscriptTemplate.comeFromDeptID=[NSString stringWithUTF8String:(char *)sqlite3_column_text(statement, 4)];
+        manuscriptTemplate.region=[NSString stringWithUTF8String:(char *)sqlite3_column_text(statement,5)];
+        manuscriptTemplate.regionID=[NSString stringWithUTF8String:(char *)sqlite3_column_text(statement,6)];
+        manuscriptTemplate.docType=[NSString stringWithUTF8String:(char *)sqlite3_column_text(statement,7)];
+        manuscriptTemplate.docTypeID=[NSString stringWithUTF8String:(char *)sqlite3_column_text(statement,8)];
+        manuscriptTemplate.provType=[NSString stringWithUTF8String:(char *)sqlite3_column_text(statement,9)];
+        manuscriptTemplate.provTypeid=[NSString stringWithUTF8String:(char *)sqlite3_column_text(statement,10)];
+        manuscriptTemplate.keywords=[NSString stringWithUTF8String:(char *)sqlite3_column_text(statement,11)];
+        manuscriptTemplate.language=[NSString stringWithUTF8String:(char *)sqlite3_column_text(statement,12)];
+        manuscriptTemplate.languageID=[NSString stringWithUTF8String:(char *)sqlite3_column_text(statement,13)];
+        manuscriptTemplate.priority=[NSString stringWithUTF8String:(char *)sqlite3_column_text(statement,14)];
+        manuscriptTemplate.priorityID=[NSString stringWithUTF8String:(char *)sqlite3_column_text(statement,15)];
+        manuscriptTemplate.sendArea=[NSString stringWithUTF8String:(char *)sqlite3_column_text(statement,16)];
+        manuscriptTemplate.happenPlace=[NSString stringWithUTF8String:(char *)sqlite3_column_text(statement,17)];
+        manuscriptTemplate.reportPlace=[NSString stringWithUTF8String:(char *)sqlite3_column_text(statement,18)];
+        manuscriptTemplate.address=[NSString stringWithUTF8String:(char *)sqlite3_column_text(statement,19)];
+        manuscriptTemplate.addressID=[NSString stringWithUTF8String:(char *)sqlite3_column_text(statement,20)];
+        manuscriptTemplate.is3Tnews=[NSString stringWithUTF8String:(char *)sqlite3_column_text(statement,21)];
+        manuscriptTemplate.isDefault=[NSString stringWithUTF8String:(char *)sqlite3_column_text(statement,22)];
+        manuscriptTemplate.createTime=[NSString stringWithUTF8String:(char *)sqlite3_column_text(statement,23)];
+        manuscriptTemplate.reviewStatus=[NSString stringWithUTF8String:(char *)sqlite3_column_text(statement,24)];
+        manuscriptTemplate.defaultTitle=[NSString stringWithUTF8String:(char *)sqlite3_column_text(statement,25)];
+        manuscriptTemplate.defaultContents=[NSString stringWithUTF8String:(char *)sqlite3_column_text(statement,26)];
+        manuscriptTemplate.isSystemOriginal=[NSString stringWithUTF8String:(char *)sqlite3_column_text(statement,27)];
+        manuscriptTemplate.author=[NSString stringWithUTF8String:(char *)sqlite3_column_text(statement,28)];
+        [ManuScriptList addObject:manuscriptTemplate];
+    }
+    sqlite3_finalize(statement);
+    sqlite3_close(database);
+    
+    return ManuScriptList;
 
-
+}
 
 
 

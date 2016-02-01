@@ -9,6 +9,34 @@
 #ifndef AppMacro_h
 #define AppMacro_h
 
+#define  NAME_TAG             0//标题
+#define  COMEFROM_DEPT_TAG     1//稿源
+#define  PROV_TYPE_TAG         2//供稿类别
+#define  DOC_TYPE_TAG          3//分类
+#define  REGION_TAG           4//地区
+#define  SEND_AREA_TAG        5//来稿地点
+#define  HAPPEN_PLACE_TAG     6//事发地点
+#define  REPORT_PLACE_TAG     7//报道地点
+#define  KEYWORDS_TAG        8//关键字
+#define  REVIEW_STATUS_TAG    9//送审情况
+#define  DEFAULT_TITLE_TAG    10//默认标题
+#define  DEFAULT_CONTENTS_TAG 11//默认正文
+#define  LANGUAGE_TAG        12//语种
+#define  PRIORITY_TAG        13//优先级
+#define  SEND_ADDRESS_TAG     14//发稿地址
+#define  AUTHOR_TAG          15//作者
+#define  SCRIPT_TYPE_TAG      16//稿件类型
+
+#define AN_ABSTRCT @"anAbstract"
+#define AUDIT_NEWS_ID @"auditNewsId"
+#define AUTHOR @"author"
+#define CHANNEL @"channel"
+#define CONTENT @"content"
+#define CREATE_TIME @"createTime"
+#define STATUS @"status"
+#define TITLE @"title"
+#define VIDEO_SRC @"videoSrc"
+
 //NSDefault key
 #define SESSION_ID @"session_id"
 #define LOGIN_NAME @"loginname"
@@ -68,6 +96,16 @@
 #define PICTURE_EXPRESS_TEMPLATE_TYPE @"PICTURE"
 #define AUDIO_EXPRESS_TEMPLATE_TYPE @"VOICE"
 #define VIDEO_EXPRESS_TEMPLATE_TYPE @"VIDEO"
+
+
+#define TEMPLATE_DETAIL_VIEW_SECTION_NUM 1//稿件属性section
+#define TEMPLATE_DETAIL_VIEWROW_NUM 11//稿件属性row
+#define SEND_ADDRESS_SECTION_NUM 1//发稿地址section
+#define SEND_ADDRESS_ROW_NUM 4//发稿地址row
+#define TF_CGRECT CGRectMake(80, 0, 180, 50)
+#define TV_CGRECT CGRectMake(70, 7, 180, 43)
+#define TF_FONT [UIFont fontWithName:@"Helvetica" size:16.0]
+#define TL_FONT [UIFont fontWithName:@"Helvetica" size:16.0]
 
 #define DATA_KEY          @"Data"
 

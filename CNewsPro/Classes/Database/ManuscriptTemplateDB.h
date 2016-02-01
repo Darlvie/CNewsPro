@@ -16,4 +16,17 @@
 - (NSInteger)addManuscriptTemplate:(ManuscriptTemplate *)mtemplate;
 
 - (ManuscriptTemplate *)getDefaultManuscriptTemplate:(NSString *)type LoginName:(NSString *)loginName;
+
+- (NSMutableArray *)getManuScriptTemplate:(NSString *)userName type:(NSString *)tagType;
+
+- (NSInteger)updateManuscriptTemplate:(ManuscriptTemplate *)mTemplate;
+
+- (BOOL)deleteManuScriptTemplate:(NSString *)mt_id;
+
+//获取全部稿签模板
+- (NSMutableArray *)getAllTemplate:(NSString *)userName;
+
+
+
+
 @end

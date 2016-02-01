@@ -29,6 +29,15 @@
 		1B1095771C59C00900465235 /* SendToAddressController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B1095761C59C00900465235 /* SendToAddressController.m */; };
 		1B10957A1C59FF3D00465235 /* EmployeeSendToAddressDB.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B1095791C59FF3D00465235 /* EmployeeSendToAddressDB.m */; };
 		1B10957D1C5A001700465235 /* EmployeeSendToAddress.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B10957C1C5A001700465235 /* EmployeeSendToAddress.m */; };
+		1B1095801C5C5D3C00465235 /* NewTagDetailViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B10957F1C5C5D3C00465235 /* NewTagDetailViewController.m */; };
+		1B1095841C5CEA2700465235 /* EditScriptCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B1095831C5CEA2700465235 /* EditScriptCell.m */; };
+		1B1095871C5E17D900465235 /* AuditNewsItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B1095861C5E17D900465235 /* AuditNewsItem.m */; };
+		1B10958A1C5E1C9400465235 /* DetailAuditNewsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B1095891C5E1C9400465235 /* DetailAuditNewsViewController.m */; };
+		1B10958D1C5F08E700465235 /* MAlertView.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B10958C1C5F08E700465235 /* MAlertView.m */; };
+		1B1095901C5F4B7700465235 /* DocTypeSuperController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B10958F1C5F4B7700465235 /* DocTypeSuperController.m */; };
+		1B1095931C5F5BEA00465235 /* DocTypeSecLVController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B1095921C5F5BEA00465235 /* DocTypeSecLVController.m */; };
+		1B1095961C5F60A000465235 /* DocTypeTriLVController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B1095951C5F60A000465235 /* DocTypeTriLVController.m */; };
+		1B1095991C5F68A700465235 /* DocTypeUltraLVController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B1095981C5F68A700465235 /* DocTypeUltraLVController.m */; };
 		1B33EA091C525DDD00223AFF /* AccessoriesDB.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B33EA081C525DDD00223AFF /* AccessoriesDB.m */; };
 		1B33EA0C1C5260DD00223AFF /* UploadMaker.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B33EA0B1C5260DD00223AFF /* UploadMaker.m */; };
 		1B33EA151C5329F500223AFF /* SendToAddressDB.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B33EA141C5329F500223AFF /* SendToAddressDB.m */; };
@@ -149,6 +158,24 @@
 		1B1095791C59FF3D00465235 /* EmployeeSendToAddressDB.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EmployeeSendToAddressDB.m; sourceTree = "<group>"; };
 		1B10957B1C5A001700465235 /* EmployeeSendToAddress.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EmployeeSendToAddress.h; sourceTree = "<group>"; };
 		1B10957C1C5A001700465235 /* EmployeeSendToAddress.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EmployeeSendToAddress.m; sourceTree = "<group>"; };
+		1B10957E1C5C5D3C00465235 /* NewTagDetailViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NewTagDetailViewController.h; sourceTree = "<group>"; };
+		1B10957F1C5C5D3C00465235 /* NewTagDetailViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NewTagDetailViewController.m; sourceTree = "<group>"; };
+		1B1095821C5CEA2700465235 /* EditScriptCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EditScriptCell.h; sourceTree = "<group>"; };
+		1B1095831C5CEA2700465235 /* EditScriptCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EditScriptCell.m; sourceTree = "<group>"; };
+		1B1095851C5E17D900465235 /* AuditNewsItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AuditNewsItem.h; sourceTree = "<group>"; };
+		1B1095861C5E17D900465235 /* AuditNewsItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AuditNewsItem.m; sourceTree = "<group>"; };
+		1B1095881C5E1C9400465235 /* DetailAuditNewsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DetailAuditNewsViewController.h; sourceTree = "<group>"; };
+		1B1095891C5E1C9400465235 /* DetailAuditNewsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DetailAuditNewsViewController.m; sourceTree = "<group>"; };
+		1B10958B1C5F08E700465235 /* MAlertView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MAlertView.h; sourceTree = "<group>"; };
+		1B10958C1C5F08E700465235 /* MAlertView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MAlertView.m; sourceTree = "<group>"; };
+		1B10958E1C5F4B7700465235 /* DocTypeSuperController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DocTypeSuperController.h; sourceTree = "<group>"; };
+		1B10958F1C5F4B7700465235 /* DocTypeSuperController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DocTypeSuperController.m; sourceTree = "<group>"; };
+		1B1095911C5F5BEA00465235 /* DocTypeSecLVController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DocTypeSecLVController.h; sourceTree = "<group>"; };
+		1B1095921C5F5BEA00465235 /* DocTypeSecLVController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DocTypeSecLVController.m; sourceTree = "<group>"; };
+		1B1095941C5F60A000465235 /* DocTypeTriLVController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DocTypeTriLVController.h; sourceTree = "<group>"; };
+		1B1095951C5F60A000465235 /* DocTypeTriLVController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DocTypeTriLVController.m; sourceTree = "<group>"; };
+		1B1095971C5F68A700465235 /* DocTypeUltraLVController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DocTypeUltraLVController.h; sourceTree = "<group>"; };
+		1B1095981C5F68A700465235 /* DocTypeUltraLVController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DocTypeUltraLVController.m; sourceTree = "<group>"; };
 		1B33EA071C525DDD00223AFF /* AccessoriesDB.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AccessoriesDB.h; sourceTree = "<group>"; };
 		1B33EA081C525DDD00223AFF /* AccessoriesDB.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AccessoriesDB.m; sourceTree = "<group>"; };
 		1B33EA0A1C5260DD00223AFF /* UploadMaker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UploadMaker.h; sourceTree = "<group>"; };
@@ -342,6 +369,16 @@
 				1B1095661C59A8DE00465235 /* TemplateManageController.m */,
 				1B1095751C59C00900465235 /* SendToAddressController.h */,
 				1B1095761C59C00900465235 /* SendToAddressController.m */,
+				1B10957E1C5C5D3C00465235 /* NewTagDetailViewController.h */,
+				1B10957F1C5C5D3C00465235 /* NewTagDetailViewController.m */,
+				1B10958E1C5F4B7700465235 /* DocTypeSuperController.h */,
+				1B10958F1C5F4B7700465235 /* DocTypeSuperController.m */,
+				1B1095911C5F5BEA00465235 /* DocTypeSecLVController.h */,
+				1B1095921C5F5BEA00465235 /* DocTypeSecLVController.m */,
+				1B1095941C5F60A000465235 /* DocTypeTriLVController.h */,
+				1B1095951C5F60A000465235 /* DocTypeTriLVController.m */,
+				1B1095971C5F68A700465235 /* DocTypeUltraLVController.h */,
+				1B1095981C5F68A700465235 /* DocTypeUltraLVController.m */,
 			);
 			path = TagManagement;
 			sourceTree = "<group>";
@@ -355,8 +392,19 @@
 				1B1095701C59ABD700465235 /* SystemManagerController.m */,
 				1B1095721C59AC7900465235 /* AuditNewsViewController.h */,
 				1B1095731C59AC7900465235 /* AuditNewsViewController.m */,
+				1B1095881C5E1C9400465235 /* DetailAuditNewsViewController.h */,
+				1B1095891C5E1C9400465235 /* DetailAuditNewsViewController.m */,
 			);
 			path = SystemManagement;
+			sourceTree = "<group>";
+		};
+		1B1095811C5CE9D200465235 /* EditingScriptList */ = {
+			isa = PBXGroup;
+			children = (
+				1B1095821C5CEA2700465235 /* EditScriptCell.h */,
+				1B1095831C5CEA2700465235 /* EditScriptCell.m */,
+			);
+			path = EditingScriptList;
 			sourceTree = "<group>";
 		};
 		2713AFBA1C5214D6006AA96D /* Lib */ = {
@@ -379,6 +427,7 @@
 		2713AFE61C5614D0006AA96D /* ManuscriptList */ = {
 			isa = PBXGroup;
 			children = (
+				1B1095811C5CE9D200465235 /* EditingScriptList */,
 				2713AFE71C5614EC006AA96D /* SendedScript */,
 			);
 			path = ManuscriptList;
@@ -544,6 +593,8 @@
 				2713B0111C585C63006AA96D /* User.m */,
 				1B10957B1C5A001700465235 /* EmployeeSendToAddress.h */,
 				1B10957C1C5A001700465235 /* EmployeeSendToAddress.m */,
+				1B1095851C5E17D900465235 /* AuditNewsItem.h */,
+				1B1095861C5E17D900465235 /* AuditNewsItem.m */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -573,13 +624,13 @@
 		27A83D4D1C4637300055502E /* Classes */ = {
 			isa = PBXGroup;
 			children = (
+				27A83D581C46487C0055502E /* Macro */,
 				1B10956B1C59AACD00465235 /* SystemManagement */,
 				1B1095641C59A8A800465235 /* TagManagement */,
 				1B10954B1C5907C300465235 /* NewManuscript */,
 				2713AFE61C5614D0006AA96D /* ManuscriptList */,
 				278D927A1C488C740017415B /* Database */,
 				27A83E371C4783980055502E /* Basic */,
-				27A83D581C46487C0055502E /* Macro */,
 				27A83D631C4659720055502E /* Network */,
 				27A83D5D1C4656120055502E /* Login */,
 				27A83D541C463D690055502E /* Common */,
@@ -610,6 +661,8 @@
 				2713AFB51C51C88A006AA96D /* BasicInfoUtility.m */,
 				2713AFC11C523069006AA96D /* MediaTypeXmlAnalytic.h */,
 				2713AFC21C523069006AA96D /* MediaTypeXmlAnalytic.m */,
+				1B10958B1C5F08E700465235 /* MAlertView.h */,
+				1B10958C1C5F08E700465235 /* MAlertView.m */,
 			);
 			path = Common;
 			sourceTree = "<group>";
@@ -894,7 +947,9 @@
 				27A83D521C463BC40055502E /* XinHuaManuscriptController.m in Sources */,
 				2713B01E1C585C63006AA96D /* SendToAddress.m in Sources */,
 				1B10956A1C59A9BA00465235 /* NewArticlesController.m in Sources */,
+				1B1095901C5F4B7700465235 /* DocTypeSuperController.m in Sources */,
 				1B1095741C59AC7900465235 /* AuditNewsViewController.m in Sources */,
+				1B1095991C5F68A700465235 /* DocTypeUltraLVController.m in Sources */,
 				2713B0131C585C63006AA96D /* ComeFromAddress.m in Sources */,
 				2713AFCD1C55C313006AA96D /* NewTypeDB.m in Sources */,
 				27A83D661C4659BF0055502E /* RequestMaker.m in Sources */,
@@ -910,6 +965,7 @@
 				1B10954E1C59080A00465235 /* NewTextController.m in Sources */,
 				27A83E3F1C4790CA0055502E /* LoginViewController.m in Sources */,
 				1B33EA0C1C5260DD00223AFF /* UploadMaker.m in Sources */,
+				1B10958A1C5E1C9400465235 /* DetailAuditNewsViewController.m in Sources */,
 				1B1095631C590E3B00465235 /* AbandonedScriptController.m in Sources */,
 				27A83E3B1C4783E40055502E /* RootViewController.m in Sources */,
 				2713AFAD1C4CEB11006AA96D /* NSData+LTExtension.m in Sources */,
@@ -930,6 +986,7 @@
 				2713B01C1C585C63006AA96D /* ProvideType.m in Sources */,
 				2713AF9E1C4C8217006AA96D /* NetworkManager.m in Sources */,
 				2713AFBF1C5214F8006AA96D /* OpenUDID.m in Sources */,
+				1B1095961C5F60A000465235 /* DocTypeTriLVController.m in Sources */,
 				2713B0201C585C63006AA96D /* User.m in Sources */,
 				2713AFD31C55C61B006AA96D /* PlaceDB.m in Sources */,
 				1B1095461C58716F00465235 /* ScriptItem.m in Sources */,
@@ -940,13 +997,18 @@
 				1B1095711C59ABD700465235 /* SystemManagerController.m in Sources */,
 				2713B0141C585C63006AA96D /* CommonModel.m in Sources */,
 				1B10957A1C59FF3D00465235 /* EmployeeSendToAddressDB.m in Sources */,
+				1B1095801C5C5D3C00465235 /* NewTagDetailViewController.m in Sources */,
 				2713AFDF1C55CABA006AA96D /* NewsPriorityDB.m in Sources */,
+				1B1095871C5E17D900465235 /* AuditNewsItem.m in Sources */,
 				2713AFB61C51C88A006AA96D /* BasicInfoUtility.m in Sources */,
 				278D92811C489D3F0017415B /* UserDB.m in Sources */,
 				2713AFD01C55C401006AA96D /* RegionDB.m in Sources */,
+				1B1095841C5CEA2700465235 /* EditScriptCell.m in Sources */,
+				1B10958D1C5F08E700465235 /* MAlertView.m in Sources */,
 				1B1095601C590E2300465235 /* SendedScriptController.m in Sources */,
 				2713AFCA1C55C16C006AA96D /* LanguageDB.m in Sources */,
 				1B1095671C59A8DE00465235 /* TemplateManageController.m in Sources */,
+				1B1095931C5F5BEA00465235 /* DocTypeSecLVController.m in Sources */,
 				278D92901C48DFBE0017415B /* UIDevice+IdentifierAddition.m in Sources */,
 				1B1095431C586F8F00465235 /* ManuscriptsDB.m in Sources */,
 				2713AFD91C55C907006AA96D /* ComeFromAddressDB.m in Sources */,

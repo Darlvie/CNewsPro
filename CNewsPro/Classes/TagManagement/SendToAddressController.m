@@ -13,6 +13,9 @@
 #import "EmployeeSendToAddress.h"
 #import "SendToAddressDB.h"
 #import "SendToAddress.h"
+#import "NewTagDetailViewController.h"
+
+static const CGFloat kTableViewCellHeight = 50;
 
 @interface SendToAddressController () <UITableViewDelegate,UITableViewDataSource>
 
@@ -168,7 +171,7 @@
             }
         }
         NSInteger i=[self.navigationController.viewControllers count]-2;
-        [[self.navigationController.viewControllers objectAtIndex:i]  SetSendToAddress:sendToAddressNameResult getSendToAddressID:sendToAddressIDResult];
+        [[self.navigationController.viewControllers objectAtIndex:i]  setSendToAddress:sendToAddressNameResult getSendToAddressID:sendToAddressIDResult];
         [self.navigationController popToViewController:[self.navigationController.viewControllers objectAtIndex:i] animated:YES];
     }
     //完成后退出，针对用户选择的是地址簿的情况
@@ -193,6 +196,66 @@
 
 }
 
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
+{
+    return [self.sendToAddressArray count];
+}
+
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    static NSString *CellIdentifier = @"DocTypeSuperCell";
+    UITableViewCell *cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:nil];
+    if (cell == nil)
+    {
+        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle
+                                       reuseIdentifier:CellIdentifier];
+    }
+   
+    UILabel *tagTitle = [[UILabel alloc] initWithFrame:CGRectMake(10, 17, 310, 21)];
+    [tagTitle setFont:[UIFont fontWithName:@"Georgia-Bold" size:16]];
+    tagTitle.backgroundColor=[UIColor clearColor];
+    tagTitle.textColor=[UIColor blackColor];
+    
+    if (self.sendToAddressType == SendToAddressTypeNoCustom || self.sendToAddressType == SendToAddressTypeSelectCustom) {
+        SendToAddress*  sendToAddress = [self.sendToAddressArray objectAtIndex:indexPath.row];
+        tagTitle.text = sendToAddress.name;
+        [cell addSubview:tagTitle];
+        cell.selectionStyle=UITableViewCellSelectionStyleGray;
+    }
+    else {
+        EmployeeSendToAddress*  employeeSendToAddress = [self.sendToAddressArray objectAtIndex:indexPath.row];
+        tagTitle.text = employeeSendToAddress.name;
+        [cell addSubview:tagTitle];
+        cell.selectionStyle=UITableViewCellSelectionStyleGray;
+    }
+    
+    
+    // Set cell checkmark
+    NSNumber *checked = [self.sendToAddressDictionary objectForKey:indexPath];
+    if (!checked) [self.sendToAddressDictionary setObject:(checked = [NSNumber numberWithBool:NO]) forKey:indexPath];
+    cell.accessoryType = checked.boolValue ? UITableViewCellAccessoryCheckmark :  UITableViewCellAccessoryNone;
+    return cell;
+}
+
+#pragma mark - Table view delegate
+//点击表格进行稿件分类选择并返回稿签模版
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    // Created an inverted value and store it
+    BOOL isChecked = !([[self.sendToAddressDictionary objectForKey:indexPath] boolValue]);
+    NSNumber *checked = [NSNumber numberWithBool:isChecked];
+    [self.sendToAddressDictionary setObject:checked forKey:indexPath];
+    
+    // Update the cell accessory checkmark
+    UITableViewCell *cell = [tableView cellForRowAtIndexPath:indexPath];
+    cell.accessoryType = isChecked ? UITableViewCellAccessoryCheckmark :  UITableViewCellAccessoryNone;
+    [tableView deselectRowAtIndexPath:indexPath animated:YES];
+}
+
+- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    return kTableViewCellHeight;
+}
 
 
 
