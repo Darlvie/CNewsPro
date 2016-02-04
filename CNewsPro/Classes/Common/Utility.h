@@ -8,7 +8,7 @@
 
 #import <Foundation/Foundation.h>
 
-@class User,ManuscriptTemplate,Manuscripts,AuditNewsItem;
+@class User,ManuscriptTemplate,Manuscripts,AuditNewsItem,Accessories;
 @interface Utility : NSObject
 
 @property (nonatomic,strong) NSArray *urlArray;
@@ -58,11 +58,20 @@
 
 + (NSData *)subDataWithRange:(NSRange)range filePath:(NSString*)filePath;
 
+//检测网络是否可用、服务器地址是否可用、版本是否符合发稿要求，以及稿件的稿签是否符合要求
++ (NSString *)serialCheckBeforeSendManu:(Manuscripts *)mcripts;
+
 /**
  *  校验稿件稿签中的发送地址与该用户被允许的发送地址是否匹配
  *
  */
 + (BOOL)checkSendToAddress:(User *)userInfo manuscriptTemplate:(ManuscriptTemplate *)manuTemplate;
+
+//发送前的数据准备：属性赋值和拆条
++ (NSMutableArray *)prepareToSendManuscript:(Manuscripts *)manuscript accessories:(NSMutableArray *)accessoriesArry userInfoFromServer:(User *)userInfo;
+
+//拼接xml
++ (void)xmlPackage:(Manuscripts *)mscripts accessories:(Accessories *)accessories;
 
 //检测稿签和稿件信息是否完整
 + (NSString *)checkInfoIsCompleted:(Manuscripts *)mcripts;
@@ -79,6 +88,8 @@
 
 //读取暂存稿签文件路径
 + (NSString *)temporaryTemplateFilePath;
+
++ (NSString *)trimBlankSpace:(NSString *)inputStr;
 
 /**
  *  生成随机UUID

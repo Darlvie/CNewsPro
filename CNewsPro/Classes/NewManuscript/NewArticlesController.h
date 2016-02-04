@@ -8,6 +8,12 @@
 
 #import "RootViewController.h"
 
+typedef NS_ENUM(NSInteger,FileNameTags) {
+    FileNameTagsPhoto,
+    FileNameTagsAudio,
+    FileNameTagsVideo
+};
+
 @interface NewArticlesController : RootViewController
 
 @property (nonatomic,copy) NSString *manuscript_id;

@@ -38,6 +38,10 @@
 		1B1095931C5F5BEA00465235 /* DocTypeSecLVController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B1095921C5F5BEA00465235 /* DocTypeSecLVController.m */; };
 		1B1095961C5F60A000465235 /* DocTypeTriLVController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B1095951C5F60A000465235 /* DocTypeTriLVController.m */; };
 		1B1095991C5F68A700465235 /* DocTypeUltraLVController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B1095981C5F68A700465235 /* DocTypeUltraLVController.m */; };
+		1B10959D1C5F90F100465235 /* VideoGrid.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B10959C1C5F90F100465235 /* VideoGrid.m */; };
+		1B1095A01C60981200465235 /* AttachDetailController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B10959F1C60981200465235 /* AttachDetailController.m */; };
+		1B1095A31C6099FF00465235 /* UIView+FirstResponder.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B1095A21C6099FF00465235 /* UIView+FirstResponder.m */; };
+		1B1095A61C61A3D100465235 /* RecordVoiceController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B1095A51C61A3D100465235 /* RecordVoiceController.m */; };
 		1B33EA091C525DDD00223AFF /* AccessoriesDB.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B33EA081C525DDD00223AFF /* AccessoriesDB.m */; };
 		1B33EA0C1C5260DD00223AFF /* UploadMaker.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B33EA0B1C5260DD00223AFF /* UploadMaker.m */; };
 		1B33EA151C5329F500223AFF /* SendToAddressDB.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B33EA141C5329F500223AFF /* SendToAddressDB.m */; };
@@ -176,6 +180,14 @@
 		1B1095951C5F60A000465235 /* DocTypeTriLVController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DocTypeTriLVController.m; sourceTree = "<group>"; };
 		1B1095971C5F68A700465235 /* DocTypeUltraLVController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DocTypeUltraLVController.h; sourceTree = "<group>"; };
 		1B1095981C5F68A700465235 /* DocTypeUltraLVController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DocTypeUltraLVController.m; sourceTree = "<group>"; };
+		1B10959B1C5F90F100465235 /* VideoGrid.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VideoGrid.h; sourceTree = "<group>"; };
+		1B10959C1C5F90F100465235 /* VideoGrid.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VideoGrid.m; sourceTree = "<group>"; };
+		1B10959E1C60981200465235 /* AttachDetailController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AttachDetailController.h; sourceTree = "<group>"; };
+		1B10959F1C60981200465235 /* AttachDetailController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AttachDetailController.m; sourceTree = "<group>"; };
+		1B1095A11C6099FF00465235 /* UIView+FirstResponder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIView+FirstResponder.h"; sourceTree = "<group>"; };
+		1B1095A21C6099FF00465235 /* UIView+FirstResponder.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIView+FirstResponder.m"; sourceTree = "<group>"; };
+		1B1095A41C61A3D100465235 /* RecordVoiceController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RecordVoiceController.h; sourceTree = "<group>"; };
+		1B1095A51C61A3D100465235 /* RecordVoiceController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RecordVoiceController.m; sourceTree = "<group>"; };
 		1B33EA071C525DDD00223AFF /* AccessoriesDB.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AccessoriesDB.h; sourceTree = "<group>"; };
 		1B33EA081C525DDD00223AFF /* AccessoriesDB.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AccessoriesDB.m; sourceTree = "<group>"; };
 		1B33EA0A1C5260DD00223AFF /* UploadMaker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UploadMaker.h; sourceTree = "<group>"; };
@@ -340,6 +352,7 @@
 		1B10954B1C5907C300465235 /* NewManuscript */ = {
 			isa = PBXGroup;
 			children = (
+				1B10959A1C5F90B500465235 /* View */,
 				1B10954C1C59080A00465235 /* NewTextController.h */,
 				1B10954D1C59080A00465235 /* NewTextController.m */,
 				1B10954F1C590AAC00465235 /* NewImageController.h */,
@@ -358,6 +371,10 @@
 				1B1095621C590E3B00465235 /* AbandonedScriptController.m */,
 				1B1095681C59A9BA00465235 /* NewArticlesController.h */,
 				1B1095691C59A9BA00465235 /* NewArticlesController.m */,
+				1B10959E1C60981200465235 /* AttachDetailController.h */,
+				1B10959F1C60981200465235 /* AttachDetailController.m */,
+				1B1095A41C61A3D100465235 /* RecordVoiceController.h */,
+				1B1095A51C61A3D100465235 /* RecordVoiceController.m */,
 			);
 			path = NewManuscript;
 			sourceTree = "<group>";
@@ -405,6 +422,15 @@
 				1B1095831C5CEA2700465235 /* EditScriptCell.m */,
 			);
 			path = EditingScriptList;
+			sourceTree = "<group>";
+		};
+		1B10959A1C5F90B500465235 /* View */ = {
+			isa = PBXGroup;
+			children = (
+				1B10959B1C5F90F100465235 /* VideoGrid.h */,
+				1B10959C1C5F90F100465235 /* VideoGrid.m */,
+			);
+			path = View;
 			sourceTree = "<group>";
 		};
 		2713AFBA1C5214D6006AA96D /* Lib */ = {
@@ -608,6 +634,8 @@
 				2713AF9A1C4C7492006AA96D /* NSString+Security.m */,
 				2713AFAB1C4CEB11006AA96D /* NSData+LTExtension.h */,
 				2713AFAC1C4CEB11006AA96D /* NSData+LTExtension.m */,
+				1B1095A11C6099FF00465235 /* UIView+FirstResponder.h */,
+				1B1095A21C6099FF00465235 /* UIView+FirstResponder.m */,
 			);
 			path = Category;
 			sourceTree = "<group>";
@@ -950,6 +978,7 @@
 				1B1095901C5F4B7700465235 /* DocTypeSuperController.m in Sources */,
 				1B1095741C59AC7900465235 /* AuditNewsViewController.m in Sources */,
 				1B1095991C5F68A700465235 /* DocTypeUltraLVController.m in Sources */,
+				1B10959D1C5F90F100465235 /* VideoGrid.m in Sources */,
 				2713B0131C585C63006AA96D /* ComeFromAddress.m in Sources */,
 				2713AFCD1C55C313006AA96D /* NewTypeDB.m in Sources */,
 				27A83D661C4659BF0055502E /* RequestMaker.m in Sources */,
@@ -958,6 +987,7 @@
 				2713B01A1C585C63006AA96D /* NewsType.m in Sources */,
 				2713AFA11C4C89F3006AA96D /* UploadQueue.m in Sources */,
 				2713AFB91C51F8CC006AA96D /* ManuscriptTemplateDB.m in Sources */,
+				1B1095A61C61A3D100465235 /* RecordVoiceController.m in Sources */,
 				2713AFB31C50C0EF006AA96D /* CommonClient.m in Sources */,
 				278D927E1C488CF80017415B /* BasicDatabase.m in Sources */,
 				2713B01B1C585C63006AA96D /* Place.m in Sources */,
@@ -996,11 +1026,13 @@
 				1B10955D1C590E0300465235 /* TaskManagementViewController.m in Sources */,
 				1B1095711C59ABD700465235 /* SystemManagerController.m in Sources */,
 				2713B0141C585C63006AA96D /* CommonModel.m in Sources */,
+				1B1095A01C60981200465235 /* AttachDetailController.m in Sources */,
 				1B10957A1C59FF3D00465235 /* EmployeeSendToAddressDB.m in Sources */,
 				1B1095801C5C5D3C00465235 /* NewTagDetailViewController.m in Sources */,
 				2713AFDF1C55CABA006AA96D /* NewsPriorityDB.m in Sources */,
 				1B1095871C5E17D900465235 /* AuditNewsItem.m in Sources */,
 				2713AFB61C51C88A006AA96D /* BasicInfoUtility.m in Sources */,
+				1B1095A31C6099FF00465235 /* UIView+FirstResponder.m in Sources */,
 				278D92811C489D3F0017415B /* UserDB.m in Sources */,
 				2713AFD01C55C401006AA96D /* RegionDB.m in Sources */,
 				1B1095841C5CEA2700465235 /* EditScriptCell.m in Sources */,

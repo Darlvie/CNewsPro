@@ -20,12 +20,12 @@
     [super viewDidLoad];
     
     self.view.backgroundColor = [UIColor whiteColor];
-    self.widthOfMainView = CGRectGetWidth(self.view.bounds);
+    self.widthOfMainView = CGRectGetWidth(self.view.frame);
     
     float deltY = IOS_7? 20.f : 0.f;
     
     self.titleLabelAndImage = [UIButton buttonWithType:UIButtonTypeCustom];
-    self.titleLabelAndImage.frame = CGRectMake(0, 0, self.widthOfMainView, 44.0 + deltY);
+    self.titleLabelAndImage.frame = CGRectMake(0, 0, CGRectGetWidth(self.view.frame), 44.0 + deltY);
     self.titleLabelAndImage.userInteractionEnabled = NO;
     self.titleLabelAndImage.titleLabel.font = [UIFont fontWithName:@"Helvetica" size:21.0];
     [self.titleLabelAndImage setImageEdgeInsets:UIEdgeInsetsMake(deltY, 0, 0, 0)];
@@ -45,7 +45,7 @@
     self.rightButton.userInteractionEnabled = NO;
     [self.view addSubview:self.rightButton];
     
-    self.heightOfMainView = HEIGH_TO_FMAIN_VIEW(CGRectGetHeight(self.view.bounds), CGRectGetMaxY(self.titleLabelAndImage.frame), 0.0);
+    self.heightOfMainView = HEIGH_TO_FMAIN_VIEW(CGRectGetHeight(self.view.frame), CGRectGetMaxY(self.titleLabelAndImage.frame), 0.0);
 }
 
 - (void)didReceiveMemoryWarning {

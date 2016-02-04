@@ -230,7 +230,7 @@ static const CGFloat kMargin          = 20;
 }
 
 //新建视频快讯”
--(IBAction)showNewVideo:(id)sender
+-(void)showNewVideo:(id)sender
 {
     ManuscriptTemplateDB *mdb = [[ManuscriptTemplateDB alloc] init];
     Manuscripts *mscripts = [[Manuscripts alloc] init];
@@ -252,7 +252,7 @@ static const CGFloat kMargin          = 20;
 }
 
 //在编稿件
--(IBAction)showEditingArticles:(id)sender
+-(void)showEditingArticles:(id)sender
 {
     EditingScriptController *editingScriptListController = [[EditingScriptController alloc]init];
     self.navigationController.navigationBarHidden = YES;
@@ -261,7 +261,7 @@ static const CGFloat kMargin          = 20;
 }
 
 //待发稿件
--(IBAction)showWatingSendedArticle:(id)sender
+-(void)showWatingSendedArticle:(id)sender
 {
     TaskManagementViewController *taskController = [[TaskManagementViewController alloc] init];
     taskController.title = @"任务管理";
@@ -270,7 +270,7 @@ static const CGFloat kMargin          = 20;
 
 
 //已发稿件页面
--(IBAction)showSendedArticles:(id)sender
+-(void)showSendedArticles:(id)sender
 {
     SendedScriptController *sendedScriptController = [[SendedScriptController alloc]init];
     self.navigationController.navigationBarHidden = YES;
@@ -279,7 +279,7 @@ static const CGFloat kMargin          = 20;
 }
 
 //淘汰稿件页面
--(IBAction)showEliminatedArticles:(id)sender
+-(void)showEliminatedArticles:(id)sender
 {
     AbandonedScriptController *abandonedScriptController = [[AbandonedScriptController alloc]init];
     self.navigationController.navigationBarHidden = YES;

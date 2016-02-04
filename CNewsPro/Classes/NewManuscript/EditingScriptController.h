@@ -10,4 +10,6 @@
 
 @interface EditingScriptController : RootViewController
 
+- (void)reloadCell:(NSString *)m_id cellIndexPath:(NSIndexPath *)indexPath;
+
 @end

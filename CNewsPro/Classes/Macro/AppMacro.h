@@ -56,6 +56,10 @@
 #define VIDEO_MANU_E @"V"
 #define PICTURE_MANU_E @"P"
 
+#define IMG_TYPE  @".jpg"
+#define VOC_TYPE  @".aif"
+#define MOV_TYPE  @".mov"
+
 #define MANUSCRIPT_TEMPLATE_TYPE @"NORMAL"
 #define TEXT_EXPRESS_TEMPLATE_TYPE @"TEXT"
 #define PICTURE_EXPRESS_TEMPLATE_TYPE @"PICTURE"
@@ -102,11 +106,14 @@
 #define TEMPLATE_DETAIL_VIEWROW_NUM 11//稿件属性row
 #define SEND_ADDRESS_SECTION_NUM 1//发稿地址section
 #define SEND_ADDRESS_ROW_NUM 4//发稿地址row
-#define TF_CGRECT CGRectMake(80, 0, 180, 50)
-#define TV_CGRECT CGRectMake(70, 7, 180, 43)
+#define TF_CGRECT CGRectMake(100, 0, 180, 50)
+#define TV_CGRECT CGRectMake(90, 7, 180, 43)
 #define TF_FONT [UIFont fontWithName:@"Helvetica" size:16.0]
 #define TL_FONT [UIFont fontWithName:@"Helvetica" size:16.0]
 
 #define DATA_KEY          @"Data"
+//此appid为您所申请,请勿随意修改
+#define APP_ID @"5032f7ef"
+#define ENGINE_URL @"http://dev.voicecloud.cn:1028/index.htm"
 
 #endif /* AppMacro_h */

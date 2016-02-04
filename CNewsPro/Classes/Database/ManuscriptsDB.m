@@ -13,7 +13,7 @@
 @implementation ManuscriptsDB
 
 //恢复稿件   :  改变稿件状态
-- (BOOL)setManuScriptStatus:(NSString *)manuscriptStatus mId:(NSString *)m_id {
+- (BOOL)setManuscriptStatus:(NSString *)manuscriptStatus mId:(NSString *)m_id {
     if ([self openDatabase] == FALSE) {
         return FALSE;
     }
@@ -154,6 +154,35 @@
 
 }
 
+//更新拆分后的稿件标题（附件如果有标题，需要进行拼接）
+- (BOOL)updateManuscriptTitle:(NSString *)title content:(NSString *)content m_id:(NSString *)m_id {
+    if ([self openDatabase]==FALSE) {
+        return FALSE;
+    }
+    NSString *sql = @"update Manuscripts set title=?,contents=? WHERE m_id = ?";
+    sqlite3_stmt *statement = nil;
+    int success = [self prepareSQL:sql SQLStatement:&statement];
+    if (success != SQLITE_OK) {
+        NSLog(@"Error: failed to prepare");
+        return FALSE;
+    }
+    //绑定参数
+    sqlite3_bind_text(statement, 1, [title UTF8String], -1, NULL);
+    sqlite3_bind_text(statement, 2, [content UTF8String], -1, NULL);
+    sqlite3_bind_text(statement, 3, [m_id UTF8String], -1, NULL);
+    success = sqlite3_step(statement);
+    if (success == SQLITE_ERROR) {
+        NSLog(@"Error: failed to delete record");
+        sqlite3_finalize(statement);
+        sqlite3_close(database);
+        return FALSE;
+    }
+    sqlite3_finalize(statement);
+    sqlite3_close(database);
+    
+    return YES;
+}
+
 //根据稿件的guid，更新稿件发送成功的时间
 - (BOOL)updateSendToTime:(NSString *)senttime m_id:(NSString *)m_id {
     if ([self openDatabase]==FALSE) {
@@ -184,12 +213,183 @@
 }
 
 
+- (Manuscripts *)getManuscriptById:(NSString *)m_id {
+    Manuscripts *manuscript = [[Manuscripts alloc] init ];
+    if ([self openDatabase] == FALSE) {
+        return nil;
+    }
+    
+    NSString *sql = @"SELECT * FROM ManuScripts where m_id=? ";
+    sqlite3_stmt *statement = nil;
+    int success = [self prepareSQL:sql SQLStatement:&statement];
+    if (success != SQLITE_OK) {
+        NSLog(@"Error:%d failed to prepare select",success);
+        return nil;
+    }
+    //绑定参数
+    sqlite3_bind_text(statement, 1, [m_id UTF8String], -1, NULL);
+    
+    while (sqlite3_step(statement) == SQLITE_ROW) {
+        [self manuscriptORM:statement manuscript:manuscript];
+    }
+    sqlite3_finalize(statement);
+    sqlite3_close(database);
+    
+    return manuscript;
+}
+
+- (NSInteger)addManuScript:(Manuscripts *)manuScript {
+    if ([self openDatabase]==FALSE) {
+        return -1;
+    }
+    
+    NSString *sql=@"INSERT INTO Manuscripts (m_id,loginname,createid,releid,newsid,title,title3T,usernameC,usernameE,groupnameC,groupcode,groupnameE,newstype,newstypeID,comefromDept,comefromDeptID,provtype,provtypeid,doctype,doctypeID,keywords,language,languageID,priority,priorityID,sendarea,happenplace,reportplace,address,addressID,comment,is3Tnews,createtime,rejecttime,reletime,senttime,rereletime,reviewstatus,region,regionID,contents,contents3T,receivetime,newsIDBacktime,manuscriptsStatus,location,author) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+    
+    sqlite3_stmt *statement = nil;
+    int success = [self prepareSQL:sql SQLStatement:&statement];
+    if (success != SQLITE_OK) {
+        NSLog(@"Error:%d failed to prepare insert",success);
+        return -1;
+    }
+    
+    //绑定参数
+    
+    sqlite3_bind_text(statement, 1, [manuScript.m_id UTF8String], -1, NULL);
+    sqlite3_bind_text(statement, 2, [[USERDEFAULTS objectForKey:LOGIN_NAME] UTF8String], -1, NULL);
+    sqlite3_bind_text(statement, 3, [manuScript.createId UTF8String], -1, NULL);
+    sqlite3_bind_text(statement, 4, [manuScript.releId UTF8String], -1, NULL);
+    sqlite3_bind_text(statement, 5, [manuScript.newsId UTF8String], -1, NULL);
+    sqlite3_bind_text(statement, 6, [manuScript.title UTF8String], -1, NULL);
+    sqlite3_bind_text(statement, 7, [manuScript.title3T UTF8String], -1, NULL);
+    sqlite3_bind_text(statement, 8, [manuScript.userNameC UTF8String], -1, NULL);
+    sqlite3_bind_text(statement, 9, [manuScript.userNameE UTF8String], -1, NULL);
+    sqlite3_bind_text(statement, 10, [manuScript.groupNameC UTF8String], -1, NULL);
+    sqlite3_bind_text(statement, 11, [manuScript.groupCode UTF8String], -1, NULL);
+    sqlite3_bind_text(statement, 12, [manuScript.groupNameE UTF8String], -1, NULL);
+    sqlite3_bind_text(statement, 13, [manuScript.newsType UTF8String], -1, NULL);
+    sqlite3_bind_text(statement, 14, [manuScript.newsTypeID UTF8String], -1, NULL);
+    sqlite3_bind_text(statement, 15, [manuScript.mTemplate.comeFromDept UTF8String], -1, NULL);
+    sqlite3_bind_text(statement, 16, [manuScript.mTemplate.comeFromDeptID UTF8String], -1, NULL);
+    sqlite3_bind_text(statement, 17, [manuScript.mTemplate.provType UTF8String], -1, NULL);
+    sqlite3_bind_text(statement, 18, [manuScript.mTemplate.provTypeid UTF8String], -1, NULL);
+    sqlite3_bind_text(statement, 19, [manuScript.mTemplate.docType UTF8String], -1, NULL);
+    sqlite3_bind_text(statement, 20, [manuScript.mTemplate.docTypeID UTF8String], -1, NULL);
+    sqlite3_bind_text(statement, 21, [manuScript.mTemplate.keywords UTF8String], -1, NULL);
+    sqlite3_bind_text(statement, 22, [manuScript.mTemplate.language UTF8String], -1, NULL);
+    sqlite3_bind_text(statement, 23, [manuScript.mTemplate.languageID UTF8String], -1, NULL);
+    sqlite3_bind_text(statement, 24, [manuScript.mTemplate.priority UTF8String], -1, NULL);
+    sqlite3_bind_text(statement, 25, [manuScript.mTemplate.priorityID UTF8String], -1, NULL);
+    sqlite3_bind_text(statement, 26, [manuScript.mTemplate.sendArea UTF8String], -1, NULL);
+    sqlite3_bind_text(statement, 27, [manuScript.mTemplate.happenPlace UTF8String], -1, NULL);
+    sqlite3_bind_text(statement, 28, [manuScript.mTemplate.reportPlace UTF8String], -1, NULL);
+    sqlite3_bind_text(statement, 29, [manuScript.mTemplate.address UTF8String], -1, NULL);
+    sqlite3_bind_text(statement, 30, [manuScript.mTemplate.addressID UTF8String], -1, NULL);
+    sqlite3_bind_text(statement, 31, [manuScript.comment UTF8String], -1, NULL);
+    sqlite3_bind_text(statement, 32, [manuScript.mTemplate.is3Tnews UTF8String], -1, NULL);
+    sqlite3_bind_text(statement, 33, [manuScript.createTime UTF8String], -1, NULL);
+    sqlite3_bind_text(statement, 34, [manuScript.rejectTime UTF8String], -1, NULL);
+    sqlite3_bind_text(statement, 35, [manuScript.releTime UTF8String], -1, NULL);
+    sqlite3_bind_text(statement, 36, [manuScript.sentTime UTF8String], -1, NULL);
+    sqlite3_bind_text(statement, 37, [manuScript.releTime UTF8String], -1, NULL);
+    sqlite3_bind_text(statement, 38, [manuScript.mTemplate.reviewStatus UTF8String], -1, NULL);
+    sqlite3_bind_text(statement, 39, [manuScript.mTemplate.region UTF8String], -1, NULL);
+    sqlite3_bind_text(statement, 40, [manuScript.mTemplate.regionID UTF8String], -1, NULL);
+    sqlite3_bind_text(statement, 41, [manuScript.contents UTF8String], -1, NULL);
+    sqlite3_bind_text(statement, 42, [manuScript.contents3T UTF8String], -1, NULL);
+    sqlite3_bind_text(statement, 43, [manuScript.receiveTime UTF8String], -1, NULL);
+    sqlite3_bind_text(statement, 44, [manuScript.newsIDBackTime UTF8String], -1, NULL);
+    sqlite3_bind_text(statement, 45, [manuScript.manuscriptsStatus UTF8String], -1, NULL);
+    sqlite3_bind_text(statement, 46, [manuScript.location UTF8String], -1, NULL);
+    sqlite3_bind_text(statement, 47, [manuScript.mTemplate.author UTF8String], -1, NULL);
+    
+    success = sqlite3_step(statement);
+    if (success == SQLITE_ERROR) {
+        NSLog(@"Error: failed to insert into the database");
+        sqlite3_finalize(statement);
+        sqlite3_close(database);
+        return -1;
+    }
+    sqlite3_finalize(statement);
+    sqlite3_close(database);
+    return sqlite3_last_insert_rowid(database);
+}
 
 
-
-
-
-
+- (NSInteger)updateManuscript:(Manuscripts *)manuScript {
+    if ([self openDatabase]==FALSE) {
+        return -1;
+    }
+    
+    NSString *sql=@"UPDATE Manuscripts SET  loginname = ?, createid = ?, releid = ?, newsid = ?, title = ?, title3T = ?, usernameC = ?, usernameE = ?, groupnameC = ?, groupcode = ?, groupnameE = ?, newstype = ?, newstypeID = ?, comefromDept = ?, comefromDeptID = ?, provtype = ?, provtypeid = ?, doctype = ?, doctypeID = ?, keywords = ?, language = ?, languageID = ?, priority = ?, priorityID = ?, sendarea = ?, happenplace = ?, reportplace = ?, address = ?, addressID = ?, comment = ?, is3Tnews = ?, createtime = ?, rejecttime = ?, reletime = ?, senttime = ?, rereletime = ?, reviewstatus = ?, region = ?, regionID = ?, contents = ?, contents3T = ?, receivetime = ?, newsIDBacktime = ?, manuscriptsStatus = ? ,location=?,author=? WHERE  m_id = ?";
+    
+    
+    sqlite3_stmt *statement = nil;
+    int success = [self prepareSQL:sql SQLStatement:&statement];
+    if (success != SQLITE_OK) {
+        NSLog(@"Error:%d failed to prepare insert",success);
+        return -1;
+    }
+    
+    //绑定参数
+    sqlite3_bind_text(statement, 1, [[USERDEFAULTS objectForKey:LOGIN_NAME] UTF8String], -1, NULL);//liuwei 0702
+    sqlite3_bind_text(statement, 2, [manuScript.createId UTF8String], -1, NULL);
+    sqlite3_bind_text(statement, 3, [manuScript.releId UTF8String], -1, NULL);
+    sqlite3_bind_text(statement, 4, [manuScript.newsId UTF8String], -1, NULL);
+    sqlite3_bind_text(statement, 5, [manuScript.title UTF8String], -1, NULL);
+    sqlite3_bind_text(statement, 6, [manuScript.title3T UTF8String], -1, NULL);
+    sqlite3_bind_text(statement, 7, [manuScript.userNameC UTF8String], -1, NULL);
+    sqlite3_bind_text(statement, 8, [manuScript.userNameE UTF8String], -1, NULL);
+    sqlite3_bind_text(statement, 9, [manuScript.groupNameC UTF8String], -1, NULL);
+    sqlite3_bind_text(statement, 10, [manuScript.groupCode UTF8String], -1, NULL);
+    sqlite3_bind_text(statement, 11, [manuScript.groupNameE UTF8String], -1, NULL);
+    sqlite3_bind_text(statement, 12, [manuScript.newsType UTF8String], -1, NULL);
+    sqlite3_bind_text(statement, 13, [manuScript.newsTypeID UTF8String], -1, NULL);
+    sqlite3_bind_text(statement, 14, [manuScript.mTemplate.comeFromDept UTF8String], -1, NULL);
+    sqlite3_bind_text(statement, 15, [manuScript.mTemplate.comeFromDeptID UTF8String], -1, NULL);
+    sqlite3_bind_text(statement, 16, [manuScript.mTemplate.provType UTF8String], -1, NULL);
+    sqlite3_bind_text(statement, 17, [manuScript.mTemplate.provTypeid UTF8String], -1, NULL);
+    sqlite3_bind_text(statement, 18, [manuScript.mTemplate.docType UTF8String], -1, NULL);
+    sqlite3_bind_text(statement, 19, [manuScript.mTemplate.docTypeID UTF8String], -1, NULL);
+    sqlite3_bind_text(statement, 20, [manuScript.mTemplate.keywords UTF8String], -1, NULL);
+    sqlite3_bind_text(statement, 21, [manuScript.mTemplate.language UTF8String], -1, NULL);
+    sqlite3_bind_text(statement, 22, [manuScript.mTemplate.languageID UTF8String], -1, NULL);
+    sqlite3_bind_text(statement, 23, [manuScript.mTemplate.priority UTF8String], -1, NULL);
+    sqlite3_bind_text(statement, 24, [manuScript.mTemplate.priorityID UTF8String], -1, NULL);
+    sqlite3_bind_text(statement, 25, [manuScript.mTemplate.sendArea UTF8String], -1, NULL);
+    sqlite3_bind_text(statement, 26, [manuScript.mTemplate.happenPlace UTF8String], -1, NULL);
+    sqlite3_bind_text(statement, 27, [manuScript.mTemplate.reportPlace UTF8String], -1, NULL);
+    sqlite3_bind_text(statement, 28, [manuScript.mTemplate.address UTF8String], -1, NULL);
+    sqlite3_bind_text(statement, 29, [manuScript.mTemplate.addressID UTF8String], -1, NULL);
+    sqlite3_bind_text(statement, 30, [manuScript.comment UTF8String], -1, NULL);
+    sqlite3_bind_text(statement, 31, [manuScript.mTemplate.is3Tnews UTF8String], -1, NULL);
+    sqlite3_bind_text(statement, 32, [manuScript.createTime UTF8String], -1, NULL);
+    sqlite3_bind_text(statement, 33, [manuScript.rejectTime UTF8String], -1, NULL);
+    sqlite3_bind_text(statement, 34, [manuScript.releTime UTF8String], -1, NULL);
+    sqlite3_bind_text(statement, 35, [manuScript.sentTime UTF8String], -1, NULL);
+    sqlite3_bind_text(statement, 36, [manuScript.releTime UTF8String], -1, NULL);
+    sqlite3_bind_text(statement, 37, [manuScript.mTemplate.reviewStatus UTF8String], -1, NULL);
+    sqlite3_bind_text(statement, 38, [manuScript.mTemplate.region UTF8String], -1, NULL);
+    sqlite3_bind_text(statement, 39, [manuScript.mTemplate.regionID UTF8String], -1, NULL);
+    sqlite3_bind_text(statement, 40, [manuScript.contents UTF8String], -1, NULL);
+    sqlite3_bind_text(statement, 41, [manuScript.contents3T UTF8String], -1, NULL);
+    sqlite3_bind_text(statement, 42, [manuScript.receiveTime UTF8String], -1, NULL);
+    sqlite3_bind_text(statement, 43, [manuScript.newsIDBackTime UTF8String], -1, NULL);
+    sqlite3_bind_text(statement, 44, [manuScript.manuscriptsStatus UTF8String], -1, NULL);
+    sqlite3_bind_text(statement, 45, [manuScript.location UTF8String], -1, NULL);
+    sqlite3_bind_text(statement, 46, [manuScript.mTemplate.author UTF8String], -1, NULL);
+    sqlite3_bind_text(statement, 47, [manuScript.m_id UTF8String], -1, NULL);
+    
+    success = sqlite3_step(statement);
+    if (success == SQLITE_ERROR) {
+        NSLog(@"Error: failed to insert into the database");
+        sqlite3_finalize(statement);
+        sqlite3_close(database);
+        return -1;
+    }
+    sqlite3_finalize(statement);
+    sqlite3_close(database);
+    return YES;
+}
 
 
 

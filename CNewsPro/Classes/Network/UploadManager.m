@@ -65,7 +65,7 @@
     UploadClient *client = [self.uploadQueue objectAtIndex:index];
     ManuscriptsDB *mdb = [[ManuscriptsDB alloc] init];
     Manuscripts *manuscripts = (Manuscripts *)[client.uploadInfo objectForKey:MANUSCRIPT_INFO];
-    [mdb setManuScriptStatus:MANUSCRIPT_STATUS_EDITING mId:manuscripts.m_id];
+    [mdb setManuscriptStatus:MANUSCRIPT_STATUS_EDITING mId:manuscripts.m_id];
     
     [client cancelUpload];
     [self.uploadQueue removeObjectAtIndex:index];

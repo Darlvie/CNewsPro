@@ -150,10 +150,10 @@
 - (void)setUpView {
     
     UIImageView *tableBg = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"TempleView_bg"]];
-    tableBg.frame = CGRectMake(21.0f,80.0f,292.0f,self.view.frame.size.height-57-37-37);
+    tableBg.frame = CGRectMake(21.0f,80.0f,SCREEN_WIDTH-42,self.view.frame.size.height-57-37-37);
     [self.view addSubview:tableBg];
     
-    self.templateDetailView = [[UITableView alloc] initWithFrame:CGRectMake(25.0f,84.0f,286.0f,self.view.frame.size.height-57-37-44) style:UITableViewStylePlain];
+    self.templateDetailView = [[UITableView alloc] initWithFrame:CGRectMake(25.0f,84.0f,SCREEN_WIDTH-50,self.view.frame.size.height-57-37-44) style:UITableViewStylePlain];
     self.templateDetailView.delegate = self;
     self.templateDetailView.dataSource = self;
     self.templateDetailView.separatorStyle = NO;
@@ -172,7 +172,7 @@
     [self.saveAsbtn setBackgroundImage:[UIImage imageNamed:@"TempleView_btnSelect"] forState:UIControlStateNormal];
     [self.view addSubview:self.saveAsbtn];
     
-    self.applybtn = [[UIButton alloc] initWithFrame:CGRectMake(238, self.view.frame.size.height-40, 71, 30)];
+    self.applybtn = [[UIButton alloc] initWithFrame:CGRectMake(SCREEN_WIDTH-91, self.view.frame.size.height-40, 71, 30)];
     [self.applybtn addTarget:self action:@selector(applybtn:) forControlEvents:UIControlEventTouchUpInside];
     [self.applybtn setTitle:@"套用" forState:0];
     [self.applybtn setBackgroundImage:[UIImage imageNamed:@"TempleView_btnSelect"] forState:UIControlStateNormal];
@@ -514,6 +514,7 @@
     }
     
 }
+
 - (UITableViewCell *)tableView:(UITableView *)tView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     UITableViewCell *cell=[[UITableViewCell alloc] init];
@@ -522,8 +523,8 @@
     tiltelb.backgroundColor=[UIColor clearColor];
     [cell addSubview:tiltelb];
 
-    UIImageView *linebg=[[UIImageView alloc] initWithFrame:CGRectMake(4, 50, 278, 1)];
-    linebg.image=[UIImage imageNamed:@"TempleView_line.png"];
+    UIImageView *linebg = [[UIImageView alloc] initWithFrame:CGRectMake(4, 50, self.templateDetailView.bounds.size.width-8, 1)];
+    linebg.image = [UIImage imageNamed:@"TempleView_line.png"];
     [cell addSubview:linebg];
 
     if (self.templateType == TemplateTypeCheckAble || self.templateType == TemplateTypeEditAble || self.templateType == TemplateTypeSaveAs) {
