@@ -272,6 +272,13 @@ static NSString *kManuCountFile = @"manuCountDaily";
     return 0;
 }
 
++ (NSString*)getNowDateTime
+{
+    NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
+    formatter.dateFormat = @"yyyy-MM-dd HH:mm:ss";
+    return [formatter stringFromDate:[NSDate date]];
+}
+
 //根据范围获取部分文件数据
 + (NSData *)subDataWithRange:(NSRange)range filePath:(NSString *)filePath {
     NSData *subData = nil;
@@ -878,6 +885,138 @@ static NSString *kManuCountFile = @"manuCountDaily";
     }
     return na;
     
+}
+
+//批量发送多个稿件，用于在编稿件列表多选稿件后点击发送
++ (NSString *)sendManuscriptList:(NSMutableArray *)manuIdList
+{
+    //循环检测稿件和稿签信息是否完整、发送地址是否匹配。发现某个稿件不符合要求，则提示用户；循环结束后，将符合要求的稿件列表统一发送。
+    NSMutableArray *manuListToSend = [[NSMutableArray alloc] initWithCapacity:0];
+    ManuscriptsDB *manuscriptsdb = [[ManuscriptsDB alloc] init];
+    for (int i= 0; i < manuIdList.count; i++) {
+        NSString *mid = [manuIdList objectAtIndex:i];
+        
+        Manuscripts *manuTemp = [manuscriptsdb getManuscriptById:mid];
+        if([manuTemp.title isEqualToString:@""])//标题不能为空
+        {
+            NSString *msg = [NSString stringWithFormat:@"第%d条：%@\n%@",i+1,@"",@"标题为空"];
+            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"校验信息" message:msg delegate:nil cancelButtonTitle:@"确认" otherButtonTitles:nil];
+            [alert show];
+        }
+        else {
+            NSString *checkInfo = [Utility checkInfoIsCompleted:manuTemp];
+            if(![checkInfo isEqualToString:@""])
+            {
+                NSString *msg = [NSString stringWithFormat:@"第%d条：%@\n%@",i+1,manuTemp.title,checkInfo];
+                UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"校验信息" message:msg delegate:nil cancelButtonTitle:@"确认" otherButtonTitles:nil];
+                [alert show];
+            }
+            else {
+                if(![Utility checkSendToAddress:[Utility sharedSingleton].userInfo manuscriptTemplate:manuTemp.mTemplate])
+                {
+                    NSString *msg = [NSString stringWithFormat:@"第%d条：%@\n%@",i+1,manuTemp.title,@"发稿通道校验失败"];
+                    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"校验信息" message:msg delegate:nil cancelButtonTitle:@"确认" otherButtonTitles:nil];
+                    [alert show];
+                }
+                else {
+                    [manuListToSend addObject:manuTemp];
+                }
+            }
+        }
+    }
+    
+    //有稿件符合要求，才读取网络上的UserInfo，因为UserInfo获取较慢
+    if( [manuListToSend count] > 0 )
+    {
+        NSString *ret = @"全部校验通过，请到待发稿件中查看发送进程";
+        if ([manuListToSend count] < [manuIdList count]) {
+            ret = @"部分稿件校验通过，请到待发稿件中查看发送进程";
+        }
+        
+        //send
+        [Utility sendManuThread:manuListToSend userInfoPara:[Utility sharedSingleton].userInfo];
+        
+        return ret;
+    }
+    else {
+        return @"校验不通过，未发送";
+    }
+    
+    return @"";
+}
+
+
+//在新建的线程中进行稿件拆分，然后给发送模块。
++ (void)sendManuThread:(NSMutableArray *)manuToSendList userInfoPara:(User *)userInfo
+{
+    //声明提交给发送模块的稿件列表和对应的相同数量的附件列表
+    NSMutableArray *manuSendList = [[NSMutableArray alloc] initWithCapacity:0];
+    NSMutableArray *accessorySendList = [[NSMutableArray alloc] initWithCapacity:0];
+    
+    //保存传入参数
+    NSMutableArray *manuList = manuToSendList;//manuList retain count = 1
+    
+    //循环拆分稿件，将拆分的稿件列表和附件列表保存在manuSendList和accessorySendList中
+    AccessoriesDB *accDB = [[AccessoriesDB alloc] init];
+    for (int i=0; i<manuList.count; i++) {
+        Manuscripts *mscriptTemp = [manuList objectAtIndex:i];
+        NSMutableArray *accessoryList = [accDB getAccessoriesListByMId:mscriptTemp.m_id];//accessoryList RC=1
+        
+        //根据附件拆分稿件，每个附件对应一个新的稿件
+        NSMutableArray *manuSplitedArray = [Utility prepareToSendManuscript:mscriptTemp
+                                                                accessories:accessoryList
+                                                         userInfoFromServer:userInfo];
+        for (int j=0; j<manuSplitedArray.count; j++) {
+            [manuSendList insertObject:[manuSplitedArray objectAtIndex:j] atIndex:manuSendList.count];
+            if([accessoryList count] > 0)
+                [accessorySendList insertObject:[accessoryList objectAtIndex:j] atIndex:accessorySendList.count];
+            else {
+                [accessorySendList insertObject:@"" atIndex:accessorySendList.count];
+            }
+        }
+    }
+    
+    //将准备好的稿件列表和附件列表循环传给发送模块
+    for (int m=0; m<[manuSendList count]; m++) {
+        
+        if( [[accessorySendList objectAtIndex:m] isEqual:@""] )
+            [Utility xmlPackage:[manuSendList objectAtIndex:m] accessories:nil];
+        else
+            [Utility xmlPackage:[manuSendList objectAtIndex:m] accessories:[accessorySendList objectAtIndex:m]];
+    }
+
+}
+
++ (NSString*)getLocalTimeStamp:(NSString*)utcTimeStamp {
+    
+    NSDateFormatter* utcFmt = [[NSDateFormatter alloc] init];//实例化一个NSDateFormatter对象
+    
+    [utcFmt  setDateFormat:@"yyyy-MM-dd HH:mm:ss.SSS ZZZ"];
+    NSDate *date =[utcFmt dateFromString:utcTimeStamp];
+    
+    NSDateFormatter *localFmt = [[NSDateFormatter alloc] init];
+    [localFmt setDateFormat:@"hh:mm MM.dd"];
+    
+    return [localFmt stringFromDate:date];
+}
+
+//图片压缩
++ (UIImage *)scale:(UIImage *)image toSize:(CGSize)size
+{
+    UIGraphicsBeginImageContext(size);
+    [image drawInRect:CGRectMake(0, 0, size.width, size.height)];
+    UIImage *scaledImage = UIGraphicsGetImageFromCurrentImageContext();
+    UIGraphicsEndImageContext();
+    return scaledImage;
+}
+
++ (UIImage *)scale:(UIImage *)image toHeight:(float)height
+{
+    UIGraphicsBeginImageContext(CGSizeMake(image.size.width * height/image.size.height, height));
+    [image drawInRect:CGRectMake(0, 0, image.size.width * height/image.size.height, height)];
+    UIImage *scaledImage = UIGraphicsGetImageFromCurrentImageContext();
+    UIGraphicsEndImageContext();
+    return scaledImage;
 }
 
 @end

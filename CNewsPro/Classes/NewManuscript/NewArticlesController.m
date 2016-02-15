@@ -25,15 +25,18 @@
 #import <MobileCoreServices/MobileCoreServices.h>
 #import "RecordVoiceController.h"
 #import "EditingScriptController.h"
+//#import <iflyMSC/IFlyRecognizerView.h>
+//#import <iflyMSC/IFlyRecognizerViewDelegate.h>
+#import <iflyMSC/iflyMSC.h>
+#import "IATConfig.h"
 
 static const NSInteger kButtonWidth = 95.0f;
 static const NSInteger kButtonHeight = 95.0f;
 //定义的归档的关键字
 static NSString *kTemporaryTemplateDataKey = @"temporaryData";
-static NSString *kCurrentManuscriptId_SessionId = @"CurrentManuscriptId_SessionId";
 static NSString *kAutoSaveTime = @"kAutoSaveTime";
 
-@interface NewArticlesController () <UIActionSheetDelegate,CLLocationManagerDelegate,UIAlertViewDelegate,UIImagePickerControllerDelegate,UINavigationControllerDelegate,PBJVisionDelegate>
+@interface NewArticlesController () <UIActionSheetDelegate,CLLocationManagerDelegate,UIAlertViewDelegate,UIImagePickerControllerDelegate,UINavigationControllerDelegate,PBJVisionDelegate,IFlyRecognizerViewDelegate,UITextFieldDelegate>
 
 @property (nonatomic,strong) UITextView *tvContent;
 @property (nonatomic,strong) UITextView *titleField;
@@ -53,11 +56,9 @@ static NSString *kAutoSaveTime = @"kAutoSaveTime";
 @property (nonatomic,assign) BOOL keyboardHide;
 @property (nonatomic,strong) Manuscripts *mcripts;
 @property (nonatomic,strong) AccessoriesDB *accessoriesdb;
-@property (nonatomic,copy) NSString *operationType;
 @property (nonatomic,assign) NSInteger keyboardHeight;
-@property (nonatomic,assign) id delegate;
 @property (nonatomic,strong) CLLocationManager *locationManager;
-@property (nonatomic,strong) NSIndexPath *indexPath;
+
 @property (nonatomic,assign) NSInteger selectAccessoryIndex;
 @property (nonatomic,strong) UIButton *selectAccessorySender;
 @property (nonatomic,strong) VideoGrid *addGrid;
@@ -75,6 +76,7 @@ static NSString *kAutoSaveTime = @"kAutoSaveTime";
 @property (nonatomic,strong) NSTimer *videoTimer;
 @property (nonatomic,copy) NSMutableArray *gridArray;
 @property (nonatomic,copy) NSMutableArray *audioInfoArray;
+@property(nonatomic,strong) IFlyRecognizerView *iflyRecognizerView;
 
 @end
 
@@ -250,7 +252,7 @@ static NSString *kAutoSaveTime = @"kAutoSaveTime";
     //      （2.2）标题不为空，则更新该稿件并返回。
     
     //获取稿件id
-    NSString *currentManuscriptId = [USERDEFAULTS objectForKey:kCurrentManuscriptId_SessionId];
+    NSString *currentManuscriptId = [USERDEFAULTS objectForKey:CURRENT_MANUSCRIPTID_SESSIONId];
     if([currentManuscriptId isEqualToString:@""])//新稿件
     {
         if (([[Utility trimBlankSpace:self.titleField.text] isEqualToString:@""]||[[Utility trimBlankSpace:self.titleField.text] isEqualToString:self.mcripts.mTemplate.defaultTitle])&&([[Utility trimBlankSpace:self.tvContent.text] isEqualToString:@""]||[[Utility trimBlankSpace:self.tvContent.text] isEqualToString:self.mcripts.mTemplate.defaultContents])&&(self.accessoriesArry.count == 0))
@@ -358,7 +360,7 @@ static NSString *kAutoSaveTime = @"kAutoSaveTime";
         NSString *bodyText = @"";
         NSString *titleText = @"";
         ManuscriptTemplateDB *mdb = [[ManuscriptTemplateDB alloc] init];
-        ManuscriptTemplate *demanuscriptTemplate = [mdb getDefaultManuscriptTemplate:MANUSCRIPT_TEMPLATE_TYPE LoginName:[USERDEFAULTS objectForKey:LOGIN_NAME]];
+        ManuscriptTemplate *demanuscriptTemplate = [mdb getDefaultManuscriptTemplate:MANUSCRIPT_TEMPLATE_TYPE loginName:[USERDEFAULTS objectForKey:LOGIN_NAME]];
       
         //查看是否存在临时稿签，如存在即加载该稿签
         NSString *filePath = [Utility temporaryTemplateFilePath];
@@ -366,7 +368,7 @@ static NSString *kAutoSaveTime = @"kAutoSaveTime";
             
             //获得默认稿签模板,用来获得稿件的标题和正文
             ManuscriptTemplateDB *mdb = [[ManuscriptTemplateDB alloc] init];
-            ManuscriptTemplate *manuscriptTemplate = [mdb getDefaultManuscriptTemplate:MANUSCRIPT_TEMPLATE_TYPE LoginName:[USERDEFAULTS objectForKey:LOGIN_NAME]];
+            ManuscriptTemplate *manuscriptTemplate = [mdb getDefaultManuscriptTemplate:MANUSCRIPT_TEMPLATE_TYPE loginName:[USERDEFAULTS objectForKey:LOGIN_NAME]];
            
             bodyText = demanuscriptTemplate.defaultContents;//标题和正文还需要加载默认的标题和正文
             titleText = demanuscriptTemplate.defaultTitle;
@@ -391,7 +393,7 @@ static NSString *kAutoSaveTime = @"kAutoSaveTime";
     }
     
     //页面第一次进入时，将传入的稿件id保存在缓存中。如果是“新建稿件”，则为@“”。
-    [USERDEFAULTS setObject:self.manuscript_id forKey:kCurrentManuscriptId_SessionId];
+    [USERDEFAULTS setObject:self.manuscript_id forKey:CURRENT_MANUSCRIPTID_SESSIONId];
 }
 
 //页面控件初始化
@@ -579,13 +581,13 @@ static NSString *kAutoSaveTime = @"kAutoSaveTime";
     NSString *logInfo = @"";
     
     //获取稿件id
-    NSString *currentManuscriptId = [[NSUserDefaults standardUserDefaults] objectForKey:kCurrentManuscriptId_SessionId];
+    NSString *currentManuscriptId = [[NSUserDefaults standardUserDefaults] objectForKey:CURRENT_MANUSCRIPTID_SESSIONId];
     if([currentManuscriptId isEqualToString:@""])
     {
         //第一次保存  生成稿件编号并存入缓存
         currentManuscriptId  = [Utility stringWithUUID];
 
-        [USERDEFAULTS setObject:currentManuscriptId forKey:kCurrentManuscriptId_SessionId];
+        [USERDEFAULTS setObject:currentManuscriptId forKey:CURRENT_MANUSCRIPTID_SESSIONId];
         
         logInfo = [self insertNewManuscript:currentManuscriptId];
     }
@@ -659,17 +661,17 @@ static NSString *kAutoSaveTime = @"kAutoSaveTime";
     Accessories *accessory = [[Accessories alloc] init];
     //保存到数据库
     switch (type) {
-        case 0:
+        case FileNameTagsPhoto:
         {
             accessory.type=@"PHOTO";
             break;
         }
-        case 1:
+        case FileNameTagsAudio:
         {
             accessory.type=@"AUDIO";
             break;
         }
-        case 2:
+        case FileNameTagsVideo:
         {
             accessory.type=@"VIDEO";
             break;
@@ -688,19 +690,19 @@ static NSString *kAutoSaveTime = @"kAutoSaveTime";
     }
     
     accessory.size= [NSString stringWithFormat: @"%ld", [Utility getFileLengthByPath:url]];
-    accessory.createTime = [self getNowDateTime];
+    accessory.createTime = [Utility getNowDateTime];
     
     NSInteger fileLength = [Utility getFileLengthByPath:url];
     accessory.size = [NSString stringWithFormat:@"%ld",fileLength];
     accessory.originName = originName;
     
     //依据缓存中的稿件稿件Id值，判断稿件是否已经保存。
-    NSString *currentManuscriptId = [USERDEFAULTS objectForKey:kCurrentManuscriptId_SessionId];
+    NSString *currentManuscriptId = [USERDEFAULTS objectForKey:CURRENT_MANUSCRIPTID_SESSIONId];
     if([currentManuscriptId isEqualToString:@""])
     {
         //说明该附件对应的稿件未保存，需要先保存稿件，然后根据稿件的m_id来添加附件
         [self saveManuscript];
-        currentManuscriptId = [USERDEFAULTS objectForKey:kCurrentManuscriptId_SessionId];
+        currentManuscriptId = [USERDEFAULTS objectForKey:CURRENT_MANUSCRIPTID_SESSIONId];
     }
     
     accessory.m_id = currentManuscriptId;
@@ -715,13 +717,6 @@ static NSString *kAutoSaveTime = @"kAutoSaveTime";
     
     [self hideWaiting];
 
-}
-
-- (NSString*)getNowDateTime
-{
-    NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
-    formatter.dateFormat = @"yyyy-MM-dd HH:mm:ss";
-    return [formatter stringFromDate:[NSDate date]];
 }
 
 //在相册保存
@@ -741,30 +736,136 @@ static NSString *kAutoSaveTime = @"kAutoSaveTime";
     [self hideWaiting];
 }
 
+//添加声音，回掉函数
+- (void)addVoice:(AVAudioRecorder *)recorder
+{
+    NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
+    formatter.dateFormat = @"ddMMMYY_hhmmss";
+    NSString *originName = [NSString stringWithFormat:@"%@%@",[formatter stringFromDate:[NSDate date]],VOC_TYPE];//文件名称：当前时间＋.aif
+    NSString *savefilepath = [FILE_PATH_IN_PHONE stringByAppendingPathComponent:originName];
+
+    //保存到本地数组
+    NSDictionary *row1 = [[NSDictionary alloc] initWithObjectsAndKeys:originName,@"name",savefilepath,@"savefilepath",nil];
+    [self.voiceArray insertObject:row1 atIndex:[self.voiceArray count]];
+    NSData *movdata= [NSData dataWithContentsOfURL:recorder.url];
+    
+    //保存文件
+    NSDictionary *filedic = [[NSDictionary alloc] initWithObjectsAndKeys:movdata,@"content",savefilepath,@"savefilepath",VOC_TYPE,@"filename", originName,@"OriginName",nil];
+    [NSThread detachNewThreadSelector:@selector(saveAttachmentToDocument:) toTarget:self withObject:filedic];
+
+}
+
+- (void)initRecognizer {
+    //单例模式，UI的实例
+    if (self.iflyRecognizerView == nil) {
+        //UI显示剧中
+        self.iflyRecognizerView= [[IFlyRecognizerView alloc] initWithCenter:self.view.center];
+        
+        [self.iflyRecognizerView setParameter:@"" forKey:[IFlySpeechConstant PARAMS]];
+        
+        //设置听写模式
+        [self.iflyRecognizerView setParameter:@"iat" forKey:[IFlySpeechConstant IFLY_DOMAIN]];
+        self.iflyRecognizerView.delegate = self;
+        
+        if (self.iflyRecognizerView != nil) {
+            IATConfig *instance = [IATConfig sharedInstance];
+            //设置最长录音时间
+            [self.iflyRecognizerView setParameter:instance.speechTimeout forKey:[IFlySpeechConstant SPEECH_TIMEOUT]];
+            //设置后端点
+            [self.iflyRecognizerView setParameter:instance.vadEos forKey:[IFlySpeechConstant VAD_EOS]];
+            //设置前端点
+            [self.iflyRecognizerView setParameter:instance.vadBos forKey:[IFlySpeechConstant VAD_BOS]];
+            //网络等待时间
+            [self.iflyRecognizerView setParameter:@"20000" forKey:[IFlySpeechConstant NET_TIMEOUT]];
+            
+            //设置采样率，推荐使用16K
+            [self.iflyRecognizerView setParameter:instance.sampleRate forKey:[IFlySpeechConstant SAMPLE_RATE]];
+            if ([instance.language isEqualToString:[IATConfig chinese]]) {
+                //设置语言
+                [self.iflyRecognizerView setParameter:instance.language forKey:[IFlySpeechConstant LANGUAGE]];
+                //设置方言
+                [self.iflyRecognizerView setParameter:instance.accent forKey:[IFlySpeechConstant ACCENT]];
+            }else if ([instance.language isEqualToString:[IATConfig english]]) {
+                //设置语言
+                [self.iflyRecognizerView setParameter:instance.language forKey:[IFlySpeechConstant LANGUAGE]];
+            }
+            //设置是否返回标点符号
+            [self.iflyRecognizerView setParameter:instance.dot forKey:[IFlySpeechConstant ASR_PTT]];
+            
+        }
+    }
+
+}
+
+#pragma mark - NewTagDetailViewController返回调用
+//回传稿签数据
+-(void)ReturnManuScriptTemplate:(ManuscriptTemplate *)manuscripttemplate
+{
+    if( [self.operationType isEqualToString:@"detail"] )
+    {
+        return;
+    }
+    else {
+        self.mcripts.mTemplate = manuscripttemplate;
+        //如果稿件已经被保存过，则将稿签信息更新至数据库
+        NSString *currentManuscriptId = [USERDEFAULTS objectForKey:CURRENT_MANUSCRIPTID_SESSIONId];
+        if(![currentManuscriptId isEqualToString:@""])
+        {
+            [self saveManuscript];
+        }
+    }
+}
+
 #pragma mark - Target Action
 
-// 转写
-#warning 科大讯飞SDK未导出
+// 转写 语音识别
 - (void)onButtonRecognize
 {
-//    //若键盘弹出则收回
-//    [self.view endEditing:YES];
-//    
+    //若键盘弹出则收回
+    [self.view endEditing:YES];
+    
 //    NSString *initParam = [[NSString alloc] initWithFormat:
 //                           @"server_url=%@,appid=%@",ENGINE_URL,APP_ID];
-//    
-//    // 识别控件
-//    _iFlyRecognizeControl = [[IFlyRecognizeControl alloc] initWithOrigin:H_CONTROL_ORIGIN theInitParam:initParam];
-//    [self.view addSubview:_iFlyRecognizeControl];
-//    [_iFlyRecognizeControl setEngine:@"sms" theEngineParam:nil theGrammarID:nil];
-//    [_iFlyRecognizeControl setSampleRate:16000];
-//    _iFlyRecognizeControl.delegate = self;
-//    [initParam release];
-//    
-//    if([_iFlyRecognizeControl start])
-//    {
-//        [self disableButton];
-//    }
+    
+    // 识别控件
+    if(self.iflyRecognizerView == nil)
+    {
+        [self initRecognizer];
+    }
+    
+    //设置音频来源为麦克风
+    [self.iflyRecognizerView setParameter:IFLY_AUDIO_SOURCE_MIC forKey:@"audio_source"];
+    
+    //设置听写结果格式为json
+    [self.iflyRecognizerView setParameter:@"plain" forKey:[IFlySpeechConstant RESULT_TYPE]];
+    
+    if([self.iflyRecognizerView start])
+    {
+        [self disableButton];
+    }
+}
+
+- (void)disableButton
+{
+    self.btnifly.enabled = NO;
+    self.tvContent.editable = NO;
+    for (UIView *subview in self.view.subviews) {
+        if ([subview isKindOfClass:[UIButton class]]) {
+            subview.userInteractionEnabled = NO;
+        }
+    }
+
+}
+
+- (void)enableButton
+{
+    self.btnifly.enabled = YES;
+    self.tvContent.editable = YES;
+    for (UIView *subview in self.view.subviews) {
+        if ([subview isKindOfClass:[UIButton class]]) {
+            subview.userInteractionEnabled = YES;
+        }
+    }
 }
 
 //添加附件
@@ -1106,6 +1207,27 @@ static NSString *kAutoSaveTime = @"kAutoSaveTime";
 
 }
 
+#pragma mark - IFlyRecognizeControlDelegate
+//	识别结束回调
+- (void)onResult:(NSArray *)resultArray isLast:(BOOL)isLast {
+
+    NSMutableString *result = [[NSMutableString alloc] init];
+    NSDictionary *dic = [resultArray objectAtIndex:0];
+    
+    for (NSString *key in dic) {
+        [result appendFormat:@"%@",key];
+    }
+    self.tvContent.text = [NSString stringWithFormat:@"%@%@",self.tvContent.text,result];
+}
+
+- (void)onError:(IFlySpeechError *)error {
+    NSLog(@"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
+    NSLog(@"%@",error.errorDesc);
+    NSLog(@"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
+    [self enableButton];
+}
+
+
 #pragma mark - CLLocationManager delegate
 - (void)locationManager:(CLLocationManager *)manager
     didUpdateToLocation:(CLLocation *)newLocation
@@ -1391,10 +1513,24 @@ static NSString *kAutoSaveTime = @"kAutoSaveTime";
 }
 
 
+#pragma mark - UITestFiedDelegate
+- (BOOL)textFieldShouldReturn:(UITextField *)textField
+{
+    textField.returnKeyType = UIReturnKeyDefault;
+    [self.tvContent becomeFirstResponder];
+    return YES;
+}
 
+- (BOOL)textFieldShouldBeginEditing:(UITextField *)textField
+{
+    textField.returnKeyType = UIReturnKeyDone;
+    return YES;
+}
 
-
-
+-(void)textFieldDoneEditing:(id)sender
+{
+    [self.tvContent becomeFirstResponder];
+}
 
 
 

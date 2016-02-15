@@ -14,6 +14,6 @@
 
 #define NOTIFICATION_CENTER [NSNotificationCenter defaultCenter]
 
-
+#define DELETE_COMPLETE_CLIENT  @"deletecompleteclient"
 
 #endif /* NotificationMacro_h */

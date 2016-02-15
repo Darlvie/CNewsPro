@@ -51,7 +51,7 @@
     ManuscriptTemplateDB* manuscriptemplatedb = [[ManuscriptTemplateDB alloc] init];
     NSString *loginNameInf = [USERDEFAULTS objectForKey:LOGIN_NAME];
     self.sysTagArray = [[NSMutableArray alloc] initWithArray:[manuscriptemplatedb getSystemTemplate:loginNameInf type:MANUSCRIPT_TEMPLATE_TYPE]];
-    self.customTagArray = [[NSMutableArray alloc] initWithArray:[manuscriptemplatedb getManuScriptTemplate:loginNameInf type:MANUSCRIPT_TEMPLATE_TYPE]];
+    self.customTagArray = [[NSMutableArray alloc] initWithArray:[manuscriptemplatedb getManuscriptTemplate:loginNameInf type:MANUSCRIPT_TEMPLATE_TYPE]];
     if ([self.sysTagArray count]==0) {
         [[AppDelegate getAppDelegate] alert:AlertTypeAlert message:@"当前系统稿签没有进行同步，请到系统设置里进行稿签同步"];
     }
@@ -136,12 +136,12 @@
     if (self.viewTemplate == ViewTemplateSelect) {
         if (indexPath.section == 0) {
             
-            [self.delegate  returnManuScriptTemplate:[self.sysTagArray objectAtIndex:indexPath.row]];
+            [self.delegate  returnManuscriptTemplate:[self.sysTagArray objectAtIndex:indexPath.row]];
             [self dismissViewControllerAnimated:YES completion:nil];
         }
         else {
             
-            [self.delegate  returnManuScriptTemplate:[self.customTagArray objectAtIndex:indexPath.row]];
+            [self.delegate  returnManuscriptTemplate:[self.customTagArray objectAtIndex:indexPath.row]];
             [self dismissViewControllerAnimated:YES completion:nil];
         }
         
@@ -268,7 +268,7 @@
     }
     else {
         //回传选中得稿签模板
-        [self.delegate  returnManuScriptTemplate:[self.customTagArray objectAtIndex:button.tag]];
+        [self.delegate  returnManuscriptTemplate:[self.customTagArray objectAtIndex:button.tag]];
         [self dismissViewControllerAnimated:YES completion:nil];
     }
 }
@@ -290,7 +290,7 @@
     }
     else {
         //回传选中得稿签模板
-        [self.delegate  returnManuScriptTemplate:[self.customTagArray objectAtIndex:button.tag]];
+        [self.delegate  returnManuscriptTemplate:[self.customTagArray objectAtIndex:button.tag]];
         [self dismissViewControllerAnimated:YES completion:nil];
     }
 

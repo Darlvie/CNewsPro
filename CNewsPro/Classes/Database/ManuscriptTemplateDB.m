@@ -125,7 +125,7 @@
 
 //获取默认稿签
 //获取稿签模板
-- (ManuscriptTemplate *)getDefaultManuscriptTemplate:(NSString *)type LoginName:(NSString *)loginName {
+- (ManuscriptTemplate *)getDefaultManuscriptTemplate:(NSString *)type loginName:(NSString *)loginName {
     if ([self openDatabase]==FALSE) {
         return nil;
     }
@@ -188,7 +188,7 @@
     return manuscriptTemplate;
 }
 
-- (NSMutableArray *)getManuScriptTemplate:(NSString *)userName type:(NSString *)tagType {
+- (NSMutableArray *)getManuscriptTemplate:(NSString *)userName type:(NSString *)tagType {
     
     NSMutableArray *ManuScriptList = [[NSMutableArray alloc] init];
     if ([self openDatabase]==FALSE) {

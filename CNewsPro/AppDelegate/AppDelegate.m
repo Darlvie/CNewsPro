@@ -16,6 +16,7 @@
 #import "UploadClient.h"
 #import "SVProgressHUD.h"
 #import "UserGuideViewController.h"
+#import <iflyMSC/iflyMSC.h>
 
 @interface AppDelegate () <UIAlertViewDelegate>
 @property (nonatomic,strong) UINavigationController *navi;
@@ -29,6 +30,9 @@
     // Override point for customization after application launch.
     self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
     [self checkVersionGCD];
+    
+    NSString *initString = [[NSString alloc] initWithFormat:@"appid=%@",APP_ID];
+    [IFlySpeechUtility createUtility:initString];
     
     [NSTimer scheduledTimerWithTimeInterval:1500.0 target:self
                                    selector:@selector(keepAliveTimer)

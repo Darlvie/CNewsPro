@@ -16,6 +16,11 @@ typedef NS_ENUM(NSUInteger,AlertType) {
     AlertTypeAlert
 };
 
+typedef NS_ENUM(NSInteger,FileNameTags) {
+    FileNameTagsPhoto = 10,
+    FileNameTagsAudio,
+    FileNameTagsVideo
+};
 
 @interface RootViewController : UIViewController
 

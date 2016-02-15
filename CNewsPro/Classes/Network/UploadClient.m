@@ -40,12 +40,10 @@ typedef NS_ENUM(NSUInteger,UploadType)
 @property (nonatomic,strong) ASIHTTPRequest *client;
 
 @property (nonatomic,strong) ASIFormDataRequest *dataClient;
-/** 重传次数 */
-@property (nonatomic,assign) NSInteger reloadCount;
+
 /** 上一块的大小 */
 @property (nonatomic,assign) NSInteger lastUploadBlockSize;
 
-@property (nonatomic,assign) double blockTime;
 
 @end
 @implementation UploadClient

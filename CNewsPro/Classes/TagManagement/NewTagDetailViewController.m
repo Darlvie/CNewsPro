@@ -294,7 +294,7 @@
                     [self.delegate reloadtable];
                 }
                 else {
-                    [self.delegate returnManuScriptTemplate:self.manuscriptTemplate];;
+                    [self.delegate returnManuscriptTemplate:self.manuscriptTemplate];;
                 }
                 NSInteger index=[self.navigationController.viewControllers count]-2;
                 [self.navigationController popToViewController:[self.navigationController.viewControllers objectAtIndex:index]  animated:YES];
@@ -483,7 +483,7 @@
 }
 
 //回传套用的稿签模板
-- (void)returnManuScriptTemplate:(ManuscriptTemplate *)returnManuscriptTemplate {
+- (void)returnManuscriptTemplate:(ManuscriptTemplate *)returnManuscriptTemplate {
     self.manuscriptTemplate = returnManuscriptTemplate;
  
     [self.templateDetailView reloadData];
@@ -1049,7 +1049,7 @@
                 NSInteger index=[self.navigationController.viewControllers count]-2;
                 if(self.templateType == TemplateTypeCheckAble || self.templateType == TemplateTypeEditAble || self.templateType == TemplateTypeSaveAs){
                     //返回稿签对象
-                    [self.delegate returnManuScriptTemplate:self.manuscriptTemplate];
+                    [self.delegate returnManuscriptTemplate:self.manuscriptTemplate];
                     
                 }
                 else if(self.templateType == TemplateTypeExist){

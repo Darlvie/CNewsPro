@@ -22,10 +22,11 @@
 /**
  *  唤醒队列中未启动的clients
  */
--(void)awakeClients;
+- (void)awakeClients;
 
 //添加client到上传队列中
--(void)addClient:(UploadClient*)client;
+- (void)addClient:(UploadClient*)client;
 
+- (void)removeObject:(UploadClient*)client;
 
 @end

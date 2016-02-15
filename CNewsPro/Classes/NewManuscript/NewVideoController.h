@@ -12,4 +12,6 @@
 
 @property (nonatomic,copy) NSString *manuscript_id;
 
+- (void)textFieldDoneEditing:(id)sender;
+
 @end

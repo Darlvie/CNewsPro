@@ -112,9 +112,27 @@
     [self.uploadQueue removeObjectAtIndex:index];
 }
 
+-(void)removeClientByClient:(UploadClient *)client
+{
+    ManuscriptsDB *mdb = [[ManuscriptsDB alloc] init];
+    Manuscripts *manuscripts=(Manuscripts *)[client.uploadInfo objectForKey:MANUSCRIPT_INFO];
+    [mdb setManuscriptStatus:MANUSCRIPT_STATUS_EDITING mId:manuscripts.m_id];
+    [client cancelUpload];
+    [self.uploadQueue removeObject:client];
+    [self.uploadQueue awakeClients];
+}
 
+- (NSString *)attachmentPathAtQueueIndex:(NSInteger)index {
+    UploadClient *client = [self.uploadQueue objectAtIndex:index];
+    NSString *path= [client.uploadInfo objectForKey:FILE_PATH];
+    return path;
+}
 
-
-
+//返回队列中指定位置的client的上传进度
+- (float)uploadProgressAtQueueIndex:(NSInteger)index
+{
+    UploadClient *client = [self.uploadQueue objectAtIndex:index];
+    return client.progress;
+}
 
 @end

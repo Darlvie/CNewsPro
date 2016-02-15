@@ -173,7 +173,7 @@ static const CGFloat kMargin          = 20;
     ManuscriptTemplateDB *mdb = [[ManuscriptTemplateDB alloc] init];
     Manuscripts *mscripts = [[Manuscripts alloc] init];
     mscripts.mTemplate = [mdb getDefaultManuscriptTemplate:TEXT_EXPRESS_TEMPLATE_TYPE
-                                                 LoginName:[USERDEFAULTS objectForKey:LOGIN_NAME]];
+                                                 loginName:[USERDEFAULTS objectForKey:LOGIN_NAME]];
     
     NSString *info=[Utility checkInfoIsCompleted:mscripts];
     if ([info isEqualToString:@""]) {
@@ -193,7 +193,7 @@ static const CGFloat kMargin          = 20;
     ManuscriptTemplateDB *mdb = [[ManuscriptTemplateDB alloc] init];
     Manuscripts *mscripts = [[Manuscripts alloc] init];
     mscripts.mTemplate = [mdb getDefaultManuscriptTemplate:PICTURE_EXPRESS_TEMPLATE_TYPE
-                                                 LoginName:[USERDEFAULTS objectForKey:LOGIN_NAME]];
+                                                 loginName:[USERDEFAULTS objectForKey:LOGIN_NAME]];
                                  
     NSString *info=[Utility checkInfoIsCompleted:mscripts];
     if ([info isEqualToString:@""]) {
@@ -214,7 +214,7 @@ static const CGFloat kMargin          = 20;
     ManuscriptTemplateDB *mdb = [[ManuscriptTemplateDB alloc] init];
     Manuscripts *mscripts = [[Manuscripts alloc] init];
     mscripts.mTemplate = [mdb getDefaultManuscriptTemplate:AUDIO_EXPRESS_TEMPLATE_TYPE
-                                                 LoginName:[USERDEFAULTS objectForKey:LOGIN_NAME]];
+                                                 loginName:[USERDEFAULTS objectForKey:LOGIN_NAME]];
     
     NSString *info=[Utility checkInfoIsCompleted:mscripts];
     if ([info isEqualToString:@""]) {
@@ -235,7 +235,7 @@ static const CGFloat kMargin          = 20;
     ManuscriptTemplateDB *mdb = [[ManuscriptTemplateDB alloc] init];
     Manuscripts *mscripts = [[Manuscripts alloc] init];
     mscripts.mTemplate = [mdb getDefaultManuscriptTemplate:VIDEO_EXPRESS_TEMPLATE_TYPE
-                                                 LoginName:[USERDEFAULTS objectForKey:LOGIN_NAME]];
+                                                 loginName:[USERDEFAULTS objectForKey:LOGIN_NAME]];
     
     NSString *info=[Utility checkInfoIsCompleted:mscripts];
     if ([info isEqualToString:@""]) {
@@ -254,10 +254,10 @@ static const CGFloat kMargin          = 20;
 //在编稿件
 -(void)showEditingArticles:(id)sender
 {
-    EditingScriptController *editingScriptListController = [[EditingScriptController alloc]init];
+    EditingScriptController *editingScriptController = [[EditingScriptController alloc]init];
     self.navigationController.navigationBarHidden = YES;
-    editingScriptListController.hidesBottomBarWhenPushed = YES;
-    [self.navigationController pushViewController:editingScriptListController animated:YES];
+    editingScriptController.hidesBottomBarWhenPushed = YES;
+    [self.navigationController pushViewController:editingScriptController animated:YES];
 }
 
 //待发稿件

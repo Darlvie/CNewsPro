@@ -15,4 +15,7 @@
 @property (nonatomic,copy) NSString *filetype;
 @property (nonatomic,strong) Accessories *accessory;
 
+- (void)saveAttachDetail:(id)sender;
+- (void)textFieldDoneEditing:(id)sender;
+
 @end

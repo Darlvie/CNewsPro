@@ -22,6 +22,8 @@
 
 @property (nonatomic,assign) double beginUp;
 
+@property (nonatomic,assign) double blockTime;
+
 @property (nonatomic,strong) NSMutableDictionary *uploadInfo;
 
 @property (nonatomic,assign) NSInteger xmlOnly;
@@ -29,6 +31,9 @@
 @property (nonatomic,copy) NSString *serverFileID;    //记录服务端传回的ServerFileID
 
 @property (nonatomic,copy) NSString *xmlServerFileID;//记录xml回传id
+
+/** 重传次数 */
+@property (nonatomic,assign) NSInteger reloadCount;
 
 - (instancetype)initWithDelegate:(id)aDelegate info:(id)uploadInfo;
 

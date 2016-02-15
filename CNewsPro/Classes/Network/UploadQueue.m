@@ -58,7 +58,10 @@
     }
 }
 
-
+- (void)removeObject:(UploadClient*)client
+{
+    [self.queue removeObject:client];
+}
 
 
 

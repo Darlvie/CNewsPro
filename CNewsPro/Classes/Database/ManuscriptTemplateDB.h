@@ -15,9 +15,9 @@
 
 - (NSInteger)addManuscriptTemplate:(ManuscriptTemplate *)mtemplate;
 
-- (ManuscriptTemplate *)getDefaultManuscriptTemplate:(NSString *)type LoginName:(NSString *)loginName;
+- (ManuscriptTemplate *)getDefaultManuscriptTemplate:(NSString *)type loginName:(NSString *)loginName;
 
-- (NSMutableArray *)getManuScriptTemplate:(NSString *)userName type:(NSString *)tagType;
+- (NSMutableArray *)getManuscriptTemplate:(NSString *)userName type:(NSString *)tagType;
 
 - (NSInteger)updateManuscriptTemplate:(ManuscriptTemplate *)mTemplate;
 

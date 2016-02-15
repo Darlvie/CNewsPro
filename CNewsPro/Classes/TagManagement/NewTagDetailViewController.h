@@ -108,7 +108,7 @@ typedef	NS_ENUM(NSInteger,TemplateType)
 - (void)setSendToAddress:(NSString *)sendToAddressInf getSendToAddressID:(NSString *)addressId ;
 
 
-- (void)returnManuScriptTemplate:(ManuscriptTemplate *)returnManuscriptTemplate;
+- (void)returnManuscriptTemplate:(ManuscriptTemplate *)returnManuscriptTemplate;
 
 
 

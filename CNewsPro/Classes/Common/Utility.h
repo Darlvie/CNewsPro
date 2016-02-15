@@ -7,6 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
+#import <UIKit/UIKit.h>
 
 @class User,ManuscriptTemplate,Manuscripts,AuditNewsItem,Accessories;
 @interface Utility : NSObject
@@ -81,10 +82,20 @@
 
 + (AuditNewsItem *)parseAuditNewsItemFromData:(NSData *)data;
 
+//批量发送多个稿件，用于在编稿件列表多选稿件后点击发送
++ (NSString *)sendManuscriptList:(NSMutableArray *)manuIdList;
+
+//在新建的线程中进行稿件拆分，然后给发送模块。
++ (void)sendManuThread:(NSMutableArray *)manuToSendList UserInfoPara:(User *)userInfo;
+
 /**
  *  将服务器上的稿签同步到手机
  */
 + (void)getTemplate;
+
++ (NSString*)getNowDateTime;
+
++ (NSString *)getLocalTimeStamp:(NSString *)utcTimeStamp;
 
 //读取暂存稿签文件路径
 + (NSString *)temporaryTemplateFilePath;
@@ -95,5 +106,9 @@
  *  生成随机UUID
  */
 + (NSString *)stringWithUUID;
+
++ (UIImage *)scale:(UIImage *)image toSize:(CGSize)size;
+
++ (UIImage *)scale:(UIImage *)image toHeight:(float)height;
 
 @end

@@ -7,15 +7,14 @@
 //
 
 #import "RootViewController.h"
-
-typedef NS_ENUM(NSInteger,FileNameTags) {
-    FileNameTagsPhoto,
-    FileNameTagsAudio,
-    FileNameTagsVideo
-};
+#import <AVFoundation/AVFoundation.h>
 
 @interface NewArticlesController : RootViewController
 
 @property (nonatomic,copy) NSString *manuscript_id;
+@property (nonatomic,strong) NSIndexPath *indexPath;
+@property (nonatomic,assign) id delegate;
+@property (nonatomic,copy) NSString *operationType;
 
+-(void)addVoice:(AVAudioRecorder *)recorder;
 @end

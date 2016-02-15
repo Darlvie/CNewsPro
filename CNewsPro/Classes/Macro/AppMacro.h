@@ -113,7 +113,15 @@
 
 #define DATA_KEY          @"Data"
 //此appid为您所申请,请勿随意修改
-#define APP_ID @"5032f7ef"
+#define APP_ID @"56b31055"
 #define ENGINE_URL @"http://dev.voicecloud.cn:1028/index.htm"
+
+#define H_CONTROL_ORIGIN CGPointMake(self.view.frame.size.width/2.-140, self.view.frame.size.height/2.-120)
+
+#define CURRENT_MANUSCRIPTID_SESSIONId @"CurrentManuscriptId_SessionId"
+#define BUTTON_WIDTH 95.0f
+#define BUTTON_HEIGHT 95.0f
+
+
 
 #endif /* AppMacro_h */

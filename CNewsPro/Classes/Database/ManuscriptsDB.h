@@ -19,6 +19,12 @@
  */
 - (NSMutableArray *)getManuscriptsByStatus:(NSString *)userName status:(NSString *)mStatus;
 
+//根据稿件状态，取出稿件列表（淘汰、已编等状态值）分页查询
+- (NSMutableArray *)getManuscriptListByStatus:(NSString *)userName status:(NSString *)mStatus pageNO:(int)pageNO pageSize:(int)pageSize;
+
+//得到某一状态下的稿件总数目
+- (NSInteger)getNumberOfManuscriptsByStatus:(NSString *)userName status:(NSString *)mStatus;
+
 //根据稿件的guid,更新回传稿号及稿件的状态
 - (BOOL)updateManuscriptNewsIdAndStatus:(NSString *)newsId m_id:(NSString *)m_id  scriptStatus:(NSString *)scriptStatus;
 
@@ -33,5 +39,8 @@
 - (NSInteger)addManuScript:(Manuscripts *)manuScript;
 
 - (NSInteger)updateManuscript:(Manuscripts *)manuScript;
+
+- (BOOL)deleteManuscript:(NSString *)m_id;
+
 
 @end

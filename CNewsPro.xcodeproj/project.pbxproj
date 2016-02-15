@@ -17,10 +17,6 @@
 		1B1095511C590AAC00465235 /* NewImageController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B1095501C590AAC00465235 /* NewImageController.m */; };
 		1B1095541C590BF100465235 /* NewAudioController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B1095531C590BF100465235 /* NewAudioController.m */; };
 		1B1095571C590CBB00465235 /* NewVideoController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B1095561C590CBB00465235 /* NewVideoController.m */; };
-		1B10955A1C590DD100465235 /* EditingScriptController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B1095591C590DD100465235 /* EditingScriptController.m */; };
-		1B10955D1C590E0300465235 /* TaskManagementViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B10955C1C590E0300465235 /* TaskManagementViewController.m */; };
-		1B1095601C590E2300465235 /* SendedScriptController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B10955F1C590E2300465235 /* SendedScriptController.m */; };
-		1B1095631C590E3B00465235 /* AbandonedScriptController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B1095621C590E3B00465235 /* AbandonedScriptController.m */; };
 		1B1095671C59A8DE00465235 /* TemplateManageController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B1095661C59A8DE00465235 /* TemplateManageController.m */; };
 		1B10956A1C59A9BA00465235 /* NewArticlesController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B1095691C59A9BA00465235 /* NewArticlesController.m */; };
 		1B10956E1C59AB2300465235 /* MoreViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B10956D1C59AB2300465235 /* MoreViewController.m */; };
@@ -42,9 +38,27 @@
 		1B1095A01C60981200465235 /* AttachDetailController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B10959F1C60981200465235 /* AttachDetailController.m */; };
 		1B1095A31C6099FF00465235 /* UIView+FirstResponder.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B1095A21C6099FF00465235 /* UIView+FirstResponder.m */; };
 		1B1095A61C61A3D100465235 /* RecordVoiceController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B1095A51C61A3D100465235 /* RecordVoiceController.m */; };
+		1B1095AF1C6349B000465235 /* iflyMSC.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1B1095AE1C6349B000465235 /* iflyMSC.framework */; };
 		1B33EA091C525DDD00223AFF /* AccessoriesDB.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B33EA081C525DDD00223AFF /* AccessoriesDB.m */; };
 		1B33EA0C1C5260DD00223AFF /* UploadMaker.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B33EA0B1C5260DD00223AFF /* UploadMaker.m */; };
 		1B33EA151C5329F500223AFF /* SendToAddressDB.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B33EA141C5329F500223AFF /* SendToAddressDB.m */; };
+		1B622EA91C6F05D600368A1A /* UploadTaskCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B622EA81C6F05D600368A1A /* UploadTaskCell.m */; };
+		1B622EAC1C6F09E200368A1A /* TaskManagementViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B622EAB1C6F09E200368A1A /* TaskManagementViewController.m */; };
+		1B622EAF1C6F18AF00368A1A /* EditingScriptController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B622EAE1C6F18AF00368A1A /* EditingScriptController.m */; };
+		1B622EB21C6F194400368A1A /* SendedScriptController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B622EB11C6F194400368A1A /* SendedScriptController.m */; };
+		1B622EB61C701AAB00368A1A /* AbandonedScriptController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B622EB51C701AAB00368A1A /* AbandonedScriptController.m */; };
+		1B622EB91C70261A00368A1A /* AbandonedScriptCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B622EB81C70261A00368A1A /* AbandonedScriptCell.m */; };
+		1B622EBC1C70488700368A1A /* ModalAlert.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B622EBB1C70488700368A1A /* ModalAlert.m */; };
+		1B622EBF1C70593A00368A1A /* AudioPlayerController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B622EBE1C70593A00368A1A /* AudioPlayerController.m */; };
+		1B93B2141C68456200DE77F7 /* IATConfig.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B93B2131C68456200DE77F7 /* IATConfig.m */; };
+		1BD6BB611C639F4F00BA54F3 /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1BD6BB601C639F4F00BA54F3 /* CoreLocation.framework */; };
+		1BD6BB631C639F5800BA54F3 /* CoreTelephony.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1BD6BB621C639F5800BA54F3 /* CoreTelephony.framework */; };
+		1BD6BB651C639F6500BA54F3 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1BD6BB641C639F6500BA54F3 /* AVFoundation.framework */; };
+		1BD6BB671C639F7600BA54F3 /* AddressBook.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1BD6BB661C639F7600BA54F3 /* AddressBook.framework */; };
+		1BD6BB691C639F8600BA54F3 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1BD6BB681C639F8600BA54F3 /* AudioToolbox.framework */; };
+		1BD6BB6B1C639F9B00BA54F3 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1BD6BB6A1C639F9B00BA54F3 /* SystemConfiguration.framework */; };
+		1BD6BB6D1C639FAE00BA54F3 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1BD6BB6C1C639FAE00BA54F3 /* QuartzCore.framework */; };
+		1BD6BB6F1C639FC100BA54F3 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1BD6BB6E1C639FC100BA54F3 /* CoreGraphics.framework */; };
 		2713AF9B1C4C7492006AA96D /* NSString+Security.m in Sources */ = {isa = PBXBuildFile; fileRef = 2713AF9A1C4C7492006AA96D /* NSString+Security.m */; };
 		2713AF9E1C4C8217006AA96D /* NetworkManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 2713AF9D1C4C8217006AA96D /* NetworkManager.m */; };
 		2713AFA11C4C89F3006AA96D /* UploadQueue.m in Sources */ = {isa = PBXBuildFile; fileRef = 2713AFA01C4C89F3006AA96D /* UploadQueue.m */; };
@@ -138,14 +152,6 @@
 		1B1095531C590BF100465235 /* NewAudioController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NewAudioController.m; sourceTree = "<group>"; };
 		1B1095551C590CBB00465235 /* NewVideoController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NewVideoController.h; sourceTree = "<group>"; };
 		1B1095561C590CBB00465235 /* NewVideoController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NewVideoController.m; sourceTree = "<group>"; };
-		1B1095581C590DD100465235 /* EditingScriptController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EditingScriptController.h; sourceTree = "<group>"; };
-		1B1095591C590DD100465235 /* EditingScriptController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EditingScriptController.m; sourceTree = "<group>"; };
-		1B10955B1C590E0300465235 /* TaskManagementViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TaskManagementViewController.h; sourceTree = "<group>"; };
-		1B10955C1C590E0300465235 /* TaskManagementViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TaskManagementViewController.m; sourceTree = "<group>"; };
-		1B10955E1C590E2300465235 /* SendedScriptController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SendedScriptController.h; sourceTree = "<group>"; };
-		1B10955F1C590E2300465235 /* SendedScriptController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SendedScriptController.m; sourceTree = "<group>"; };
-		1B1095611C590E3B00465235 /* AbandonedScriptController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AbandonedScriptController.h; sourceTree = "<group>"; };
-		1B1095621C590E3B00465235 /* AbandonedScriptController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AbandonedScriptController.m; sourceTree = "<group>"; };
 		1B1095651C59A8DE00465235 /* TemplateManageController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TemplateManageController.h; sourceTree = "<group>"; };
 		1B1095661C59A8DE00465235 /* TemplateManageController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TemplateManageController.m; sourceTree = "<group>"; };
 		1B1095681C59A9BA00465235 /* NewArticlesController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NewArticlesController.h; sourceTree = "<group>"; };
@@ -188,12 +194,39 @@
 		1B1095A21C6099FF00465235 /* UIView+FirstResponder.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIView+FirstResponder.m"; sourceTree = "<group>"; };
 		1B1095A41C61A3D100465235 /* RecordVoiceController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RecordVoiceController.h; sourceTree = "<group>"; };
 		1B1095A51C61A3D100465235 /* RecordVoiceController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RecordVoiceController.m; sourceTree = "<group>"; };
+		1B1095AE1C6349B000465235 /* iflyMSC.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = iflyMSC.framework; sourceTree = "<group>"; };
 		1B33EA071C525DDD00223AFF /* AccessoriesDB.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AccessoriesDB.h; sourceTree = "<group>"; };
 		1B33EA081C525DDD00223AFF /* AccessoriesDB.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AccessoriesDB.m; sourceTree = "<group>"; };
 		1B33EA0A1C5260DD00223AFF /* UploadMaker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UploadMaker.h; sourceTree = "<group>"; };
 		1B33EA0B1C5260DD00223AFF /* UploadMaker.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UploadMaker.m; sourceTree = "<group>"; };
 		1B33EA131C5329F500223AFF /* SendToAddressDB.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SendToAddressDB.h; sourceTree = "<group>"; };
 		1B33EA141C5329F500223AFF /* SendToAddressDB.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SendToAddressDB.m; sourceTree = "<group>"; };
+		1B622EA71C6F05D600368A1A /* UploadTaskCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UploadTaskCell.h; sourceTree = "<group>"; };
+		1B622EA81C6F05D600368A1A /* UploadTaskCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UploadTaskCell.m; sourceTree = "<group>"; };
+		1B622EAA1C6F09E200368A1A /* TaskManagementViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TaskManagementViewController.h; sourceTree = "<group>"; };
+		1B622EAB1C6F09E200368A1A /* TaskManagementViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TaskManagementViewController.m; sourceTree = "<group>"; };
+		1B622EAD1C6F18AF00368A1A /* EditingScriptController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EditingScriptController.h; sourceTree = "<group>"; };
+		1B622EAE1C6F18AF00368A1A /* EditingScriptController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EditingScriptController.m; sourceTree = "<group>"; };
+		1B622EB01C6F194400368A1A /* SendedScriptController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SendedScriptController.h; sourceTree = "<group>"; };
+		1B622EB11C6F194400368A1A /* SendedScriptController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SendedScriptController.m; sourceTree = "<group>"; };
+		1B622EB41C701AAB00368A1A /* AbandonedScriptController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AbandonedScriptController.h; sourceTree = "<group>"; };
+		1B622EB51C701AAB00368A1A /* AbandonedScriptController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AbandonedScriptController.m; sourceTree = "<group>"; };
+		1B622EB71C70261A00368A1A /* AbandonedScriptCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AbandonedScriptCell.h; sourceTree = "<group>"; };
+		1B622EB81C70261A00368A1A /* AbandonedScriptCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AbandonedScriptCell.m; sourceTree = "<group>"; };
+		1B622EBA1C70488700368A1A /* ModalAlert.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ModalAlert.h; sourceTree = "<group>"; };
+		1B622EBB1C70488700368A1A /* ModalAlert.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ModalAlert.m; sourceTree = "<group>"; };
+		1B622EBD1C70593A00368A1A /* AudioPlayerController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AudioPlayerController.h; sourceTree = "<group>"; };
+		1B622EBE1C70593A00368A1A /* AudioPlayerController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AudioPlayerController.m; sourceTree = "<group>"; };
+		1B93B2121C68456200DE77F7 /* IATConfig.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IATConfig.h; sourceTree = "<group>"; };
+		1B93B2131C68456200DE77F7 /* IATConfig.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IATConfig.m; sourceTree = "<group>"; };
+		1BD6BB601C639F4F00BA54F3 /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
+		1BD6BB621C639F5800BA54F3 /* CoreTelephony.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreTelephony.framework; path = System/Library/Frameworks/CoreTelephony.framework; sourceTree = SDKROOT; };
+		1BD6BB641C639F6500BA54F3 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
+		1BD6BB661C639F7600BA54F3 /* AddressBook.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AddressBook.framework; path = System/Library/Frameworks/AddressBook.framework; sourceTree = SDKROOT; };
+		1BD6BB681C639F8600BA54F3 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
+		1BD6BB6A1C639F9B00BA54F3 /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
+		1BD6BB6C1C639FAE00BA54F3 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
+		1BD6BB6E1C639FC100BA54F3 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
 		2713AF991C4C7492006AA96D /* NSString+Security.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+Security.h"; sourceTree = "<group>"; };
 		2713AF9A1C4C7492006AA96D /* NSString+Security.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+Security.m"; sourceTree = "<group>"; };
 		2713AF9C1C4C8217006AA96D /* NetworkManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NetworkManager.h; sourceTree = "<group>"; };
@@ -314,9 +347,18 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1BD6BB6F1C639FC100BA54F3 /* CoreGraphics.framework in Frameworks */,
+				1BD6BB6D1C639FAE00BA54F3 /* QuartzCore.framework in Frameworks */,
+				1BD6BB6B1C639F9B00BA54F3 /* SystemConfiguration.framework in Frameworks */,
+				1BD6BB691C639F8600BA54F3 /* AudioToolbox.framework in Frameworks */,
+				1BD6BB671C639F7600BA54F3 /* AddressBook.framework in Frameworks */,
+				1BD6BB651C639F6500BA54F3 /* AVFoundation.framework in Frameworks */,
+				1BD6BB631C639F5800BA54F3 /* CoreTelephony.framework in Frameworks */,
+				1BD6BB611C639F4F00BA54F3 /* CoreLocation.framework in Frameworks */,
 				1B1095401C5869B600465235 /* libxml2.tbd in Frameworks */,
 				1B10953E1C5869AA00465235 /* libsqlite3.0.tbd in Frameworks */,
 				1B10953C1C58699D00465235 /* libz.tbd in Frameworks */,
+				1B1095AF1C6349B000465235 /* iflyMSC.framework in Frameworks */,
 				F84121DC539A18C431868CB8 /* libPods.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -341,6 +383,14 @@
 		0B13DE097ED11BE393A92DD4 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				1BD6BB6E1C639FC100BA54F3 /* CoreGraphics.framework */,
+				1BD6BB6C1C639FAE00BA54F3 /* QuartzCore.framework */,
+				1BD6BB6A1C639F9B00BA54F3 /* SystemConfiguration.framework */,
+				1BD6BB681C639F8600BA54F3 /* AudioToolbox.framework */,
+				1BD6BB661C639F7600BA54F3 /* AddressBook.framework */,
+				1BD6BB641C639F6500BA54F3 /* AVFoundation.framework */,
+				1BD6BB621C639F5800BA54F3 /* CoreTelephony.framework */,
+				1BD6BB601C639F4F00BA54F3 /* CoreLocation.framework */,
 				1B10953F1C5869B600465235 /* libxml2.tbd */,
 				1B10953D1C5869AA00465235 /* libsqlite3.0.tbd */,
 				1B10953B1C58699D00465235 /* libz.tbd */,
@@ -361,20 +411,14 @@
 				1B1095531C590BF100465235 /* NewAudioController.m */,
 				1B1095551C590CBB00465235 /* NewVideoController.h */,
 				1B1095561C590CBB00465235 /* NewVideoController.m */,
-				1B1095581C590DD100465235 /* EditingScriptController.h */,
-				1B1095591C590DD100465235 /* EditingScriptController.m */,
-				1B10955B1C590E0300465235 /* TaskManagementViewController.h */,
-				1B10955C1C590E0300465235 /* TaskManagementViewController.m */,
-				1B10955E1C590E2300465235 /* SendedScriptController.h */,
-				1B10955F1C590E2300465235 /* SendedScriptController.m */,
-				1B1095611C590E3B00465235 /* AbandonedScriptController.h */,
-				1B1095621C590E3B00465235 /* AbandonedScriptController.m */,
 				1B1095681C59A9BA00465235 /* NewArticlesController.h */,
 				1B1095691C59A9BA00465235 /* NewArticlesController.m */,
 				1B10959E1C60981200465235 /* AttachDetailController.h */,
 				1B10959F1C60981200465235 /* AttachDetailController.m */,
 				1B1095A41C61A3D100465235 /* RecordVoiceController.h */,
 				1B1095A51C61A3D100465235 /* RecordVoiceController.m */,
+				1B622EBD1C70593A00368A1A /* AudioPlayerController.h */,
+				1B622EBE1C70593A00368A1A /* AudioPlayerController.m */,
 			);
 			path = NewManuscript;
 			sourceTree = "<group>";
@@ -418,6 +462,8 @@
 		1B1095811C5CE9D200465235 /* EditingScriptList */ = {
 			isa = PBXGroup;
 			children = (
+				1B622EAD1C6F18AF00368A1A /* EditingScriptController.h */,
+				1B622EAE1C6F18AF00368A1A /* EditingScriptController.m */,
 				1B1095821C5CEA2700465235 /* EditScriptCell.h */,
 				1B1095831C5CEA2700465235 /* EditScriptCell.m */,
 			);
@@ -431,6 +477,28 @@
 				1B10959C1C5F90F100465235 /* VideoGrid.m */,
 			);
 			path = View;
+			sourceTree = "<group>";
+		};
+		1B622EA61C6F05A000368A1A /* UploadScript */ = {
+			isa = PBXGroup;
+			children = (
+				1B622EAA1C6F09E200368A1A /* TaskManagementViewController.h */,
+				1B622EAB1C6F09E200368A1A /* TaskManagementViewController.m */,
+				1B622EA71C6F05D600368A1A /* UploadTaskCell.h */,
+				1B622EA81C6F05D600368A1A /* UploadTaskCell.m */,
+			);
+			path = UploadScript;
+			sourceTree = "<group>";
+		};
+		1B622EB31C701A6B00368A1A /* AbandonedScript */ = {
+			isa = PBXGroup;
+			children = (
+				1B622EB41C701AAB00368A1A /* AbandonedScriptController.h */,
+				1B622EB51C701AAB00368A1A /* AbandonedScriptController.m */,
+				1B622EB71C70261A00368A1A /* AbandonedScriptCell.h */,
+				1B622EB81C70261A00368A1A /* AbandonedScriptCell.m */,
+			);
+			path = AbandonedScript;
 			sourceTree = "<group>";
 		};
 		2713AFBA1C5214D6006AA96D /* Lib */ = {
@@ -453,6 +521,8 @@
 		2713AFE61C5614D0006AA96D /* ManuscriptList */ = {
 			isa = PBXGroup;
 			children = (
+				1B622EB31C701A6B00368A1A /* AbandonedScript */,
+				1B622EA61C6F05A000368A1A /* UploadScript */,
 				1B1095811C5CE9D200465235 /* EditingScriptList */,
 				2713AFE71C5614EC006AA96D /* SendedScript */,
 			);
@@ -462,6 +532,8 @@
 		2713AFE71C5614EC006AA96D /* SendedScript */ = {
 			isa = PBXGroup;
 			children = (
+				1B622EB01C6F194400368A1A /* SendedScriptController.h */,
+				1B622EB11C6F194400368A1A /* SendedScriptController.m */,
 				2713AFE81C56153A006AA96D /* ScriptCell.h */,
 				2713AFE91C56153A006AA96D /* ScriptCell.m */,
 				1B1095441C58716F00465235 /* ScriptItem.h */,
@@ -685,12 +757,16 @@
 				278D928C1C48DEE20017415B /* Category */,
 				27A83D551C463DA10055502E /* Utility.h */,
 				27A83D561C463DA10055502E /* Utility.m */,
+				1B93B2121C68456200DE77F7 /* IATConfig.h */,
+				1B93B2131C68456200DE77F7 /* IATConfig.m */,
 				2713AFB41C51C88A006AA96D /* BasicInfoUtility.h */,
 				2713AFB51C51C88A006AA96D /* BasicInfoUtility.m */,
 				2713AFC11C523069006AA96D /* MediaTypeXmlAnalytic.h */,
 				2713AFC21C523069006AA96D /* MediaTypeXmlAnalytic.m */,
 				1B10958B1C5F08E700465235 /* MAlertView.h */,
 				1B10958C1C5F08E700465235 /* MAlertView.m */,
+				1B622EBA1C70488700368A1A /* ModalAlert.h */,
+				1B622EBB1C70488700368A1A /* ModalAlert.m */,
 			);
 			path = Common;
 			sourceTree = "<group>";
@@ -738,6 +814,7 @@
 		27A83D671C4736740055502E /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				1B1095AE1C6349B000465235 /* iflyMSC.framework */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -967,11 +1044,13 @@
 				2713B0181C585C63006AA96D /* NewsCategory.m in Sources */,
 				27A83D571C463DA10055502E /* Utility.m in Sources */,
 				2713B01F1C585C63006AA96D /* ServerAddress.m in Sources */,
+				1B622EB21C6F194400368A1A /* SendedScriptController.m in Sources */,
 				27A83D4C1C46371F0055502E /* AppDelegate.m in Sources */,
 				2718C09B1C30D12300457E66 /* main.m in Sources */,
 				2713AFDC1C55CA00006AA96D /* ProvideTypeDB.m in Sources */,
 				2713AFEA1C56153A006AA96D /* ScriptCell.m in Sources */,
 				278D92841C48C91D0017415B /* LoginManagermentController.m in Sources */,
+				1B93B2141C68456200DE77F7 /* IATConfig.m in Sources */,
 				27A83D521C463BC40055502E /* XinHuaManuscriptController.m in Sources */,
 				2713B01E1C585C63006AA96D /* SendToAddress.m in Sources */,
 				1B10956A1C59A9BA00465235 /* NewArticlesController.m in Sources */,
@@ -990,14 +1069,16 @@
 				1B1095A61C61A3D100465235 /* RecordVoiceController.m in Sources */,
 				2713AFB31C50C0EF006AA96D /* CommonClient.m in Sources */,
 				278D927E1C488CF80017415B /* BasicDatabase.m in Sources */,
+				1B622EB91C70261A00368A1A /* AbandonedScriptCell.m in Sources */,
 				2713B01B1C585C63006AA96D /* Place.m in Sources */,
-				1B10955A1C590DD100465235 /* EditingScriptController.m in Sources */,
 				1B10954E1C59080A00465235 /* NewTextController.m in Sources */,
 				27A83E3F1C4790CA0055502E /* LoginViewController.m in Sources */,
 				1B33EA0C1C5260DD00223AFF /* UploadMaker.m in Sources */,
 				1B10958A1C5E1C9400465235 /* DetailAuditNewsViewController.m in Sources */,
-				1B1095631C590E3B00465235 /* AbandonedScriptController.m in Sources */,
+				1B622EB61C701AAB00368A1A /* AbandonedScriptController.m in Sources */,
+				1B622EBF1C70593A00368A1A /* AudioPlayerController.m in Sources */,
 				27A83E3B1C4783E40055502E /* RootViewController.m in Sources */,
+				1B622EBC1C70488700368A1A /* ModalAlert.m in Sources */,
 				2713AFAD1C4CEB11006AA96D /* NSData+LTExtension.m in Sources */,
 				2713AF9B1C4C7492006AA96D /* NSString+Security.m in Sources */,
 				1B1095511C590AAC00465235 /* NewImageController.m in Sources */,
@@ -1023,7 +1104,7 @@
 				278D928B1C48D4C80017415B /* ServerAddressDB.m in Sources */,
 				27A83E301C473C060055502E /* UploadManager.m in Sources */,
 				2713B01D1C585C63006AA96D /* Region.m in Sources */,
-				1B10955D1C590E0300465235 /* TaskManagementViewController.m in Sources */,
+				1B622EA91C6F05D600368A1A /* UploadTaskCell.m in Sources */,
 				1B1095711C59ABD700465235 /* SystemManagerController.m in Sources */,
 				2713B0141C585C63006AA96D /* CommonModel.m in Sources */,
 				1B1095A01C60981200465235 /* AttachDetailController.m in Sources */,
@@ -1037,12 +1118,13 @@
 				2713AFD01C55C401006AA96D /* RegionDB.m in Sources */,
 				1B1095841C5CEA2700465235 /* EditScriptCell.m in Sources */,
 				1B10958D1C5F08E700465235 /* MAlertView.m in Sources */,
-				1B1095601C590E2300465235 /* SendedScriptController.m in Sources */,
 				2713AFCA1C55C16C006AA96D /* LanguageDB.m in Sources */,
 				1B1095671C59A8DE00465235 /* TemplateManageController.m in Sources */,
 				1B1095931C5F5BEA00465235 /* DocTypeSecLVController.m in Sources */,
+				1B622EAC1C6F09E200368A1A /* TaskManagementViewController.m in Sources */,
 				278D92901C48DFBE0017415B /* UIDevice+IdentifierAddition.m in Sources */,
 				1B1095431C586F8F00465235 /* ManuscriptsDB.m in Sources */,
+				1B622EAF1C6F18AF00368A1A /* EditingScriptController.m in Sources */,
 				2713AFD91C55C907006AA96D /* ComeFromAddressDB.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1179,6 +1261,10 @@
 			baseConfigurationReference = A722D560414E2B7AA882522C /* Pods.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/CNewsPro/Resources",
+				);
 				HEADER_SEARCH_PATHS = (
 					"\"$(SDKROOT)/usr/include/libxml2\"",
 					"$(SDKROOT)/usr/include/libxml2",
@@ -1205,6 +1291,10 @@
 			baseConfigurationReference = 0EB46AFD6717CD40C21788CE /* Pods.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/CNewsPro/Resources",
+				);
 				HEADER_SEARCH_PATHS = (
 					"\"$(SDKROOT)/usr/include/libxml2\"",
 					"$(SDKROOT)/usr/include/libxml2",

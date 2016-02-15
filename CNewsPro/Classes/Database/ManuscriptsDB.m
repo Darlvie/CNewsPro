@@ -48,7 +48,7 @@
     if ([self openDatabase] == FALSE) {
         return nil;
     }
-    NSString *sql = @"SELECT * FROM ManuScripts where loginname=? and manuscriptsStatus=? ";
+    NSString *sql = @"SELECT * FROM Manuscripts where loginname=? and manuscriptsStatus=? ";
     sqlite3_stmt *statement = nil;
     int success = [self prepareSQL:sql SQLStatement:&statement];
     if (success != SQLITE_OK) {
@@ -127,7 +127,7 @@
         return FALSE;
     }
     
-    NSString *sql = @"UPDATE ManuScripts SET newsid=?,manuscriptsStatus=? Where m_id=?";
+    NSString *sql = @"UPDATE Manuscripts SET newsid=?,manuscriptsStatus=? Where m_id=?";
     sqlite3_stmt *statement = nil;
     int success = [self prepareSQL:sql SQLStatement:&statement];
     if (success != SQLITE_OK) {
@@ -188,7 +188,7 @@
     if ([self openDatabase]==FALSE) {
         return FALSE;
     }
-    NSString *sql = @"UPDATE ManuScripts SET senttime=? Where m_id=?";
+    NSString *sql = @"UPDATE Manuscripts SET senttime=? Where m_id=?";
     sqlite3_stmt *statement = nil;
     int success = [self prepareSQL:sql SQLStatement:&statement];
     if (success != SQLITE_OK) {
@@ -219,7 +219,7 @@
         return nil;
     }
     
-    NSString *sql = @"SELECT * FROM ManuScripts where m_id=? ";
+    NSString *sql = @"SELECT * FROM Manuscripts where m_id=? ";
     sqlite3_stmt *statement = nil;
     int success = [self prepareSQL:sql SQLStatement:&statement];
     if (success != SQLITE_OK) {
@@ -392,12 +392,106 @@
 }
 
 
+- (NSMutableArray *)getManuscriptListByStatus:(NSString *)userName status:(NSString *)mStatus pageNO:(int)pageNO pageSize:(int)pageSize{
+    
+    NSMutableArray *ManuScriptList = [[NSMutableArray alloc] init];
+    
+    if ([self openDatabase]==FALSE) {
+        return nil;
+    }
+    NSString *sql=@"";
+    if ([mStatus isEqualToString:MANUSCRIPT_STATUS_SENT]) {
+        sql = @"SELECT * FROM Manuscripts where loginname=? and manuscriptsStatus=? order by senttime Desc limit ?,?";//已发稿件按照发稿时间进行排序
+    }else {
+        sql = @"SELECT * FROM Manuscripts where loginname=? and manuscriptsStatus=? order by createtime Desc limit ?,?";
+    }
+    
+    sqlite3_stmt *statement = nil;
+    int success = [self prepareSQL:sql SQLStatement:&statement];
+    if (success != SQLITE_OK) {
+        NSLog(@"Error:%d failed to prepare select",success);
+        return nil;
+    }
+    
+    //绑定参数
+    sqlite3_bind_text(statement, 1, [userName UTF8String], -1, NULL);
+    sqlite3_bind_text(statement, 2, [mStatus UTF8String], -1, NULL);
+    sqlite3_bind_int(statement, 3, pageNO*pageSize);
+    sqlite3_bind_int(statement, 4, pageSize);
+
+    
+    while (sqlite3_step(statement)==SQLITE_ROW) {
+        ScriptItem *manuscript=[[ScriptItem alloc] init];
+        
+        [self manuscriptORM:statement manuscript:manuscript];
+        if( ![manuscript.m_id isEqualToString:@""] )
+            [ManuScriptList addObject:manuscript];
+    }
+    sqlite3_finalize(statement);
+    sqlite3_close(database);
+    
+    return ManuScriptList;
+}
 
 
+- (NSInteger)getNumberOfManuscriptsByStatus:(NSString *)userName status:(NSString *)mStatus {
+    if ([self openDatabase]==FALSE) {
+        return -1;
+    }
+    
+    NSString *sql = @"SELECT count(*) FROM Manuscripts where loginname=? and manuscriptsStatus=?";
+    sqlite3_stmt *statement = nil;
+    int success = [self prepareSQL:sql SQLStatement:&statement];
+    if (success != SQLITE_OK) {
+        NSLog(@"Error:%d failed to prepare select",success);
+        return -1;
+    }
+    
+    //绑定参数
+    sqlite3_bind_text(statement, 1, [userName UTF8String], -1, NULL);
+    sqlite3_bind_text(statement, 2, [mStatus UTF8String], -1, NULL);
 
+    NSInteger totalNumber=0;
+    while (sqlite3_step(statement)==SQLITE_ROW) {
+        totalNumber = sqlite3_column_int(statement,0);
+    }
+    
+    sqlite3_finalize(statement);
+    sqlite3_close(database);
 
+    return totalNumber;
+}
 
-
+//删除稿件   :  需要加入本地多媒体文件的删除
+- (BOOL)deleteManuscript:(NSString *)m_id
+{
+    if ([self openDatabase]==FALSE) {
+        return FALSE;
+    }
+    
+    NSString *sql = @"DELETE FROM Manuscripts WHERE m_id = ?";
+    sqlite3_stmt *statement = nil;
+    int success = [self prepareSQL:sql SQLStatement:&statement];
+    if (success != SQLITE_OK) {
+        NSLog(@"Error: failed to prepare");
+        return FALSE;
+    }
+    
+    //绑定参数
+    sqlite3_bind_text(statement, 1, [m_id UTF8String], -1, NULL);
+    
+    success = sqlite3_step(statement);
+    if (success == SQLITE_ERROR) {
+        NSLog(@"Error: failed to delete record");
+        sqlite3_finalize(statement);
+        sqlite3_close(database);
+        return FALSE;
+    }
+    sqlite3_finalize(statement);
+    sqlite3_close(database);
+    
+    return YES;
+}
 
 
 

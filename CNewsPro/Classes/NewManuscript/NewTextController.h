@@ -11,4 +11,7 @@
 @interface NewTextController : RootViewController
 
 @property (nonatomic,copy) NSString *manuscript_id;
+
+- (void)textFieldDoneEditing:(id)sender;
+
 @end
