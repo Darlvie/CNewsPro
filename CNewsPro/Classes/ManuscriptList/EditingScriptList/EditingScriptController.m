@@ -470,7 +470,7 @@ static const NSInteger kTableCellHeight = 70;
   
         [cell updateCell];
     }
-    cell.backgroundColor=[UIColor colorWithRed:60.0f/255.0f green:59.0f/255.0f blue:59.0f/255.0f alpha:1];//改变Cell背景颜色
+    cell.backgroundColor = [UIColor whiteColor];//改变Cell背景颜色
     
     cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
     ScriptItem* scriptItem = [self.scriptItems objectAtIndex:indexPath.row];
@@ -639,10 +639,10 @@ static const NSInteger kTableCellHeight = 70;
         ScriptItem *iconDownloader = [self.scriptItems objectAtIndex:indexPath.row];
         if (iconDownloader.image != nil)
         {
-            ScriptCell *cell = (ScriptCell *)[self.scriptTableView cellForRowAtIndexPath:indexPath];
+            EditScriptCell *cell = (EditScriptCell *)[self.scriptTableView cellForRowAtIndexPath:indexPath];
             
             // Display the newly loaded image
-            cell.accessaryView.image = iconDownloader.image;
+            cell.m_accessaryView.image = iconDownloader.image;
         }
         
     }

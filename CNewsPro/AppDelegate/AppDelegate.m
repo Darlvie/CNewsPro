@@ -29,7 +29,9 @@
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     // Override point for customization after application launch.
     self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
-    [self checkVersionGCD];
+    
+    //检查更新
+    //[self checkVersionGCD];
     
     NSString *initString = [[NSString alloc] initWithFormat:@"appid=%@",APP_ID];
     [IFlySpeechUtility createUtility:initString];
@@ -117,10 +119,10 @@
         [USERDEFAULTS setObject:@"高" forKey:COMPRESS];
     }
     if (resolution == nil) {
-        [USERDEFAULTS setObject:@"640*480" forKey:RESOLUTION];
+        [USERDEFAULTS setObject:@"标清480p" forKey:RESOLUTION];
     }
     if (codeBit == nil) {
-        [USERDEFAULTS setObject:@"1000" forKey:CODE_BIT];
+        [USERDEFAULTS setObject:@"30FPS" forKey:CODE_BIT];
     }
     
     if ([Utility testConnection]) {

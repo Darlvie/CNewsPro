@@ -10,9 +10,9 @@
 
 @interface SystemManagerController : RootViewController
 /** 网络设置项 **/
-@property (copy,nonatomic) NSArray *networkSettingItems;
+@property (strong,nonatomic) NSArray *networkSettingItems;
 /** 本地设置项 **/
-@property (copy,nonatomic) NSArray *localSettingItems;
+@property (strong,nonatomic) NSArray *localSettingItems;
 
 @property (strong,nonatomic) UITableView *sysTableView;
 /** 当前用户 **/
@@ -28,25 +28,25 @@
 /** 公用动作表 **/
 @property (strong,nonatomic) UIView *actionSheet;
 /** 供选择的传输文件块大小 **/
-@property (copy,nonatomic) NSArray *fileBlockArray;
+@property (strong,nonatomic) NSArray *fileBlockArray;
 
 @property (copy,nonatomic) NSString *currentAutoSaveTime;
 /** 供选择的自动保存时间 **/
-@property (copy,nonatomic) NSArray *autoSaveTimeArray;
+@property (strong,nonatomic) NSArray *autoSaveTimeArray;
 /** 设置是否保存密码的开关 **/
 @property (strong,nonatomic) UISwitch *switchOfSavePassword;
 /** 自动重传次数 **/
-@property (copy,nonatomic) NSArray *autoReSendCount;
+@property (strong,nonatomic) NSArray *autoReSendCount;
 /** 重传次数 **/
 @property (copy,nonatomic) NSString *currentResendCount;
 /** 压缩 **/
-@property (copy,nonatomic) NSArray *compressLevel;
+@property (strong,nonatomic) NSArray *compressLevel;
 /** 分辨率设置 **/
-@property (copy,nonatomic)  NSArray *resolutionArry;
+@property (strong,nonatomic) NSArray *resolutionArry;
 /** 分辨率 **/
 @property (copy,nonatomic) NSString *resolution;
 /** 码率 **/
-@property (copy,nonatomic) NSArray *codeBitArray;
+@property (strong,nonatomic) NSArray *codeBitArray;
 /** 当前码率 **/
 @property (copy,nonatomic) NSString *codeText;
 

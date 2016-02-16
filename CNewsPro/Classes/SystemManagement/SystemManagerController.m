@@ -49,7 +49,7 @@
     [self.rightButton addTarget:self action:@selector(LogOut:) forControlEvents:UIControlEventTouchUpInside];
     
     self.networkSettingItems = [[NSArray alloc]initWithObjects:@"当前账号",@"登录服务器",@"更新基础数据",@"系统版本",@"设备标识号",nil];
-    self.localSettingItems = [[NSArray alloc]initWithObjects:@"传输文件分块大小",@"自动保存时间",@"自动重传次数",@"是否保存用户密码",@"视频质量",@"分辨率",@"码率",nil];
+    self.localSettingItems = [[NSArray alloc]initWithObjects:@"传输文件分块大小",@"自动保存时间",@"自动重传次数",@"是否保存用户密码",@"视频质量",@"视频清晰度",@"帧率",nil];
     
     [self initializeFileBlockSelection];
     [self initializeAutoSaveTimeSelection];
@@ -151,11 +151,11 @@
 
 -(void)initializeResolutionArry
 {
-    if ([[self getDeviceVersion]hasPrefix:@"iPhone4"]|| [[self getDeviceVersion]hasPrefix:@"iPhone5"]) {
-        self.resolutionArry = [[NSArray alloc] initWithObjects:@"352*288",@"640*480",@"1280*720",@"1920*1080", nil];
+    if ([[self getDeviceVersion]hasPrefix:@"iPhone4"] || [[self getDeviceVersion]hasPrefix:@"iPhone5"]) {
+        self.resolutionArry = [[NSArray alloc] initWithObjects:@"标清480p",@"高清720p", nil];
     }
     else
-        self.resolutionArry = [[NSArray alloc] initWithObjects:@"352*288",@"640*480",@"1280*720", nil];
+        self.resolutionArry = [[NSArray alloc] initWithObjects:@"标清480p",@"高清720p",@"全高清1080p", nil];
     //分辨率初始化
     if ([[NSUserDefaults standardUserDefaults] objectForKey:RESOLUTION]) {
         self.resolution= [[NSUserDefaults standardUserDefaults] objectForKey:RESOLUTION];
@@ -183,7 +183,7 @@
         }
     }
     else {
-        self.currentResendCount = NSLocalizedString(@"system_fre_5 ",nil);
+        self.currentResendCount = @"5 次";
         [USERDEFAULTS setObject:@"5 " forKey:RE_SEND_COUNT];
     }
     
@@ -191,7 +191,7 @@
 
 -(void)initializeCodeArray
 {
-    self.codeBitArray = [[NSArray alloc]initWithObjects:@"500",@"1000",@"1500",@"2000",@"2500",@"3000",@"3500",@"4000",nil];
+    self.codeBitArray = [[NSArray alloc]initWithObjects:@"24FPS",@"25FPS",@"30FPS",@"60FPS",nil];
     if ([[NSUserDefaults standardUserDefaults] objectForKey:CODE_BIT])
     {
         NSString *codetext = [USERDEFAULTS objectForKey:CODE_BIT];
@@ -570,7 +570,7 @@
             pickerView.delegate = self;
             [[self.actionSheet viewWithTag:1101] addSubview:pickerView];
             //定义选择按钮
-            UISegmentedControl *closeButton = [[UISegmentedControl alloc] initWithItems:[NSArray arrayWithObject:NSLocalizedString(@"alert_select",nil)]];
+            UISegmentedControl *closeButton = [[UISegmentedControl alloc] initWithItems:[NSArray arrayWithObject:@"选择"]];
             closeButton.momentary = YES;
             closeButton.frame = CGRectMake(260, 7.0f, 50.0f, 30.0f);
             closeButton.segmentedControlStyle = UISegmentedControlStyleBar;

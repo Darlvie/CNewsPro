@@ -11,6 +11,7 @@
 #import "UploadQueue.h"
 #import "ManuscriptsDB.h"
 #import "Manuscripts.h"
+#import "AppDelegate.h"
 
 @implementation UploadManager
 
@@ -133,6 +134,34 @@
 {
     UploadClient *client = [self.uploadQueue objectAtIndex:index];
     return client.progress;
+}
+
+#pragma mark - 上传完成回调
+- (void)fileDidUpload:(NSDictionary*)uploadInfo
+{
+    NSUInteger tag = [[uploadInfo objectForKey:@"tag"] unsignedIntValue];
+    if ([[uploadInfo objectForKey:REQUEST_STATUS] isEqualToString:LAST_SUCESS]) {
+        
+        //移除完成的任务
+        [self.uploadQueue removeObjectWithTag:tag];
+        
+        //发出更新进度通知,更新界面显示
+        [[NSNotificationCenter defaultCenter] postNotificationName:DELETE_COMPLETE_CLIENT object:nil];
+        
+        //唤醒等待上传的任务
+        [self.uploadQueue awakeClients];
+        
+        //回传id写入数据库
+        [[AppDelegate getAppDelegate] alert:AlertTypeSuccess message:@"任务上传完成！"];
+    }
+    else  if ([[uploadInfo objectForKey:REQUEST_STATUS] isEqualToString:REQUEST_FAIL]) {
+        //发出更新进度通知,更新界面显示
+        [[AppDelegate getAppDelegate] alert:AlertTypeError message:@"任务中断，请续传！"];
+    } else if ([[uploadInfo objectForKey:REQUEST_STATUS] isEqualToString:LAST_FAIL]){
+
+        [[AppDelegate getAppDelegate] alert:AlertTypeError message:@"任务上传失败，请重新发送！"];
+    }
+    
 }
 
 @end

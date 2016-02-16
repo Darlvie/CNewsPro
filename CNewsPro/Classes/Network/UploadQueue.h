@@ -29,4 +29,6 @@
 
 - (void)removeObject:(UploadClient*)client;
 
+- (void)removeObjectWithTag:(NSUInteger)tag;
+
 @end

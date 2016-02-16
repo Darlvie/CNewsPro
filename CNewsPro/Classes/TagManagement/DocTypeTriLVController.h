@@ -11,9 +11,9 @@
 @class NewsCategory;
 @interface DocTypeTriLVController : RootViewController
 
-@property (nonatomic,retain) NSMutableArray *docTypeTriLVArray;
-@property (nonatomic,retain) NewsCategory *newsCategorySecLV;
-@property (nonatomic,retain) NSString *newsCategorySecLVInf;
-@property (nonatomic,retain) UITableView *docTypeTriLVView;
+@property (nonatomic,strong) NSMutableArray *docTypeTriLVArray;
+@property (nonatomic,strong) NewsCategory *newsCategorySecLV;
+@property (nonatomic,copy) NSString *newsCategorySecLVInf;
+@property (nonatomic,strong) UITableView *docTypeTriLVView;
 
 @end

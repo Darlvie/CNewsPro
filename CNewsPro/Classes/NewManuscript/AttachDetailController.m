@@ -26,7 +26,6 @@ static const NSInteger kLableHeight = 30;
 @property (nonatomic,strong) UIScrollView *scrollView;
 @property (nonatomic,strong) UITextField *tvTitle;
 @property (nonatomic,strong) UITextView *tvContent;
-@property (nonatomic,strong) NSString *operationType;
 @property (nonatomic,strong) UIButton *keyboardButton;
 @property (nonatomic,assign) NSInteger keyboardHeight;
 @property (nonatomic,assign) BOOL keyboardHide;
@@ -40,7 +39,7 @@ static const NSInteger kLableHeight = 30;
     
     //导航试图
     [self.titleLabelAndImage setImage:[UIImage imageNamed:@"manuscript_logo.png"] forState:UIControlStateNormal];
-    [self.titleLabelAndImage setTitle:@"attach_detail" forState:UIControlStateNormal];
+    [self.titleLabelAndImage setTitle:@"附件详情" forState:UIControlStateNormal];
     self.titleLabelAndImage.backgroundColor=[UIColor colorWithRed:0.0f/255.0f green:137.0f/255.0f blue:185.0f/225.0f alpha:1.0f];
     
     //liying
@@ -77,10 +76,10 @@ static const NSInteger kLableHeight = 30;
     
     //liying
     self.tvTitle=[[UITextField alloc]initWithFrame:CGRectMake(61, self.view.frame.size.height-TV_HEIGHT-kTFHeight-DOWN, 248, kTFHeight)];
-    self.tvTitle.placeholder = @"";
-    self.tvTitle.textColor=[UIColor grayColor];
+    self.tvTitle.placeholder = @"请输入标题...";
+    self.tvTitle.textColor   = [UIColor grayColor];
     [self.tvTitle setFont:[UIFont fontWithName:@"黑体-简 细体" size:15.0f]];
-    [self.tvTitle addTarget:self action:@selector(clean) forControlEvents:UIControlEventTouchUpInside];
+//    [self.tvTitle addTarget:self action:@selector(clean) forControlEvents:UIControlEventTouchUpInside];
     self.tvTitle.delegate = self;
     self.tvTitle.returnKeyType =UIReturnKeyDone;
     [self.scrollView addSubview:self.tvTitle];

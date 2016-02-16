@@ -17,6 +17,7 @@
 #import "ASIFormDataRequest.h"
 #import "NSData+LTExtension.h"
 #import "ManuscriptsDB.h"
+#import "UploadManager.h"
 
 typedef NS_ENUM(NSUInteger,UploadType)
 {

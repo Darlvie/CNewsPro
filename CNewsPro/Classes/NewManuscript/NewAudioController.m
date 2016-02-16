@@ -30,11 +30,11 @@
 @property (strong, nonatomic) Manuscripts *mcripts;
 @property (strong, nonatomic) ManuscriptsDB *manuscriptsdb;
 @property (strong, nonatomic) AccessoriesDB *accessoriesdb;
-@property (copy, nonatomic) NSMutableArray *audioInfoArray;
-@property (copy, nonatomic) NSMutableArray *gridArray;
+@property (strong, nonatomic) NSMutableArray *audioInfoArray;
+@property (strong, nonatomic) NSMutableArray *gridArray;
 @property (strong, nonatomic) VideoGrid *audioGrid;
 @property (nonatomic,strong) NSTimer *timer;
-@property(nonatomic,strong) CLLocationManager *locationManager;
+@property (nonatomic,strong) CLLocationManager *locationManager;
 @property (nonatomic,assign) NSInteger selectAccessoryIndex;
 @property (nonatomic,strong) UIButton *selectAccessorySender;
 @end

@@ -87,15 +87,15 @@ static const CGFloat  kTableCellHeight = 95;
         [UIView setAnimationCurve:UIViewAnimationCurveEaseInOut];
         [UIView setAnimationDuration:0.3];
         
-        self.m_checkImageView.center = pt;
-        self.m_checkImageView.alpha = alpha;
+        _m_checkImageView.center = pt;
+        _m_checkImageView.alpha = alpha;
         
         [UIView commitAnimations];
     }
     else
     {
-        self.m_checkImageView.center = pt;
-        self.m_checkImageView.alpha = alpha;
+        _m_checkImageView.center = pt;
+        _m_checkImageView.alpha = alpha;
     }
 }
 
@@ -120,30 +120,33 @@ static const CGFloat  kTableCellHeight = 95;
         self.textLabel.backgroundColor = [UIColor clearColor];
         self.detailTextLabel.backgroundColor = [UIColor clearColor];
         
-        if (self.m_checkImageView == nil)
+        if (_m_checkImageView == nil)
         {
-            self.m_checkImageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"SendingScript_UnCheck"]];
-            [self addSubview:self.m_checkImageView];
+            _m_checkImageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"SendingScript_UnCheck"]];
+            [self addSubview:_m_checkImageView];
         }
         
         [self setChecked:self.m_checked];
-        self.m_checkImageView.frame = CGRectMake(0,0,25,24);
-        self.m_checkImageView.center = CGPointMake(-CGRectGetWidth(self.m_checkImageView.frame) * 0.5,
+        _m_checkImageView.frame = CGRectMake(0,0,25,24);
+        _m_checkImageView.center = CGPointMake(-CGRectGetWidth(_m_checkImageView.frame) * 0.5,
                                               CGRectGetHeight(self.bounds) * 0.5);
-        self.m_checkImageView.alpha = 0.0;
+        _m_checkImageView.alpha = 0.0;
         [self setCheckImageViewCenter:CGPointMake(20.5, CGRectGetHeight(self.bounds) * 0.5)
                                 alpha:1.0 animated:animated];
     }
     else
     {
-        self.m_checked = NO;
+        _m_checked = NO;
         self.selectionStyle = UITableViewCellSelectionStyleBlue;
         self.backgroundView = nil;
         
-        if (self.m_checkImageView)
+        UIImageView *bgImageView = [[UIImageView alloc]initWithImage:[UIImage imageNamed:@"commonbg.png"]];
+        self.backgroundView = bgImageView;
+        
+        if (_m_checkImageView)
         {
-            self.m_checkImageView.frame = CGRectMake(0,0,25,24);
-            [self setCheckImageViewCenter:CGPointMake(-CGRectGetWidth(self.m_checkImageView.frame) * 0.5,
+            _m_checkImageView.frame = CGRectMake(0,0,25,24);
+            [self setCheckImageViewCenter:CGPointMake(-CGRectGetWidth(_m_checkImageView.frame) * 0.5,
                                                       CGRectGetHeight(self.bounds) * 0.5)
                                     alpha:0.0
                                  animated:animated];
@@ -156,16 +159,16 @@ static const CGFloat  kTableCellHeight = 95;
 {
     if (checked)
     {
-        self.m_checkImageView.image = [UIImage imageNamed:@"editingScript_Checked.png"];
+        _m_checkImageView.image = [UIImage imageNamed:@"editingScript_Checked.png"];
         self.backgroundView.backgroundColor = [UIColor colorWithRed:223.0/255.0 green:230.0/255.0 blue:250.0/255.0 alpha:1.0];
     }
     else
     {
-        self.m_checkImageView.image = [UIImage imageNamed:@"editingScript_Unchecked.png"];
+        _m_checkImageView.image = [UIImage imageNamed:@"editingScript_Unchecked.png"];
         self.backgroundView.backgroundColor = [UIColor whiteColor];
     }
     
-    self.m_checked = checked;
+    _m_checked = checked;
 }
 
 @end

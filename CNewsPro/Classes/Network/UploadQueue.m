@@ -63,7 +63,18 @@
     [self.queue removeObject:client];
 }
 
-
+//移除client
+- (void)removeObjectWithTag:(NSUInteger)tag
+{
+    for (int i = 0; i < [self.queue count]; i++) {
+        UploadClient *client = (UploadClient*)[self.queue objectAtIndex:i];
+        if ([[client.uploadInfo objectForKey:@"tag"] unsignedIntegerValue] == tag) {
+            
+            [self.queue removeObjectAtIndex:i];
+            break;
+        }
+    }
+}
 
 
 

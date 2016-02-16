@@ -103,7 +103,7 @@
 
 
 #define TEMPLATE_DETAIL_VIEW_SECTION_NUM 1//稿件属性section
-#define TEMPLATE_DETAIL_VIEWROW_NUM 11//稿件属性row
+#define TEMPLATE_DETAIL_VIEW_ROW_NUM 11//稿件属性row
 #define SEND_ADDRESS_SECTION_NUM 1//发稿地址section
 #define SEND_ADDRESS_ROW_NUM 4//发稿地址row
 #define TF_CGRECT CGRectMake(100, 0, 180, 50)

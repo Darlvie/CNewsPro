@@ -13,6 +13,7 @@
 
 @property (nonatomic,copy) NSString *filepath;//附件地址
 @property (nonatomic,copy) NSString *filetype;
+@property (nonatomic,strong) NSString *operationType;
 @property (nonatomic,strong) Accessories *accessory;
 
 - (void)saveAttachDetail:(id)sender;

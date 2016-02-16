@@ -10,7 +10,7 @@
 
 @interface DocTypeSuperController : RootViewController
 
-@property (nonatomic,copy) NSMutableArray *docTypeSuperArray;
+@property (nonatomic,strong) NSMutableArray *docTypeSuperArray;
 @property (nonatomic,strong) UITableView *docTypeSuperView;
 
 @end

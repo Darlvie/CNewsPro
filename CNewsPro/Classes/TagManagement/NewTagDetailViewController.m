@@ -72,6 +72,32 @@
     // Dispose of any resources that can be recreated.
 }
 
+- (void)returnToParentView:(UIButton *)button {
+    [[NetworkManager sharedManager]  cancelRequestForDelegate:self];
+    if (self.templateType == TemplateTypeNew)
+    {
+        NSInteger index=[self.navigationController.viewControllers count]-2;
+        TemplateManageController *templateManageController = [self.navigationController.viewControllers objectAtIndex:index];
+        [templateManageController reloadtable];
+        [self.navigationController popToViewController:templateManageController  animated:YES];
+        
+    }
+    else {
+        NSInteger index=[self.navigationController.viewControllers count]-2;
+        if(self.templateType == TemplateTypeCheckAble || self.templateType == TemplateTypeEditAble || self.templateType == TemplateTypeSaveAs){
+            //返回稿签对象
+            [self.delegate returnManuscriptTemplate:self.manuscriptTemplate];
+            
+        }
+        else if(self.templateType == TemplateTypeExist){
+            //返回稿签对象
+            [self.delegate reloadtable];
+        }
+        [self.navigationController popToViewController:[self.navigationController.viewControllers objectAtIndex:index]  animated:YES];
+    }
+
+}
+
 #pragma mark - KeyboardNotification
 //根据键盘遮挡情况移动视图
 -(void)textFieldKeyboardDidShow:(NSNotification *)notification
@@ -495,7 +521,7 @@
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
     if (tableView == self.templateDetailView) {
-        return TEMPLATE_DETAIL_VIEWROW_NUM;
+        return TEMPLATE_DETAIL_VIEW_SECTION_NUM;
     }
     else {
         return SEND_ADDRESS_SECTION_NUM;
@@ -505,9 +531,9 @@
 {
     if (tableView==self.templateDetailView) {
         if (self.templateType == TemplateTypeCheckAble || self.templateType == TemplateTypeEditAble || self.templateType == TemplateTypeSaveAs) {
-            return TEMPLATE_DETAIL_VIEWROW_NUM-3;
+            return TEMPLATE_DETAIL_VIEW_ROW_NUM-3;
         }
-        return TEMPLATE_DETAIL_VIEWROW_NUM-2;
+        return TEMPLATE_DETAIL_VIEW_ROW_NUM-2;
     }
     else {
         return SEND_ADDRESS_ROW_NUM;

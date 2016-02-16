@@ -43,8 +43,8 @@
     self.lbText3.textColor=[UIColor grayColor];
     [self.contentView addSubview:self.lbText3];
     
-    self.accessaryView=[[UIImageView alloc] init];
-    CGRect accessaryViewSize=CGRectMake(210, 2, 80, 66);
+    self.accessaryView = [[UIImageView alloc] init];
+    CGRect accessaryViewSize = CGRectMake(210, 2, 80, 66);
     self.accessaryView.frame = accessaryViewSize;
     [self.contentView addSubview:self.accessaryView];
   
@@ -55,15 +55,15 @@
 {
     if (checked)
     {
-        self.checkImageView.image = [UIImage imageNamed:@"abandoned_selectBg.png"];
+        _checkImageView.image = [UIImage imageNamed:@"abandoned_selectBg.png"];
         self.backgroundView.backgroundColor = [UIColor colorWithRed:223.0/255.0 green:230.0/255.0 blue:250.0/255.0 alpha:1.0];
     }
     else
     {
-        self.checkImageView.image = [UIImage imageNamed:@"abandoned_unselectBg.png"];
+        _checkImageView.image = [UIImage imageNamed:@"abandoned_unselectBg.png"];
         self.backgroundView.backgroundColor = [UIColor whiteColor];
     }
-    self.checked = checked;
+    _checked = checked;
 }
 
 //进入编辑模式添加的动画
@@ -76,15 +76,15 @@
         [UIView setAnimationCurve:UIViewAnimationCurveEaseInOut];
         [UIView setAnimationDuration:0.3];
         
-        self.checkImageView.center = pt;
-        self.checkImageView.alpha = alpha;
+        _checkImageView.center = pt;
+        _checkImageView.alpha = alpha;
         
         [UIView commitAnimations];
     }
     else
     {
-        self.checkImageView.center = pt;
-        self.checkImageView.alpha = alpha;
+        _checkImageView.center = pt;
+        _checkImageView.alpha = alpha;
     }
 }
 
@@ -105,34 +105,37 @@
         
         UIImageView *bgImageView = [[UIImageView alloc]initWithImage:[UIImage imageNamed:@"commonbg.png"]];
         self.backgroundView = bgImageView;
-        
+//
         self.textLabel.backgroundColor = [UIColor clearColor];
         self.detailTextLabel.backgroundColor = [UIColor clearColor];
         
-        if (self.checkImageView == nil)
+        if (_checkImageView == nil)
         {
-            self.checkImageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"abandoned_unselectBg.png"]];
-            [self addSubview:self.checkImageView];
+            _checkImageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"abandoned_unselectBg.png"]];
+            [self addSubview:_checkImageView];
         }
         
-        [self setChecked:self.checked];
-        self.checkImageView.frame = CGRectMake(0,0,25,24);
-        self.checkImageView.center = CGPointMake(-CGRectGetWidth(self.checkImageView.frame) * 0.5,
+        [self setChecked:_checked];
+        _checkImageView.frame = CGRectMake(0,0,25,24);
+        _checkImageView.center = CGPointMake(-CGRectGetWidth(_checkImageView.frame) * 0.5,
                                               CGRectGetHeight(self.bounds) * 0.5);
-        self.checkImageView.alpha = 0.0;
+        _checkImageView.alpha = 0.0;
         [self setCheckImageViewCenter:CGPointMake(20.5, CGRectGetHeight(self.bounds) * 0.5)
                                 alpha:1.0 animated:animated];
     }
     else
     {
-        self.checked = NO;
+        _checked = NO;
         self.selectionStyle = UITableViewCellSelectionStyleBlue;
         self.backgroundView = nil;
+
+        UIImageView *bgImageView = [[UIImageView alloc]initWithImage:[UIImage imageNamed:@"commonbg.png"]];
+        self.backgroundView = bgImageView;
         
-        if (self.checkImageView)
+        if (_checkImageView)
         {
-            self.checkImageView.frame = CGRectMake(0,0,25,24);
-            [self setCheckImageViewCenter:CGPointMake(-CGRectGetWidth(self.checkImageView.frame) * 0.5,
+            _checkImageView.frame = CGRectMake(0,0,25,24);
+            [self setCheckImageViewCenter:CGPointMake(-CGRectGetWidth(_checkImageView.frame) * 0.5,
                                                       CGRectGetHeight(self.bounds) * 0.5)
                                     alpha:0.0 
                                  animated:animated];

@@ -51,18 +51,18 @@
 //自定义编辑模式下的选中图片
 - (void)setChecked:(BOOL)checked {
     if (checked) {
-        self.checkImageView.image = [UIImage imageNamed:@"sent_selectBg.png"];
+        _checkImageView.image = [UIImage imageNamed:@"sent_selectBg.png"];
         self.backgroundView.backgroundColor = [UIColor colorWithRed:223.0/255.0 green:230.0/255.0 blue:250.0/255.0 alpha:1.0];
     } else {
-        self.checkImageView.image = [UIImage imageNamed:@"sent_unselectBg.png"];
+        _checkImageView.image = [UIImage imageNamed:@"sent_unselectBg.png"];
         self.backgroundView.backgroundColor = [UIColor whiteColor];
     }
-    self.checked = checked;
+    _checked = checked;
 }
 
 //自定义的编辑模式
 - (void)setEditing:(BOOL)editing animated:(BOOL)animated {
-    if ((self.editing = editing)) {
+    if (self.editing == editing) {
         return;
     }
     [super setEditing:editing animated:YES];
@@ -76,25 +76,29 @@
         self.textLabel.backgroundColor = [UIColor clearColor];
         self.detailTextLabel.backgroundColor = [UIColor clearColor];
         
-        if (self.checkImageView == nil) {
-            self.checkImageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"sent_unselectBg.png"]];
-            [self addSubview:self.checkImageView];
+        if (_checkImageView == nil) {
+            _checkImageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"sent_unselectBg.png"]];
+            [self addSubview:_checkImageView];
         }
         [self setChecked:self.checked];
-        self.checkImageView.frame = CGRectMake(0,0,25,24);
-        self.checkImageView.center = CGPointMake(-CGRectGetWidth(self.checkImageView.frame) * 0.5,
+        _checkImageView.frame = CGRectMake(0,0,25,24);
+        _checkImageView.center = CGPointMake(-CGRectGetWidth(_checkImageView.frame) * 0.5,
                                                  CGRectGetHeight(self.bounds) * 0.5);
-        self.checkImageView.alpha = 0.0;
+        _checkImageView.alpha = 0.0;
         [self setCheckImageViewCenter:CGPointMake(20.5, CGRectGetHeight(self.bounds) * 0.5)
                                 alpha:1.0
                              animated:animated];
     } else {
-        self.checked = NO;
+        _checked = NO;
         self.selectionStyle = UITableViewCellSelectionStyleBlue;
         self.backgroundView = nil;
-        if (self.checkImageView) {
-            self.checkImageView.frame = CGRectMake(0,0,25,24);
-            [self setCheckImageViewCenter:CGPointMake(-CGRectGetWidth(self.checkImageView.frame) * 0.5,
+        
+        UIImageView *bgImageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"commonbg.png"]];
+        self.backgroundView = bgImageView;
+        
+        if (_checkImageView) {
+            _checkImageView.frame = CGRectMake(0,0,25,24);
+            [self setCheckImageViewCenter:CGPointMake(-CGRectGetWidth(_checkImageView.frame) * 0.5,
                                                       CGRectGetHeight(self.bounds) * 0.5)
                                     alpha:0.0
                                  animated:animated];
@@ -110,12 +114,12 @@
         [UIView setAnimationCurve:UIViewAnimationCurveEaseInOut];
         [UIView setAnimationDuration:0.3];
         
-        self.checkImageView.center = cp;
-        self.checkImageView.alpha = alpha;
+        _checkImageView.center = cp;
+        _checkImageView.alpha = alpha;
         [UIView commitAnimations];
     } else {
-        self.checkImageView.center = cp;
-        self.checkImageView.alpha = alpha;
+        _checkImageView.center = cp;
+        _checkImageView.alpha = alpha;
     }
 }
 

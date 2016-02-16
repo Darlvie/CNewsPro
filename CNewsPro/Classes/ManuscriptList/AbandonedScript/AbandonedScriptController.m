@@ -22,9 +22,9 @@ static const NSInteger kTableCellHeight = 70;
 
 @interface AbandonedScriptController () <UITableViewDelegate,UITableViewDataSource>
 
-@property (nonatomic,assign) BOOL			allSelected;
-@property (nonatomic,copy)   NSMutableDictionary *deleteDic;
-@property (nonatomic,copy)   NSMutableArray *scriptItems;
+@property (nonatomic,assign) BOOL allSelected;
+@property (nonatomic,strong) NSMutableDictionary *deleteDic;
+@property (nonatomic,strong) NSMutableArray *scriptItems;
 @property (nonatomic,strong) UITableView *scriptTableView;
 @property (nonatomic,strong) UIImageView *checkImageView;
 @property (nonatomic,strong) UIView *viewAboveTableView;
@@ -34,7 +34,7 @@ static const NSInteger kTableCellHeight = 70;
 @property (nonatomic,strong) UIButton *reButton;
 @property (nonatomic,strong) UILabel *totalNumber;
 @property (nonatomic,assign) int pageNum;
-@property (nonatomic,copy)   NSMutableArray *imageList;
+@property (nonatomic,strong) NSMutableArray *imageList;
 @property (nonatomic,strong) UIView *viewBelowTableView;
 @property (nonatomic,strong) UIButton *nextBtn;
 @property (nonatomic,strong) UIButton *lastBtn;
@@ -452,14 +452,14 @@ static const NSInteger kTableCellHeight = 70;
         
         UIView *backgrdView = [[UIView alloc] initWithFrame:cell.frame];
         UILabel * grayBg = [[UILabel alloc] initWithFrame:CGRectMake(1,1,319,kTableCellHeight-2)];
-        grayBg.backgroundColor = [UIColor colorWithRed:238.0f/255.0f green:239.0f/255.0f blue:239.0f/255.0f alpha:1.0f];;
+        grayBg.backgroundColor = [UIColor colorWithRed:238.0f/255.0f green:239.0f/255.0f blue:239.0f/255.0f alpha:1.0f];
         [backgrdView addSubview:grayBg];
         cell.backgroundView = backgrdView;
 
         [cell updateCell];
     }
     
-    cell.backgroundColor=[UIColor colorWithRed:60.0f/225.0f green:59.0f/225.0f blue:59.0f/225.0f alpha:1];//改变Cell背景颜色
+    cell.backgroundColor = [UIColor whiteColor];//改变Cell背景颜色
     
     cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
     ScriptItem* scriptItem = [self.scriptItems objectAtIndex:indexPath.row];
@@ -475,9 +475,8 @@ static const NSInteger kTableCellHeight = 70;
         NSMutableArray *accessoriesList = [[NSMutableArray alloc]init];
         accessoriesList=[adb getAccessoriesListByMId:scriptItem.m_id];
 
-        //        NSString *imageName=@"";
         if([accessoriesList count]==0){  //如果没有附件时，加载默认图片
-            //        imageName=[NSString stringWithFormat:@"%@%@%@",[[NSBundle mainBundle]resourcePath],@"/",@"bigpicholder.png"];
+
         }
         else{
             //根据附件类型确定加载视频图片、音频图片还是普通图片
@@ -497,7 +496,7 @@ static const NSInteger kTableCellHeight = 70;
                         [self startIconDownload:scriptItem  forIndexPath:indexPath];
                     }
                     // if a download is deferred or in progress, return a placeholder image
-                    cell.accessaryView.image = [self.imageList objectAtIndex:0];//[UIImage imageNamed:@"bigpicholder.png"];
+                    cell.accessaryView.image = [self.imageList objectAtIndex:0];
            
                 }
                 else if([accessType isEqualToString:@"VIDEO"]){

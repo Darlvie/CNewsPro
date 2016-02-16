@@ -421,7 +421,7 @@
 
     
     while (sqlite3_step(statement)==SQLITE_ROW) {
-        ScriptItem *manuscript=[[ScriptItem alloc] init];
+        ScriptItem *manuscript = [ScriptItem scriptItem];
         
         [self manuscriptORM:statement manuscript:manuscript];
         if( ![manuscript.m_id isEqualToString:@""] )

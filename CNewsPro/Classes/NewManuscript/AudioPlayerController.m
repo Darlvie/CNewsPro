@@ -25,11 +25,11 @@ static const NSInteger kXmax = 30;
 @property (nonatomic,strong) UIButton *btnPlay;
 @property (nonatomic,strong) UIButton *btnPause;
 @property (nonatomic,strong) NSTimer *timer;
-@property(nonatomic,strong) UIProgressView *meter1;
-@property(nonatomic,strong) UIProgressView *meter2;
-@property(nonatomic,strong) UISlider *scrubber;
-@property(nonatomic,strong) UISlider *volumeSlider;
-@property(nonatomic,strong) UILabel *nowPlaying;
+@property (nonatomic,strong) UIProgressView *meter1;
+@property (nonatomic,strong) UIProgressView *meter2;
+@property (nonatomic,strong) UISlider *scrubber;
+@property (nonatomic,strong) UISlider *volumeSlider;
+@property (nonatomic,strong) UILabel *nowPlaying;
 @end
 
 @implementation AudioPlayerController

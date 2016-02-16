@@ -28,15 +28,15 @@
 @property (strong,nonatomic) Manuscripts *mcripts;
 @property (strong,nonatomic) ManuscriptsDB *manuscriptsdb;
 @property (strong,nonatomic) AccessoriesDB *accessoriesdb;
-@property (copy,nonatomic) NSMutableArray *accessoriesArry;
+@property (strong,nonatomic) NSMutableArray *accessoriesArry;
 @property (strong,nonatomic) UIScrollView *imageListScrollView;
-@property (copy,nonatomic) NSMutableArray *gridArray;
+@property (strong,nonatomic) NSMutableArray *gridArray;
 @property (strong,nonatomic) VideoGrid *imageGrid;
 @property (nonatomic,strong) NSTimer *timer;
 @property (nonatomic,strong) CLLocationManager *locationManager;
-@property (nonatomic,copy) NSMutableArray *audioInfoArray;
+@property (nonatomic,strong) NSMutableArray *audioInfoArray;
 @property (nonatomic,assign) NSInteger selectAccessoryIndex;
-@property(nonatomic,strong) UIButton *selectAccessorySender;
+@property (nonatomic,strong) UIButton *selectAccessorySender;
 @property (nonatomic,assign) BOOL isCamera;
 
 @end

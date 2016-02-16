@@ -11,7 +11,7 @@
 @class NewsCategory;
 @interface DocTypeSecLVController : RootViewController
 
-@property (nonatomic,copy) NSMutableArray *docTypeSecLVArray;
+@property (nonatomic,strong) NSMutableArray *docTypeSecLVArray;
 @property (nonatomic,strong) NewsCategory *newsCategorySuper;
 @property (nonatomic,copy) NSString *newsCategorySuperInf;
 @property (nonatomic,strong) UITableView *docTypeSecLVView;

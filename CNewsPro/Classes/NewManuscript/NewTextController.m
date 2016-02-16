@@ -35,8 +35,8 @@
 @property(nonatomic,strong) Manuscripts *mcripts;
 @property(nonatomic,strong) ManuscriptsDB *manuscriptsdb;
 @property(nonatomic,strong) CLLocationManager *locationManager;
-@property(nonatomic, strong)  NSTimer *timer;//自动保存定时器
-@property (nonatomic,copy) NSMutableArray *accessoriesArry;
+@property(nonatomic,strong)  NSTimer *timer;//自动保存定时器
+@property(nonatomic,strong) NSMutableArray *accessoriesArry;
 @property(nonatomic,strong) IFlyRecognizerView *iflyRecognizerView;
 
 @end
@@ -334,7 +334,7 @@
 }
 
 //保存稿件。不负责保存稿件的附件信息。附件信息在添加和删除附件时完成。
--(NSString *)saveManuscript
+- (NSString *)saveManuscript
 {
     NSString *logInfo = @"";
     
@@ -590,7 +590,7 @@
 
 #pragma mark - NewTagDetailViewController返回调用
 //回传稿签数据
--(void)returnManuScriptTemplate:(ManuscriptTemplate *)manuscripttemplate
+-(void)returnManuscriptTemplate:(ManuscriptTemplate *)manuscripttemplate
 {
     self.mcripts.mTemplate = manuscripttemplate;
     

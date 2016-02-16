@@ -24,7 +24,7 @@ static const CGFloat kCellHeight = 105.0f;
 
 @interface TaskManagementViewController () <UITableViewDelegate,UITableViewDataSource>
 @property (nonatomic,strong) NSMutableDictionary *selectDic;
-@property (nonatomic,copy)  NSMutableArray *imageList;
+@property (nonatomic,strong)  NSMutableArray *imageList;
 @property (nonatomic,strong) UIButton *cancelButton;
 @property (nonatomic,strong) UIButton *deleteButton;
 @property (nonatomic,strong) UIButton *pauseButton;
@@ -34,7 +34,7 @@ static const CGFloat kCellHeight = 105.0f;
 @property (nonatomic,strong) UILabel *totalNumber;
 @property (nonatomic,strong) UITableView *tableView;
 @property (nonatomic,strong) UILabel *noDataLabel;
-@property (nonatomic,copy) NSMutableArray *scriptItems;
+@property (nonatomic,strong) NSMutableArray *scriptItems;
 @property (nonatomic,strong) UIImageView *checkImageView;
 @property (nonatomic,assign) BOOL		allSelected;
 @end
@@ -173,6 +173,10 @@ static const CGFloat kCellHeight = 105.0f;
     // Dispose of any resources that can be recreated.
 }
 
+- (void)dealloc {
+    [NOTIFICATION_CENTER removeObserver:self];
+}
+
 - (void)returnToParentView:(UIButton *)button {
     //取消禁止锁屏
     [UIApplication sharedApplication].idleTimerDisabled=NO;
@@ -207,14 +211,14 @@ static const CGFloat kCellHeight = 105.0f;
 {
     //刷新tableview，以更新上传进度显示
     UploadClient *a = [notif object];
-    NSIndexPath *i=[NSIndexPath indexPathForRow:a.currentIndexPath inSection:0];
+    NSIndexPath *i  = [NSIndexPath indexPathForRow:a.currentIndexPath inSection:0];
     UploadTaskCell *cell = (UploadTaskCell*)[self.tableView cellForRowAtIndexPath:i];
     cell.progressView.progress = a.progress;
     
     NSString *filepath = [[UploadManager sharedManager] attachmentPathAtQueueIndex:i.row];
     double totalSize = (double)[Utility getFileLengthByPath:filepath]/1024.0;
     double speed = (double)[[USERDEFAULTS objectForKey:FILE_BLOCK] intValue]*1000/a.blockTime;
-    double time = (double)totalSize*(1-a.progress)/speed;
+    double time  = (double)totalSize*(1-a.progress)/speed;
     if (time>60&&time<60*60) {
         NSInteger minute = time/60;
         cell.leaveTime.text = [NSString stringWithFormat:@"%@%ld%@",@"剩余时间:",minute,@"分钟"];
@@ -246,7 +250,7 @@ static const CGFloat kCellHeight = 105.0f;
         [[UploadManager sharedManager] pauseUploadClientAtQueueIndex:i.row];
         
     }
-    if (!a.paused&&a.running) {
+    if (!a.paused && a.running) {
         [cell.btnSwitch setImage:[UIImage imageNamed:@"SendingScript_pause"] forState:UIControlStateNormal];
         [cell.btnSwitch setTitle:@"1" forState:UIControlStateNormal];
         
@@ -489,8 +493,8 @@ static const CGFloat kCellHeight = 105.0f;
     ScriptItem* scriptItem = [self.scriptItems objectAtIndex:indexPath.row];
     UploadTaskCell *cell = (UploadTaskCell*)[aTableView dequeueReusableCellWithIdentifier:cellIdentifier];
     
-    Manuscripts *manuscripts=[[UploadManager sharedManager] objectAtQueueIndex:indexPath.row];
-    NSString *filepath=[[UploadManager sharedManager] attachmentPathAtQueueIndex:indexPath.row];
+    Manuscripts *manuscripts = [[UploadManager sharedManager] objectAtQueueIndex:indexPath.row];
+    NSString *filepath = [[UploadManager sharedManager] attachmentPathAtQueueIndex:indexPath.row];
     if (cell==nil)
     {
         cell = [[UploadTaskCell alloc] initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:cellIdentifier];
@@ -567,12 +571,12 @@ static const CGFloat kCellHeight = 105.0f;
         cell.btnSwitch.hidden = YES;
     }
     //编辑模式下隐藏按钮
-    if (aTableView.editing==YES) {
-        cell.btnSwitch.hidden=YES;
+    if (aTableView.editing == YES) {
+        cell.btnSwitch.hidden = YES;
     }
     else
     {
-        cell.btnSwitch.hidden=NO;
+        cell.btnSwitch.hidden = NO;
     }
     cell.selectionStyle = UITableViewCellSelectionStyleGray;
     [cell setChecked:scriptItem.checked];

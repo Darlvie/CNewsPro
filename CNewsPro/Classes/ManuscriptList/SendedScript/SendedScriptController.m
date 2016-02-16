@@ -21,9 +21,9 @@ static const NSInteger kTableCellHeight = 70;
 
 @interface SendedScriptController () <UITableViewDataSource,UITableViewDelegate>
 
-@property (nonatomic,copy) NSMutableDictionary *deleteDic;
+@property (nonatomic,strong) NSMutableDictionary *deleteDic;
 @property (nonatomic,assign) int pageNum;
-@property (nonatomic,copy) NSMutableArray *imageList;
+@property (nonatomic,strong) NSMutableArray *imageList;
 @property (nonatomic,strong) UIView *viewAboveTableView;
 @property (nonatomic,strong) UIView *viewBelowTableView;
 @property (nonatomic,strong) UITableView *scriptTableView;
@@ -36,7 +36,7 @@ static const NSInteger kTableCellHeight = 70;
 @property (nonatomic,strong) UILabel *pageStatusLabel;
 @property (nonatomic,strong) UILabel *noDataLabel;
 @property (nonatomic,strong) NSMutableArray *scriptItems;
-@property (nonatomic,retain)  UIImageView*	checkImageView;
+@property (nonatomic,retain) UIImageView*	checkImageView;
 @property (nonatomic,assign) BOOL allSelected;
 @end
 
@@ -436,7 +436,7 @@ static const NSInteger kTableCellHeight = 70;
         [cell updateCell];
     }
 
-    cell.backgroundColor=[UIColor colorWithRed:60.0f/225.0f green:59.0f/225.0f blue:59.0f/225.0f alpha:1];//改变Cell背景颜色
+    cell.backgroundColor=[UIColor whiteColor];//改变Cell背景颜色
     
     cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
     ScriptItem* scriptItem = [self.scriptItems objectAtIndex:indexPath.row];

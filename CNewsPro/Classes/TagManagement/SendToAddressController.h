@@ -18,8 +18,8 @@ typedef NS_ENUM(NSInteger,SendToAddressType) {
 @interface SendToAddressController : RootViewController
 
 @property (nonatomic,assign) NSInteger sendToAddressType;
-@property (nonatomic,copy) NSMutableArray *sendToAddressArray;
-@property (nonatomic,copy) NSArray *selectedSendToAddressArray;
-@property (nonatomic,copy) NSMutableDictionary *sendToAddressDictionary;
+@property (nonatomic,strong) NSMutableArray *sendToAddressArray;
+@property (nonatomic,strong) NSArray *selectedSendToAddressArray;
+@property (nonatomic,strong) NSMutableDictionary *sendToAddressDictionary;
 @property (nonatomic,strong) UITableView *sendToAddressView;
 @end

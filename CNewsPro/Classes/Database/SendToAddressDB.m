@@ -13,6 +13,7 @@
 
 //查看发稿地址列表
 - (NSMutableArray *)getSendToAddressList {
+    
     NSMutableArray *sendToAddressList = [[NSMutableArray alloc] init];
     if ([self openDatabase]==FALSE) {
         return nil;

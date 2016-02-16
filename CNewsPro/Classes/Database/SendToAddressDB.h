@@ -13,7 +13,7 @@
 /**
  *  查看发稿地址列表
  */
-- (NSMutableArray*)getSendToAddressList;
+- (NSMutableArray *)getSendToAddressList;
 
 - (BOOL)deleteAll;
 

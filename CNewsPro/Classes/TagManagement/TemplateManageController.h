@@ -16,8 +16,8 @@ typedef NS_ENUM(NSInteger,ViewTemplate) {
 @class ManuscriptTemplate;
 @interface TemplateManageController : RootViewController
 
-@property (nonatomic,copy) NSMutableArray *sysTagArray;
-@property (nonatomic,copy) NSMutableArray *customTagArray;
+@property (nonatomic,strong) NSMutableArray *sysTagArray;
+@property (nonatomic,strong) NSMutableArray *customTagArray;
 @property (nonatomic,strong) ManuscriptTemplate *defaultManuscriptTemplate;
 @property (nonatomic,assign) NSInteger viewTemplate;
 @property (nonatomic,strong) UITableView *tableView;

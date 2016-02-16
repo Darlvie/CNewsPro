@@ -25,8 +25,6 @@
 #import <MobileCoreServices/MobileCoreServices.h>
 #import "RecordVoiceController.h"
 #import "EditingScriptController.h"
-//#import <iflyMSC/IFlyRecognizerView.h>
-//#import <iflyMSC/IFlyRecognizerViewDelegate.h>
 #import <iflyMSC/iflyMSC.h>
 #import "IATConfig.h"
 
@@ -46,12 +44,12 @@ static NSString *kAutoSaveTime = @"kAutoSaveTime";
 @property (nonatomic,strong) UILabel *labelTitle;
 @property (nonatomic,strong) UILabel *title_static;
 @property (nonatomic,strong) UIScrollView *scrollView1;
-@property (nonatomic,copy) NSMutableArray *imageArray;
-@property (nonatomic,copy) NSMutableArray *videoArray;
-@property (nonatomic,copy) NSMutableArray *voiceArray;
+@property (nonatomic,strong) NSMutableArray *imageArray;
+@property (nonatomic,strong) NSMutableArray *videoArray;
+@property (nonatomic,strong) NSMutableArray *voiceArray;
 @property (nonatomic,strong) UIButton *keyboardButton;
 @property (nonatomic,strong) NSTimer *timer;//自动保存定时器
-@property (nonatomic,copy)  NSMutableArray *accessoriesArry;//附件列表
+@property (nonatomic,strong) NSMutableArray *accessoriesArry;//附件列表
 @property (nonatomic,strong) ManuscriptsDB *manuscriptsdb;
 @property (nonatomic,assign) BOOL keyboardHide;
 @property (nonatomic,strong) Manuscripts *mcripts;
@@ -74,9 +72,9 @@ static NSString *kAutoSaveTime = @"kAutoSaveTime";
 @property (nonatomic,assign) NSInteger videoSecond;
 @property (nonatomic,strong) UILabel *videoTimeLb;
 @property (nonatomic,strong) NSTimer *videoTimer;
-@property (nonatomic,copy) NSMutableArray *gridArray;
-@property (nonatomic,copy) NSMutableArray *audioInfoArray;
-@property(nonatomic,strong) IFlyRecognizerView *iflyRecognizerView;
+@property (nonatomic,strong) NSMutableArray *gridArray;
+@property (nonatomic,strong) NSMutableArray *audioInfoArray;
+@property (nonatomic,strong) IFlyRecognizerView *iflyRecognizerView;
 
 @end
 
@@ -258,8 +256,7 @@ static NSString *kAutoSaveTime = @"kAutoSaveTime";
         if (([[Utility trimBlankSpace:self.titleField.text] isEqualToString:@""]||[[Utility trimBlankSpace:self.titleField.text] isEqualToString:self.mcripts.mTemplate.defaultTitle])&&([[Utility trimBlankSpace:self.tvContent.text] isEqualToString:@""]||[[Utility trimBlankSpace:self.tvContent.text] isEqualToString:self.mcripts.mTemplate.defaultContents])&&(self.accessoriesArry.count == 0))
         {
             //直接返回上级视图
-        }
-        else {
+        } else {
             if( [[Utility trimBlankSpace:self.titleField.text] isEqualToString:@""] )
             {
                 [[AppDelegate getAppDelegate] alert:AlertTypeAlert message:@"请输入稿件标题"];
@@ -293,7 +290,6 @@ static NSString *kAutoSaveTime = @"kAutoSaveTime";
                 {
                     if(self.delegate)
                     {
-
                         [self.delegate reloadCell:currentManuscriptId cellIndexPath:self.indexPath];
 
                     }
@@ -313,7 +309,7 @@ static NSString *kAutoSaveTime = @"kAutoSaveTime";
 
 #pragma mark - 初始化方法
 //页面首次进入时，初始化稿件内容
--(void)initializeManusContent
+- (void)initializeManusContent
 {
     //调用数据库函数
     self.manuscriptsdb = [[ManuscriptsDB alloc] init];
@@ -397,7 +393,7 @@ static NSString *kAutoSaveTime = @"kAutoSaveTime";
 }
 
 //页面控件初始化
--(void)initializeController
+- (void)initializeController
 {
     //导航试图
     [self.titleLabelAndImage setImage:[UIImage imageNamed:@"manuscript_logo.png"] forState:UIControlStateNormal];
@@ -426,8 +422,14 @@ static NSString *kAutoSaveTime = @"kAutoSaveTime";
         self.labelTitle.hidden = YES;
         
         //添加键盘监听
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillShow:) name:UIKeyboardWillShowNotification object:nil];
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillHide:) name:UIKeyboardWillHideNotification object:nil];
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(keyboardWillShow:)
+                                                     name:UIKeyboardWillShowNotification
+                                                   object:nil];
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(keyboardWillHide:)
+                                                     name:UIKeyboardWillHideNotification
+                                                   object:nil];
         
         //控制键盘按钮
         self.keyboardHide = TRUE;
@@ -610,11 +612,10 @@ static NSString *kAutoSaveTime = @"kAutoSaveTime";
         return @"当前登录名为空，未保存";
     }
     self.mcripts.title = [Utility trimBlankSpace:self.titleField.text];
-    
+    self.mcripts.contents = [Utility trimBlankSpace:self.tvContent.text];
     self.mcripts.manuscriptsStatus = MANUSCRIPT_STATUS_EDITING;   //稿件状态。必填。
     //zyq,12/10,添加地理位置信息
     self.mcripts.location = @"0.0,0.0"; //定位信息
-    
     self.mcripts.createTime = [Utility getLogTimeStamp];
     
     if ([self.manuscriptsdb addManuScript:self.mcripts] > 0) {
@@ -629,7 +630,8 @@ static NSString *kAutoSaveTime = @"kAutoSaveTime";
 //更新已存在的稿件
 - (NSString*)updateManuscript:(NSString*)manuscriptId
 {
-    self.mcripts.title=[Utility trimBlankSpace:self.titleField.text];
+    self.mcripts.title = [Utility trimBlankSpace:self.titleField.text];
+    self.mcripts.contents = [Utility trimBlankSpace:self.tvContent.text];
     if ([self.manuscriptsdb updateManuscript:self.mcripts]) {
         return @"更新稿件成功";
     }
@@ -799,7 +801,7 @@ static NSString *kAutoSaveTime = @"kAutoSaveTime";
 
 #pragma mark - NewTagDetailViewController返回调用
 //回传稿签数据
--(void)ReturnManuScriptTemplate:(ManuscriptTemplate *)manuscripttemplate
+-(void)returnManuscriptTemplate:(ManuscriptTemplate *)manuscripttemplate
 {
     if( [self.operationType isEqualToString:@"detail"] )
     {
@@ -950,7 +952,7 @@ static NSString *kAutoSaveTime = @"kAutoSaveTime";
         NSString *originName = [NSString stringWithFormat:@"%@%@",[formatter stringFromDate:[NSDate date]],MOV_TYPE];//文件名称
         self.currentVideoPath = originName;
 #warning PBJVision开始捕获
-        //[[PBJVision sharedInstance] startVideoCapture:originName];
+        [[PBJVision sharedInstance] startVideoCapture:originName];
         
     }else
     {
@@ -1000,36 +1002,62 @@ static NSString *kAutoSaveTime = @"kAutoSaveTime";
 #warning 重置PBJVision,需要自定义方法？
 - (void)resetCapture
 {
-//    NSInteger codeBit = [[USERDEFAULTS objectForKey:CODE_BIT] intValue];
-//    NSString *resolution = [USERDEFAULTS objectForKey:RESOLUTION];
-//    [[PBJVision sharedInstance] startPreviewWithMALV:codeBit];
-//    self.pbvision = [PBJVision sharedInstance];
-//    self.pbvision.delegate = self;
-//    if ([resolution isEqualToString:@"352*288"]) {
-//        pbvision.fenbianlv =AVCaptureSessionPreset352x288;
-//    }
-//    if ([resolution isEqualToString:@"640*480"]) {
-//        pbvision.fenbianlv =AVCaptureSessionPreset640x480;
-//    }
-//    if ([resolution isEqualToString:@"1280*720"]) {
-//        pbvision.fenbianlv =AVCaptureSessionPreset1280x720;
-//    }
-//    pbvision.pinzhen = 30;
-//    [pbvision setCameraMode:PBJCameraModeVideo];    //设置📷模式
-//    [pbvision setCameraDevice:PBJCameraDeviceBack];   //设置📷设备
-//    [pbvision setCameraOrientation:PBJCameraOrientationPortrait]; //设置📷其方向
-//    [pbvision setFocusMode:PBJFocusModeAutoFocus];
-//    
+    NSInteger codeBit = [[USERDEFAULTS objectForKey:CODE_BIT] intValue];
+    NSString *resolution = [USERDEFAULTS objectForKey:RESOLUTION];
+    
+    self.pbvision = [PBJVision sharedInstance];
+    self.pbvision.delegate = self;
+    
+    if ([resolution isEqualToString:@"标清480p"]) {
+        self.pbvision.captureSessionPreset = AVCaptureSessionPreset640x480;
+        self.pbvision.outputFormat = PBJOutputFormatStandard;
+        self.pbvision.videoBitRate = PBJVideoBitRate640x480;
+        self.pbvision.additionalCompressionProperties = @{AVVideoProfileLevelKey:AVVideoProfileLevelH264HighAutoLevel};
+    }
+    if ([resolution isEqualToString:@"高清720p"]) {
+        self.pbvision.captureSessionPreset = AVCaptureSessionPreset1280x720;
+        self.pbvision.outputFormat = PBJOutputFormatWidescreen;
+        self.pbvision.videoBitRate = PBJVideoBitRate1280x720;
+        self.pbvision.additionalCompressionProperties = @{AVVideoProfileLevelKey:AVVideoProfileLevelH264High40};
+    }
+    if ([resolution isEqualToString:@"全高清1080p"]) {
+        self.pbvision.captureSessionPreset = AVCaptureSessionPreset1920x1080;
+        self.pbvision.outputFormat = PBJOutputFormatWidescreen;
+        self.pbvision.videoBitRate = PBJVideoBitRate1920x1080;
+        self.pbvision.additionalCompressionProperties = @{AVVideoProfileLevelKey:AVVideoProfileLevelH264High41};
+
+    }
+    
+    if ([resolution isEqualToString:@"24FPS"]) {
+        self.pbvision.videoFrameRate = 24;
+    } else if ([resolution isEqualToString:@"25FPS"]) {
+        self.pbvision.videoFrameRate = 25;
+    } else if ([resolution isEqualToString:@"30FPS"] || [resolution isEqualToString:@""]) {
+        self.pbvision.videoFrameRate = 30;
+    } else if ([resolution isEqualToString:@"60FPS"]) {
+        self.pbvision.videoFrameRate = 60;
+    }
+    
+    [self.pbvision setCameraMode:PBJCameraModeVideo];    //设置📷模式
+    [self.pbvision setCameraDevice:PBJCameraDeviceBack];   //设置📷设备
+    [self.pbvision setCameraOrientation:PBJCameraOrientationPortrait]; //设置📷其方向
+    [self.pbvision setFocusMode:PBJFocusModeAutoFocus];
+    
+    [self.pbvision startPreview];
+    
 }
 
 //稿件详情页
 -(void)showDetailAttachment:(id)sender
 {
-    Accessories *selectAudioInfo = [self.audioInfoArray objectAtIndex:[sender tag]];
+    Accessories *selectaccessories = [self.accessoriesArry objectAtIndex:[sender tag]];
+   
     AttachDetailController *attachDetailController = [[AttachDetailController alloc] init];
-    attachDetailController.filetype = selectAudioInfo.type;
-    attachDetailController.filepath = [FILE_PATH_IN_PHONE stringByAppendingPathComponent:selectAudioInfo.originName];
-    attachDetailController.accessory = selectAudioInfo;
+    attachDetailController.filetype = selectaccessories.type;
+    attachDetailController.filepath = [FILE_PATH_IN_PHONE stringByAppendingPathComponent:selectaccessories.originName];
+    attachDetailController.accessory = selectaccessories;
+    if( [self.operationType isEqualToString:@"detail"] )
+        attachDetailController.operationType = @"detail";
     [self.navigationController pushViewController:attachDetailController animated:YES];
 }
 
@@ -1058,7 +1086,7 @@ static NSString *kAutoSaveTime = @"kAutoSaveTime";
         
         if([[Utility trimBlankSpace:self.titleField.text] isEqualToString:@""])
         {
-            self.mcripts.title=@"<无标题>";
+            self.mcripts.title = @"<无标题>";
         }
         NSString *message = [self saveManuscript];
         [[AppDelegate getAppDelegate] alert:AlertTypeSuccess message:message];

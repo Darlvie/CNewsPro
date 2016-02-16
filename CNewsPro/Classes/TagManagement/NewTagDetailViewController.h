@@ -58,11 +58,11 @@ typedef	NS_ENUM(NSInteger,TemplateType)
 /** 稿件类型 **/
 @property (nonatomic,strong) UITextField  *tf16;
 /** 语种数据 **/
-@property (nonatomic,copy) NSMutableArray *languageArray;
+@property (nonatomic,strong) NSMutableArray *languageArray;
 /** 供稿类别数据 **/
-@property (nonatomic,copy) NSMutableArray *provideTypeArray;
+@property (nonatomic,strong) NSMutableArray *provideTypeArray;
 /** 优先级数据 **/
-@property (nonatomic,copy) NSMutableArray *newsPriorityArray;
+@property (nonatomic,strong) NSMutableArray *newsPriorityArray;
 /** 公用动作表 **/
 @property (nonatomic,strong) UIView *actionSheet;
 /** 加载TemplateDetailController的类型 **/
