@@ -25,25 +25,29 @@ static const CGFloat  kTableCellHeight = 95;
 - (instancetype)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier {
     self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
     if (self) {
+        UIView *cellBackgroundView = [[UIView alloc] init];
+        self.cellBackgroundView.frame = self.bounds;
+        [self.contentView addSubview:cellBackgroundView];
+        cellBackgroundView.backgroundColor = [UIColor whiteColor];
+        self.cellBackgroundView = cellBackgroundView;
+        
         // Initialization code
         self.progressView = [[UIProgressView alloc] initWithProgressViewStyle:UIProgressViewStyleDefault];
-        self.progressView.frame = CGRectMake(10, 85, 300, 10);
-        [self.contentView addSubview:self.progressView];
+        self.progressView.frame = CGRectMake(10, 85, SCREEN_WIDTH-20, 10);
+        [self.cellBackgroundView addSubview:self.progressView];
         
         self.btnSwitch = [UIButton buttonWithType:UIButtonTypeCustom];
         self.btnSwitch.frame = CGRectMake(5, 20, 25, 25);
         //btnSwitch.titleLabel.textColor=[UIColor clearColor];
         [self.btnSwitch setTitleColor:[UIColor clearColor] forState:UIControlStateNormal];
         [self.btnSwitch setTitle:@"0" forState:UIControlStateNormal];
-        [self.btnSwitch setImage:[UIImage imageNamed:@"SendingScript_pause"] forState:UIControlStateNormal];
+        [self.btnSwitch setImage:[UIImage imageNamed:@"pause_filled"] forState:UIControlStateNormal];
         
         self.manuscriptsTitle=[[UILabel alloc] initWithFrame:CGRectMake(46, 5, 159, 20)];
         self.manuscriptsTitle.backgroundColor=[UIColor clearColor];
         self.manuscriptsTitle.textColor=[UIColor blackColor];
         [self.manuscriptsTitle setFont:[UIFont systemFontOfSize:17]];
-        
-        
-        
+          
         self.manuscriptsContent=[[UITextView alloc] initWithFrame:CGRectMake(40, 25, 300 , kTableCellHeight-55)];
         self.manuscriptsContent.backgroundColor=[UIColor clearColor];
         [self.manuscriptsContent setFont:[UIFont systemFontOfSize:16]];
@@ -61,17 +65,12 @@ static const CGFloat  kTableCellHeight = 95;
         self.leaveTime.textColor=[UIColor grayColor];
         [self.leaveTime setFont:[UIFont systemFontOfSize:13]];
         
-        
-        self.line = [[UILabel alloc] initWithFrame:CGRectMake(0, kTableCellHeight-2, 481, 1)];
-        self.line.backgroundColor=[UIColor colorWithRed:205.0f/255.0f green:212.0f/255.0f blue:217.0f/255.0f alpha:1];
-        [self.contentView addSubview:self.line];
-        
-        [self.contentView addSubview:self.btnSwitch];
-        [self.contentView addSubview:self.manuscriptsTitle];
-        [self.contentView addSubview:self.manuscriptsContent];
-        [self.contentView addSubview:self.attachmentimg];
-        [self.contentView addSubview:self.leaveTime];
-        [self.contentView addSubview:self.fileLenth];
+        [self.cellBackgroundView addSubview:self.btnSwitch];
+        [self.cellBackgroundView addSubview:self.manuscriptsTitle];
+        [self.cellBackgroundView addSubview:self.manuscriptsContent];
+        [self.cellBackgroundView addSubview:self.attachmentimg];
+        [self.cellBackgroundView addSubview:self.leaveTime];
+        [self.cellBackgroundView addSubview:self.fileLenth];
     }
     return self;
 
@@ -112,17 +111,13 @@ static const CGFloat  kTableCellHeight = 95;
     if (editting)
     {
         self.selectionStyle = UITableViewCellSelectionStyleNone;
-        self.backgroundView = [[UIView alloc] init];
-        ////self.backgroundView.backgroundColor = [UIColor whiteColor];
-        UIImageView *bgImageView = [[UIImageView alloc]initWithImage:[UIImage imageNamed:@"commonbg.png"]];
-        self.backgroundView = bgImageView;
         
         self.textLabel.backgroundColor = [UIColor clearColor];
         self.detailTextLabel.backgroundColor = [UIColor clearColor];
         
         if (_m_checkImageView == nil)
         {
-            _m_checkImageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"SendingScript_UnCheck"]];
+            _m_checkImageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"checked_2-1"]];
             [self addSubview:_m_checkImageView];
         }
         
@@ -138,11 +133,7 @@ static const CGFloat  kTableCellHeight = 95;
     {
         _m_checked = NO;
         self.selectionStyle = UITableViewCellSelectionStyleBlue;
-        self.backgroundView = nil;
-        
-        UIImageView *bgImageView = [[UIImageView alloc]initWithImage:[UIImage imageNamed:@"commonbg.png"]];
-        self.backgroundView = bgImageView;
-        
+
         if (_m_checkImageView)
         {
             _m_checkImageView.frame = CGRectMake(0,0,25,24);
@@ -159,13 +150,18 @@ static const CGFloat  kTableCellHeight = 95;
 {
     if (checked)
     {
-        _m_checkImageView.image = [UIImage imageNamed:@"editingScript_Checked.png"];
-        self.backgroundView.backgroundColor = [UIColor colorWithRed:223.0/255.0 green:230.0/255.0 blue:250.0/255.0 alpha:1.0];
+        _m_checkImageView.image = [UIImage imageNamed:@"checked_2_filled"];
+        self.cellBackgroundView.backgroundColor = RGB(239, 239, 239);
+        self.backgroundView = [[UIView alloc] init];
+        UIImageView *bgImageView = [[UIImageView alloc]initWithImage:[UIImage imageNamed:@"commonbg.png"]];
+        self.backgroundView = bgImageView;
     }
     else
     {
-        _m_checkImageView.image = [UIImage imageNamed:@"editingScript_Unchecked.png"];
+        _m_checkImageView.image = [UIImage imageNamed:@"checked_2-1"];
         self.backgroundView.backgroundColor = [UIColor whiteColor];
+        self.cellBackgroundView.backgroundColor = [UIColor whiteColor];
+        self.backgroundView = nil;
     }
     
     _m_checked = checked;

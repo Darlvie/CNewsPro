@@ -672,6 +672,7 @@ static NSString *kManuCountFile = @"manuCountDaily";
     
     ManuscriptsDB *mdb = [[ManuscriptsDB alloc] init];
     [mdb setManuscriptStatus:MANUSCRIPT_STATUS_STAND_TO mId:mscripts.m_id];
+    
     //标题进行拆分更新
     if (![accessories.title isEqualToString:@""] && accessories.title != NULL) {
         mscripts.title=[NSString stringWithFormat:@"%@%@%@",mscripts.title,@" ",accessories.title];
@@ -868,7 +869,7 @@ static NSString *kManuCountFile = @"manuCountDaily";
         [UploadMaker uploadWithFilePath:mscripts accessories:accessories];
     }
     else {
-        NSLog(@"shibai");
+        NSLog(@"失败");
     }
 }
 
@@ -995,7 +996,7 @@ static NSString *kManuCountFile = @"manuCountDaily";
     NSDate *date =[utcFmt dateFromString:utcTimeStamp];
     
     NSDateFormatter *localFmt = [[NSDateFormatter alloc] init];
-    [localFmt setDateFormat:@"hh:mm MM.dd"];
+    [localFmt setDateFormat:@"yyyy/MM/dd HH:mm"];
     
     return [localFmt stringFromDate:date];
 }

@@ -15,10 +15,15 @@
 
 #define RGBA(r, g, b, a) [UIColor colorWithRed:r/255.0f green:g/255.0f blue:b/255.0f alpha:a]
 #define RGB(r,g,b) [UIColor colorWithRed:r/255.0f green:g/255.0f blue:b/255.0f alpha:1]
+#define UIColorFromRGBA(rgbValue, alphaValue) [UIColor \
+colorWithRed:((float)((rgbValue & 0xFF0000) >> 16))/255.0 \
+green:((float)((rgbValue & 0x00FF00) >> 8))/255.0 \
+blue:((float)(rgbValue & 0x0000FF))/255.0 \
+alpha:alphaValue]
 
 #define BLOCK_SIZE  [[[NSUserDefaults standardUserDefaults] objectForKey:FILE_BLOCK] intValue]*1024
 
-#define FILE_PATH_IN_PHONE [[NSHomeDirectory() stringByAppendingPathComponent:@"Documents"] stringByAppendingPathComponent:[[NSUserDefaults standardUserDefaults] objectForKey:LOGIN_NAME]]
+#define FILE_PATH_IN_PHONE [NSHomeDirectory() stringByAppendingPathComponent:@"Documents"]
 
 #define SCREEN_WIDTH [UIScreen mainScreen].bounds.size.width
 #define SCREEN_HEIGHT [UIScreen mainScreen].bounds.size.height

@@ -41,7 +41,7 @@ static const NSInteger kXmax = 30;
     //导航试图
     [self.titleLabelAndImage setImage:[UIImage imageNamed:@"express_audio"] forState:UIControlStateNormal];
     [self.titleLabelAndImage setTitle:@"音频播放" forState:UIControlStateNormal];
-    self.titleLabelAndImage.backgroundColor=[UIColor colorWithRed:154.0f/255.0f green:213.0f/255.0f blue:231.0f/255.0f alpha:1.0f];
+    self.titleLabelAndImage.backgroundColor=RGB(60, 90, 154);
     
     //添加暂停按钮
     self.btnPause=[[UIButton alloc] initWithFrame:self.rightButton.frame];
@@ -63,22 +63,22 @@ static const NSInteger kXmax = 30;
    
     
     //liying
-    self.meter1=[[UIProgressView alloc]initWithFrame:CGRectMake(20, self.view.frame.size.height-down-44-51-45-kProgressViewUpHeight-kProgressViewDownHeight-kSliderUpHeight-kSliderDownHeight, 280, kProgressViewUpHeight)];
+    self.meter1=[[UIProgressView alloc]initWithFrame:CGRectMake(20, self.view.frame.size.height-down-44-51-45-kProgressViewUpHeight-kProgressViewDownHeight-kSliderUpHeight-kSliderDownHeight, SCREEN_WIDTH-40, kProgressViewUpHeight)];
     [self.view addSubview:self.meter1];
     
     //liying
-    self.meter2=[[UIProgressView alloc]initWithFrame:CGRectMake(20, self.view.frame.size.height-down-44-51-kProgressViewDownHeight-kSliderUpHeight-kSliderDownHeight, 280, kProgressViewUpHeight)];
+    self.meter2=[[UIProgressView alloc]initWithFrame:CGRectMake(20, self.view.frame.size.height-down-44-51-kProgressViewDownHeight-kSliderUpHeight-kSliderDownHeight, SCREEN_WIDTH-40, kProgressViewUpHeight)];
     [self.view addSubview:self.meter2];
     
     //liying
-    self.scrubber=[[UISlider alloc]initWithFrame:CGRectMake(19, self.view.frame.size.height-down-44-kSliderUpHeight-kSliderDownHeight, 280, 22)];
+    self.scrubber=[[UISlider alloc]initWithFrame:CGRectMake(19, self.view.frame.size.height-down-44-kSliderUpHeight-kSliderDownHeight, SCREEN_WIDTH-40, 22)];
     self.scrubber.minimumValue=0;
     self.scrubber.maximumValue=1;
     [self.scrubber addTarget:self action:@selector(setTimeIndex:) forControlEvents:UIControlEventValueChanged];
     [self.view addSubview:self.scrubber];
     
     //liying
-    self.volumeSlider=[[UISlider alloc]initWithFrame:CGRectMake(19, self.view.frame.size.height-down-kSliderDownHeight, 280, 22)];
+    self.volumeSlider=[[UISlider alloc]initWithFrame:CGRectMake(19, self.view.frame.size.height-down-kSliderDownHeight, SCREEN_WIDTH-40, 22)];
     self.volumeSlider.minimumValue=0;
     self.volumeSlider.maximumValue=1;
     self.volumeSlider.value = self.volumeSlider.maximumValue;

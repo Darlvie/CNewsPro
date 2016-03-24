@@ -30,7 +30,7 @@ static const NSInteger kTableViewCellHeight = 50;
     
     //导航试图
     [self.titleLabelAndImage setTitle:self.newsCategorySuper.name forState:UIControlStateNormal];
-    self.titleLabelAndImage.backgroundColor=[UIColor colorWithRed:154.0f/255.0f green:213.0f/255.0f blue:231.0f/255.0f alpha:1.0f];
+    self.titleLabelAndImage.backgroundColor = RGB(60, 90, 154);
     
     
     self.newsCategorySuperInf = self.newsCategorySuper.name;

@@ -7,7 +7,7 @@
 //
 
 #import "AuditNewsViewController.h"
-#import "EditScriptCell.h"
+#import "MultipleScriptCell.h"
 #import "AuditNewsItem.h"
 #import "DetailAuditNewsViewController.h"
 #import "AppDelegate.h"
@@ -219,25 +219,30 @@ static const NSInteger kTableViewCellHeight = 70;
     static NSString *CellIdentifier = @"EditingscriptItemCell";
     
     //使用自定义cell
-    EditScriptCell *cell = (EditScriptCell*)[tableView dequeueReusableCellWithIdentifier:CellIdentifier];
+    MultipleScriptCell *cell = (MultipleScriptCell*)[tableView dequeueReusableCellWithIdentifier:CellIdentifier];
     if (cell == nil) {
-        cell = [[EditScriptCell alloc] initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:CellIdentifier];
+//        cell = [[EditScriptCell alloc] initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:CellIdentifier];
+        cell = [[[NSBundle mainBundle] loadNibNamed:@"EditScriptCell" owner:nil options:nil] lastObject];
         UIView *backgrdView = [[UIView alloc] initWithFrame:cell.frame];
         UILabel *grayBg = [[UILabel alloc] initWithFrame:CGRectMake(1,1,319,kTableViewCellHeight-2)];
         grayBg.backgroundColor = [UIColor colorWithRed:238.0f/255.0f green:239.0f/255.0f blue:239.0f/255.0f alpha:1.0f];;
         [backgrdView addSubview:grayBg];
         cell.backgroundView = backgrdView;
-        [cell updateCell];
+//        [cell updateCell];
     }
     //改变Cell背景颜色
     cell.backgroundColor = [UIColor colorWithRed:60.0f/255.0f green:59.0f/255.0f blue:59.0f/255.0f alpha:1];
     cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
     AuditNewsItem* scriptItem = [self.scriptItems objectAtIndex:indexPath.row];
-    cell.m_lbText1.text = scriptItem.anAbstract;
-    cell.m_lbText2.text = scriptItem.createTime;
-    cell.m_accessaryView.image = [UIImage imageNamed:@"videoBg"];
-    cell.m_lbText3.text = scriptItem.author;
+//    cell.m_lbText1.text = scriptItem.anAbstract;
+//    cell.m_lbText2.text = scriptItem.createTime;
+//    cell.m_accessaryView.image = [UIImage imageNamed:@"videoBg"];
+//    cell.m_lbText3.text = scriptItem.author;
     
+    cell.cellTitleLabel.text = scriptItem.author;
+    cell.cellDetailLabel.text = scriptItem.anAbstract;
+    cell.cellDateLabel.text = scriptItem.createTime;
+    cell.cellImageView.image = [UIImage imageNamed:@"videoBg"];
     return cell;
 }
 

@@ -58,7 +58,7 @@
 
 #define IMG_TYPE  @".jpg"
 #define VOC_TYPE  @".aif"
-#define MOV_TYPE  @".mov"
+#define MOV_TYPE  @".mp4"
 
 #define MANUSCRIPT_TEMPLATE_TYPE @"NORMAL"
 #define TEXT_EXPRESS_TEMPLATE_TYPE @"TEXT"

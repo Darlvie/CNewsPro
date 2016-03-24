@@ -7,7 +7,7 @@
 //
 
 #import "UserGuideViewController.h"
-#import "XinHuaManuscriptController.h"
+#import "LoginViewController.h"
 
 @interface UserGuideViewController ()
 
@@ -65,9 +65,9 @@
 
 - (void)firstpressed
 {
-    XinHuaManuscriptController *manuscriptVC = [[XinHuaManuscriptController alloc]
-                                                initWithNibName:@"XinHuaManuscriptController" bundle:nil];
-    [self presentViewController:manuscriptVC animated:YES completion:nil];
+    LoginViewController *loginVC = [[LoginViewController alloc] initWithNibName:@"LoginViewController" bundle:nil];
+                                    
+    [self presentViewController:loginVC animated:YES completion:nil];
 }
 
 @end

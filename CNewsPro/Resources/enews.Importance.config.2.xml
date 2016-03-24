@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CNML xmlns="http://www.cnml.org.cn/2005/CNMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<Items>
+<Item xsi:type="TopicListItemType">
+<MetaInfo>
+<AdministrationMetaGroup>
+<Id>
+<PublicId>urn:cnml:xinhua.org:20131014:enews.Importance.config.2:2</PublicId>
+<ProviderId>xinhua.org</ProviderId>
+<DateId>20131014</DateId>
+<ItemId>enews.Importance.config.2</ItemId>
+<VersionId>2</VersionId>
+</Id>
+<Status>Usable</Status>
+</AdministrationMetaGroup>
+</MetaInfo>
+<Contents>
+<TopicList xsi:type="TopicListType" id="c0030186001" domain="//DescriptionMetaGroup/SubjectCodes/SubjectCode[@kind='Importance']/MainCode/@topicRef">
+<Topics>
+<Topic id="c0030186001001" topicId="001" deleteFlag="Remain">
+<Name xml:lang="zh-CN">最高</Name>
+</Topic>
+<Topic id="c0030186001002" topicId="002" deleteFlag="Remain">
+<Name xml:lang="zh-CN">级别2</Name>
+</Topic>
+<Topic id="c0030186001003" topicId="003" deleteFlag="Remain">
+<Name xml:lang="zh-CN">级别3</Name>
+</Topic>
+<Topic id="c0030186001004" topicId="004" deleteFlag="Remain">
+<Name xml:lang="zh-CN">级别4</Name>
+</Topic>
+<Topic id="c0030186001005" topicId="005" deleteFlag="Remain">
+<Name xml:lang="zh-CN">普通</Name>
+</Topic>
+<Topic id="c0030186001006" topicId="006" deleteFlag="Remain">
+<Name xml:lang="zh-CN">级别6</Name>
+</Topic>
+<Topic id="c0030186001007" topicId="007" deleteFlag="Remain">
+<Name xml:lang="zh-CN">级别7</Name>
+</Topic>
+<Topic id="c0030186001008" topicId="008" deleteFlag="Remain">
+<Name xml:lang="zh-CN">最低</Name>
+</Topic>
+<Topic id="c0030186001009" topicId="009" deleteFlag="Remain">
+<Name xml:lang="zh-CN">用户自定义</Name>
+</Topic>
+</Topics>
+</TopicList>
+</Contents>
+</Item>
+</Items>
+</CNML>

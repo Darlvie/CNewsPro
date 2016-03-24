@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CNML>
+<Items>
+<item>
+<Contents>
+<TopicList>
+<Topics>
+<Topic topicId="004009" deleteFlag="Remain">
+<Name>新闻频道</Name>
+<Description kind="Order">0</Description>
+<Description kind="Language">zh-CHS</Description>
+<Description kind="Tag"/>
+</Topic>
+</Topics>
+</TopicList>
+</Contents>
+</item>
+</Items>
+</CNML>

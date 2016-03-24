@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CNML xmlns="http://www.cnml.org.cn/2005/CNMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<Items>
+<Item xsi:type="TopicListItemType">
+<MetaInfo>
+<AdministrationMetaGroup>
+<Id>
+<PublicId>urn:cnml:xinhua.org:20131014:enews.Category.config.2:2</PublicId>
+<ProviderId>xinhua.org</ProviderId>
+<DateId>20131014</DateId>
+<ItemId>enews.Category.config.2</ItemId>
+<VersionId>2</VersionId>
+</Id>
+<Status>Usable</Status>
+</AdministrationMetaGroup>
+</MetaInfo>
+<Contents>
+<TopicList xsi:type="TopicListType" id="c0030186002" domain="//DescriptionMetaGroup/SubjectCodes/SubjectCode[@kind='Category']/MainCode/@topicRef">
+<Topics>
+<Topic id="c0030186002001" topicId="001" deleteFlag="Remain">
+<Name xml:lang="zh-CN">政治</Name>
+<Name xml:lang="en">PoliticsAndLaw</Name>
+<Description xml:lang="zh-CN">有关政治、法律制度、机构、政策等情况的新闻</Description>
+</Topic>
+<Topic id="c0030186002002" topicId="002" deleteFlag="Remain">
+<Name xml:lang="zh-CN">国际</Name>
+<Name xml:lang="en">International</Name>
+<Description xml:lang="zh-CN">综述政治概况和基本情况的新闻，包括国际国内形势综述</Description>
+</Topic>
+<Topic id="c0030186002003" topicId="003" deleteFlag="Remain">
+<Name xml:lang="zh-CN">突发</Name>
+<Name xml:lang="en">Breakout</Name>
+<Description xml:lang="zh-CN">突发事件</Description>
+</Topic>
+<Topic id="c0030186002004" topicId="004" deleteFlag="Remain">
+<Name xml:lang="zh-CN">财经</Name>
+<Name xml:lang="en">economics</Name>
+<Description xml:lang="zh-CN">财经</Description>
+</Topic>
+<Topic id="c0030186002005" topicId="005" deleteFlag="Remain">
+<Name xml:lang="zh-CN">名人</Name>
+<Name xml:lang="en">famousperson</Name>
+<Description xml:lang="zh-CN">名人</Description>
+</Topic>
+<Topic id="c0030186002006" topicId="006" deleteFlag="Remain">
+<Name xml:lang="zh-CN">丑闻</Name>
+<Name xml:lang="en">scandal</Name>
+<Description xml:lang="zh-CN">丑闻</Description>
+</Topic>
+<Topic id="c0030186002007" topicId="007" deleteFlag="Remain">
+<Name xml:lang="zh-CN">体育</Name>
+<Name xml:lang="en">sports</Name>
+<Description xml:lang="zh-CN">体育</Description>
+</Topic>
+<Topic id="c0030186002008" topicId="008" deleteFlag="Remain">
+<Name xml:lang="zh-CN">文娱</Name>
+<Name xml:lang="en">entertainment</Name>
+<Description xml:lang="zh-CN">文娱</Description>
+</Topic>
+</Topics>
+</TopicList>
+</Contents>
+</Item>
+</Items>
+</CNML>

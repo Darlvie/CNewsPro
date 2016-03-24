@@ -72,12 +72,12 @@ typedef NS_ENUM(NSUInteger,UploadType)
 
 //开始上传
 - (void)startUpload {
-    NSDate *newDate = [NSDate date];
-    NSDateFormatter *dateFormat = [[NSDateFormatter alloc] init];
-    [dateFormat setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
-    NSString *newDateOne = [dateFormat stringFromDate:newDate];
-    [dateFormat setDateStyle:NSDateFormatterFullStyle];
-    [dateFormat setTimeZone:[NSTimeZone timeZoneWithAbbreviation:@"UTC"]];
+//    NSDate *newDate = [NSDate date];
+//    NSDateFormatter *dateFormat = [[NSDateFormatter alloc] init];
+//    [dateFormat setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
+//    NSString *newDateOne = [dateFormat stringFromDate:newDate];
+//    [dateFormat setDateStyle:NSDateFormatterFullStyle];
+//    [dateFormat setTimeZone:[NSTimeZone timeZoneWithAbbreviation:@"UTC"]];
     
     self.paused = NO;
     self.running = YES;
@@ -97,7 +97,7 @@ typedef NS_ENUM(NSUInteger,UploadType)
     if (![Utility testConnection]) {
         self.paused = YES;
         [self.uploadInfo setObject:LAST_FAIL forKey:REQUEST_STATUS];
-        [NOTIFICATION_CENTER postNotificationName:UPDATE_UPLOAD_PROGRESS_NOTIFICATION object:nil];
+        [NOTIFICATION_CENTER postNotificationName:UPDATE_UPLOAD_PROGRESS_NOTIFICATION object:self];
     }
     
     //判断sessionId是否存在（为空表示离线登录，需要重新获取）
@@ -121,13 +121,13 @@ typedef NS_ENUM(NSUInteger,UploadType)
                 [[AppDelegate getAppDelegate] alert:AlertTypeError message:@"session校验失败!"];
                 self.paused = YES;
                 [self.uploadInfo setObject:LAST_FAIL forKey:REQUEST_STATUS];
-                [NOTIFICATION_CENTER postNotificationName:UPDATE_UPLOAD_PROGRESS_NOTIFICATION object:nil];
+                [NOTIFICATION_CENTER postNotificationName:UPDATE_UPLOAD_PROGRESS_NOTIFICATION object:self];
                 return;
             }
         } else {
             self.paused = YES;
             [self.uploadInfo setObject:LAST_FAIL forKey:REQUEST_STATUS];
-            [NOTIFICATION_CENTER postNotificationName:UPDATE_UPLOAD_PROGRESS_NOTIFICATION object:nil];
+            [NOTIFICATION_CENTER postNotificationName:UPDATE_UPLOAD_PROGRESS_NOTIFICATION object:self];
             return;
         }
     }
@@ -310,8 +310,7 @@ typedef NS_ENUM(NSUInteger,UploadType)
  *  发送文件步骤三：确认整个文件已完全传输
  *
  */
--(void)uploadConfirmFileWithServerFileID:(NSString*)fid length:(NSUInteger)length checkCode:(NSString*)checkCode checkFlag:(int)checkFlag
-                            compressFlag:(int)compressFlag encryptFlag:(int)encryptFlag {
+-(void)uploadConfirmFileWithServerFileID:(NSString*)fid length:(NSUInteger)length checkCode:(NSString*)checkCode checkFlag:(int)checkFlag compressFlag:(int)compressFlag encryptFlag:(int)encryptFlag {
     NSString *url=[NSString stringWithFormat:@"%@%@",MITI_IP,@"mServices!uploadComplete.action"];
     NSString *bodyStr = [NSString stringWithFormat:@"ua=%@&sss=%@&fid=%@&len=%lu&checkCode=%@&checkFlag=%d&compressFlag=%d&encryptFlag=%d",
                          @"file.upconfirm",
@@ -361,11 +360,12 @@ typedef NS_ENUM(NSUInteger,UploadType)
 
 //网络请求成功回调
 - (void)requestFinished:(ASIHTTPRequest *)request {
+    
     NSData *responseData = [request responseData];
     NSString *responseStr = [[NSString alloc] initWithData:responseData encoding:NSUTF8StringEncoding];
+    
     if (responseData) {
         if (request.tag == UploadTypeWhole) {
-            self.dataClient = nil;
             if ([responseStr componentsSeparatedByString:@"||"].count > 1) {
                 NSString *status = [[responseStr componentsSeparatedByString:@"||"] objectAtIndex:0];
                 if ([status isEqualToString:@"0"]) {
@@ -374,7 +374,6 @@ typedef NS_ENUM(NSUInteger,UploadType)
                 }
             }
         } else if (request.tag == UploadTypeEmptyNew) {
-            self.client = nil;
             if ([responseStr componentsSeparatedByString:@"||"].count > 1) {
                 NSString *status = [[responseStr componentsSeparatedByString:@"||"] objectAtIndex:0];
                 if ([status isEqualToString:@"0"]) {
@@ -400,7 +399,6 @@ typedef NS_ENUM(NSUInteger,UploadType)
                 NSLog(@"数据错误");
             }
         } else if (request.tag == UploadTypePart) {
-            self.dataClient = nil;
             double nowTime = [[NSDate date] timeIntervalSince1970] * 1000.f;
             self.blockTime = nowTime - self.beginUp;
             
@@ -418,7 +416,8 @@ typedef NS_ENUM(NSUInteger,UploadType)
                     }
                     
                     //计算上传完成进度
-                    self.progress = self.filePosition / self.fileLength;
+                    self.progress = (float)self.filePosition / (float)self.fileLength;
+//                    NSLog(@"progress:%f",self.progress);
                     //发出更新进度通知，更新界面显示
                     [NOTIFICATION_CENTER postNotificationName:UPDATE_UPLOAD_PROGRESS_NOTIFICATION object:self];
                 } else {
@@ -432,7 +431,6 @@ typedef NS_ENUM(NSUInteger,UploadType)
                 }
             }
         } else if (request.tag == UploadTypeConfirm) {
-            self.client = nil;
             if ([responseStr componentsSeparatedByString:@"||"].count > 1) {
                 NSString *status = [[responseStr componentsSeparatedByString:@"||"] objectAtIndex:0];
                 if ([status isEqualToString:@"0"]) {
@@ -448,7 +446,6 @@ typedef NS_ENUM(NSUInteger,UploadType)
                 }
             }
         } else if (request.tag == UploadTypeXML) {
-            self.dataClient = nil;
             self.xmlServerFileID = [[[[responseStr componentsSeparatedByString:@"||"] objectAtIndex:1] componentsSeparatedByString:@"^"] objectAtIndex:0];
             if ([responseStr componentsSeparatedByString:@"||"].count > 1) {
                 NSString *status = [[responseStr componentsSeparatedByString:@"||"] objectAtIndex:0];
@@ -461,7 +458,6 @@ typedef NS_ENUM(NSUInteger,UploadType)
                 }
             }
         } else if (request.tag == UploadTypeSaveFile) {
-            self.client = nil;
             if ([responseStr componentsSeparatedByString:@"||"].count > 1) {
                 NSString *status = [[responseStr componentsSeparatedByString:@"||"] objectAtIndex:0];
                 if ([status isEqualToString:@"0"]) {
@@ -469,14 +465,13 @@ typedef NS_ENUM(NSUInteger,UploadType)
                 }
             }
         } else if (request.tag == UploadTypeSaveNews) {
-            self.client = nil;
             if ([responseStr componentsSeparatedByString:@"||"].count >1) {
                 NSString *status = [[responseStr componentsSeparatedByString:@"||"] objectAtIndex:0];
                 //回传的稿件ID
                 NSString *newsId = [[[[responseStr componentsSeparatedByString:@"||"] objectAtIndex:1] componentsSeparatedByString:@"^"] objectAtIndex:0];
                 if ([status isEqualToString:@"0"]) {
                     [self deleteXmlAndUpdate:newsId];
-                    [self.uploadInfo setObject:LAST_FAIL forKey:REQUEST_STATUS];
+                    [self.uploadInfo setObject:LAST_SUCESS forKey:REQUEST_STATUS];
                     [self.uploadInfo setObject:newsId forKey:RE_NEWS_ID];
                 } else {
                     self.filePosition = 0;
@@ -500,7 +495,7 @@ typedef NS_ENUM(NSUInteger,UploadType)
             [self.uploadInfo setObject:LAST_FAIL forKey:REQUEST_STATUS];
         }
         [NOTIFICATION_CENTER postNotificationName:UPDATE_UPLOAD_PROGRESS_NOTIFICATION object:self];
-        [self.delegate performSelector:@selector(fileDidUpdate:) withObject:self.uploadInfo];
+        [self.delegate performSelector:@selector(fileDidUpload:) withObject:self.uploadInfo];
     }
 }
 

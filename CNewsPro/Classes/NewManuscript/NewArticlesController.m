@@ -12,6 +12,8 @@
 #import "AccessoriesDB.h"
 #import "VideoGrid.h"
 #import "PBJVision.h"
+#import "PBJFocusView.h"
+#import "PBJVisionUtilities.h"
 #import <CoreLocation/CoreLocation.h>
 #import <AssetsLibrary/AssetsLibrary.h>
 #import "ManuscriptTemplateDB.h"
@@ -27,6 +29,10 @@
 #import "EditingScriptController.h"
 #import <iflyMSC/iflyMSC.h>
 #import "IATConfig.h"
+#import "FixedToolbar.h"
+#import "FloatToolbar.h"
+#import "NewArticlesToolbarDelegate.h"
+#import "LTTextView.h"
 
 static const NSInteger kButtonWidth = 95.0f;
 static const NSInteger kButtonHeight = 95.0f;
@@ -34,10 +40,10 @@ static const NSInteger kButtonHeight = 95.0f;
 static NSString *kTemporaryTemplateDataKey = @"temporaryData";
 static NSString *kAutoSaveTime = @"kAutoSaveTime";
 
-@interface NewArticlesController () <UIActionSheetDelegate,CLLocationManagerDelegate,UIAlertViewDelegate,UIImagePickerControllerDelegate,UINavigationControllerDelegate,PBJVisionDelegate,IFlyRecognizerViewDelegate,UITextFieldDelegate>
+@interface NewArticlesController () <UIActionSheetDelegate,CLLocationManagerDelegate,UIAlertViewDelegate,UIImagePickerControllerDelegate,UINavigationControllerDelegate,PBJVisionDelegate,IFlyRecognizerViewDelegate,UITextFieldDelegate,UIGestureRecognizerDelegate,NewArticlesToolbarDelegate>
 
-@property (nonatomic,strong) UITextView *tvContent;
-@property (nonatomic,strong) UITextView *titleField;
+@property (nonatomic,strong) LTTextView *tvContent;
+@property (nonatomic,strong) UITextField *titleField;
 @property (nonatomic,strong) UIButton *saveBtn;
 @property (nonatomic,strong) UIButton *locationBtn;
 @property (nonatomic,strong) UIButton *addAttachBtn;
@@ -56,7 +62,9 @@ static NSString *kAutoSaveTime = @"kAutoSaveTime";
 @property (nonatomic,strong) AccessoriesDB *accessoriesdb;
 @property (nonatomic,assign) NSInteger keyboardHeight;
 @property (nonatomic,strong) CLLocationManager *locationManager;
-
+@property (nonatomic,strong) PBJFocusView *focusView;
+@property (nonatomic,strong) AVCaptureVideoPreviewLayer *previewLayer;
+@property (nonatomic,strong) UITapGestureRecognizer *focusTapGestureRecognizer;
 @property (nonatomic,assign) NSInteger selectAccessoryIndex;
 @property (nonatomic,strong) UIButton *selectAccessorySender;
 @property (nonatomic,strong) VideoGrid *addGrid;
@@ -68,13 +76,15 @@ static NSString *kAutoSaveTime = @"kAutoSaveTime";
 @property (nonatomic,assign) BOOL isCamera;
 @property (nonatomic,strong) UIButton *btnifly;
 @property (nonatomic,copy)  NSString *currentVideoPath;
-@property (nonatomic,strong) PBJVision *pbvision;
 @property (nonatomic,assign) NSInteger videoSecond;
 @property (nonatomic,strong) UILabel *videoTimeLb;
 @property (nonatomic,strong) NSTimer *videoTimer;
 @property (nonatomic,strong) NSMutableArray *gridArray;
 @property (nonatomic,strong) NSMutableArray *audioInfoArray;
 @property (nonatomic,strong) IFlyRecognizerView *iflyRecognizerView;
+@property (nonatomic,strong) FixedToolbar *fixedToolbar;
+@property (nonatomic,strong) FloatToolbar *floatToolbar;
+@property (nonatomic,copy) NSString *locationStr;
 
 @end
 
@@ -92,8 +102,9 @@ static NSString *kAutoSaveTime = @"kAutoSaveTime";
     self.scrollView1.scrollEnabled = YES;
     self.scrollView1.bounces = NO;
     self.scrollView1.showsHorizontalScrollIndicator=NO;
+    self.scrollView1.showsVerticalScrollIndicator = NO;
     [self.scrollView1 setContentSize:CGSizeMake(self.view.bounds.size.width,self.view.frame.size.height+50)];
-    self.title_static = [[UILabel alloc] initWithFrame:CGRectMake(10, 8, 52, 21)];
+    self.title_static = [[UILabel alloc] initWithFrame:CGRectMake(13, 8, 52, 21)];
     self.title_static.font = [UIFont systemFontOfSize:17];
     self.title_static.textAlignment = NSTextAlignmentLeft;
     [self.scrollView1 addSubview:self.title_static];
@@ -103,69 +114,47 @@ static NSString *kAutoSaveTime = @"kAutoSaveTime";
     self.labelTitle.textAlignment = NSTextAlignmentLeft;
     [self.scrollView1 addSubview:self.labelTitle];
     
-    self.titleField = [[UITextView alloc] initWithFrame:CGRectMake(54, 3, 257, 30)];
-    [self.titleField becomeFirstResponder];
+    self.titleField = [[UITextField alloc] initWithFrame:CGRectMake(54, 3, SCREEN_WIDTH-75, 30)];
     self.titleField.font = [UIFont systemFontOfSize:15];
     self.titleField.textAlignment = NSTextAlignmentLeft;
     self.titleField.returnKeyType = UIReturnKeyDone;
+    self.titleField.delegate = self;
     [self.scrollView1 addSubview:self.titleField];
     
-    self.tvContent = [[UITextView alloc] initWithFrame:CGRectMake(11, self.title_static.frame.size.height+8+10-5, 297, self.scrollView1.frame.size.height-200)];
+    self.tvContent = [[LTTextView alloc] initWithFrame:CGRectMake(10, self.title_static.frame.size.height+8+10-5+46, SCREEN_WIDTH-20, self.scrollView1.frame.size.height-200)];
     self.tvContent.backgroundColor = [UIColor colorWithWhite:254.0/255.0 alpha:1.0];
     self.tvContent.font = [UIFont systemFontOfSize:15];
     self.tvContent.textAlignment = NSTextAlignmentLeft;
     self.tvContent.userInteractionEnabled = YES;
     self.tvContent.multipleTouchEnabled = YES;
+    self.tvContent.placeholder = @"添加稿件内容";
+    self.tvContent.placeholderColor = [UIColor lightGrayColor];
     [self.scrollView1 addSubview:self.tvContent];
     
-    self.btnifly = [[UIButton alloc]initWithFrame:CGRectMake(self.view.frame.size.width/5.0-35./2., self.scrollView1.frame.size.height-100-50, 35, 35)];
-    [self.btnifly setImage:[UIImage imageNamed:@"express_iflyButton"] forState:UIControlStateNormal];
-    [self.btnifly addTarget:self action:@selector(onButtonRecognize) forControlEvents:UIControlEventTouchUpInside];
-    [self.scrollView1 addSubview:self.btnifly];
-    
-    self.addAttachBtn = [[UIButton alloc] initWithFrame:CGRectMake(self.view.frame.size.width/5.0*2-35./2., self.scrollView1.frame.size.height-100-50, 35, 35)];
-    [self.addAttachBtn setTitleColor:[UIColor whiteColor]forState:UIControlStateNormal];
-    [self.addAttachBtn setImage:[UIImage imageNamed:@"manuscript_addaccessory.png"] forState:UIControlStateNormal];
-    self.addAttachBtn.userInteractionEnabled = YES;
-    [self.addAttachBtn addTarget:self action:@selector(addAttachment:) forControlEvents:UIControlEventTouchUpInside];
-    [self.addAttachBtn setContentMode:UIViewContentModeCenter];
-    [self.addAttachBtn setShowsTouchWhenHighlighted:YES];
-    [self.scrollView1 addSubview:self.addAttachBtn];
-    
-    self.locationBtn = [[UIButton alloc] initWithFrame:CGRectMake(self.view.frame.size.width/5.0*3-35./2., self.scrollView1.frame.size.height-100-50, 35, 35)];
-    [self.locationBtn setTitleColor:[UIColor whiteColor]forState:UIControlStateNormal];
-    [self.locationBtn setImage:[UIImage imageNamed:@"express_location"] forState:UIControlStateNormal];
-    self.locationBtn.userInteractionEnabled = YES;
-    [self.locationBtn addTarget:self action:@selector(attachLocationInfo:) forControlEvents:UIControlEventTouchUpInside];
-    [self.locationBtn setContentMode:UIViewContentModeCenter];
-    [self.locationBtn setShowsTouchWhenHighlighted:YES];
-    [self.scrollView1 addSubview:self.locationBtn];
-    
-    self.saveBtn = [[UIButton alloc] initWithFrame:CGRectMake(self.view.frame.size.width/5.0*4-35./2., self.scrollView1.frame.size.height-100-50, 35, 35)];
-    [self.saveBtn setTitleColor:[UIColor whiteColor]forState:UIControlStateNormal];
-    [self.saveBtn setImage:[UIImage imageNamed:@"save"] forState:UIControlStateNormal];
-    self.saveBtn.userInteractionEnabled = YES;
-    [self.saveBtn addTarget:self action:@selector(saveManuscriptAction:) forControlEvents:UIControlEventTouchUpInside];
-    [self.saveBtn setContentMode:UIViewContentModeCenter];
-    [self.saveBtn setShowsTouchWhenHighlighted:YES];
-    [self.scrollView1 addSubview:self.saveBtn];
-    
-    UIButton *showDetailBtn = [[UIButton alloc] initWithFrame:CGRectMake(SCREEN_WIDTH-25, self.scrollView1.frame.size.height/2-55, 25, 60)];
-    [showDetailBtn setTitleColor:[UIColor whiteColor]forState:UIControlStateNormal];
-    [showDetailBtn setImage:[UIImage imageNamed:@"switch.png"] forState:UIControlStateNormal];
-    showDetailBtn.userInteractionEnabled = YES;
-    [showDetailBtn addTarget:self action:@selector(showTagDetailController:) forControlEvents:UIControlEventTouchUpInside];
-    [showDetailBtn setContentMode:UIViewContentModeCenter];
-    [showDetailBtn setShowsTouchWhenHighlighted:YES];
-    [self.scrollView1 addSubview:showDetailBtn];
-    
-    UIImageView *topLine = [[UIImageView alloc] initWithFrame:CGRectMake(11, self.title_static.frame.size.height+8+5, SCREEN_WIDTH - 22, 1)];
+
+    UIImageView *topLine = [[UIImageView alloc] initWithFrame:CGRectMake(10, self.title_static.frame.size.height+8+5, SCREEN_WIDTH - 22, 1)];
     [topLine setImage:[UIImage imageNamed:@"TempleView_line.png"]];
     [self.scrollView1 addSubview:topLine];
+
+//    UIImageView *bottomLine = [[UIImageView alloc] initWithFrame:CGRectMake(12, self.scrollView1.frame.size.height-60-50, SCREEN_WIDTH - 22, 1)];
+//    [bottomLine setImage:[UIImage imageNamed:@"TempleView_line.png"]];
+//    [self.scrollView1 addSubview:bottomLine];
     
-    UIImageView *bottomLine = [[UIImageView alloc] initWithFrame:CGRectMake(12, self.scrollView1.frame.size.height-60-50, SCREEN_WIDTH - 22, 1)];
-    [bottomLine setImage:[UIImage imageNamed:@"TempleView_line.png"]];
-    [self.scrollView1 addSubview:bottomLine];
+    UIView *templeView = [[UIView alloc] initWithFrame:CGRectMake(10, self.title_static.frame.size.height+8+5+2, SCREEN_WIDTH - 22, 44)];
+    [self.scrollView1 addSubview:templeView];
+    UIButton *infoButton = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 100, templeView.bounds.size.height)];
+    [infoButton setImage:[UIImage imageNamed:@"quill_with_ink"] forState:UIControlStateNormal];
+    
+    [infoButton setTitle:@"编辑稿签" forState:UIControlStateNormal];
+    [infoButton.titleLabel setFont:[UIFont systemFontOfSize:15]];
+    [infoButton setTitleColor:RGB(60, 90, 154) forState:UIControlStateNormal];
+    [infoButton addTarget:self action:@selector(showTagDetailController:) forControlEvents:UIControlEventTouchUpInside];
+    [templeView addSubview:infoButton];
+    
+    UIButton *showTemple = [[UIButton alloc] initWithFrame:CGRectMake(templeView.bounds.size.width - 50, 0,50, templeView.bounds.size.height)];
+    [showTemple setImage:[UIImage imageNamed:@"info"] forState:UIControlStateNormal];
+    [showTemple addTarget:self action:@selector(showTagDetailController:) forControlEvents:UIControlEventTouchUpInside];
+    [templeView addSubview:showTemple];
     
     self.scrollView1.hidden = NO;
     [self.view addSubview:self.scrollView1];
@@ -174,7 +163,170 @@ static NSString *kAutoSaveTime = @"kAutoSaveTime";
     
     [self initializeController];
     
+    [self initializeMediaCapture];
+}
+
+#pragma mark - 初始化方法
+
+- (void)setUpToolbar {
+    //键盘上部工具栏
+    self.floatToolbar = [FloatToolbar floatToolbar];
+    self.floatToolbar.floatToolbarDelegate = self;
+    self.floatToolbar.frame = CGRectMake(0, SCREEN_HEIGHT, SCREEN_WIDTH, 49);
+    [self.view addSubview:self.floatToolbar];
     
+    //底部工具栏初始化
+    self.fixedToolbar = [FixedToolbar fixedToolbar];
+    self.fixedToolbar.toobarDelegate = self;
+    self.fixedToolbar.frame = CGRectMake(0, SCREEN_HEIGHT - 49, SCREEN_WIDTH, 49);
+    [self.view addSubview:self.fixedToolbar];
+
+}
+
+//页面首次进入时，初始化稿件内容
+- (void)initializeManusContent
+{
+    //调用数据库函数
+    self.manuscriptsdb = [[ManuscriptsDB alloc] init];
+    self.accessoriesdb = [[AccessoriesDB alloc] init];
+    
+    //初始化数据实体对象.此处为对象属性，在本类中各个方法中都能访问。
+    self.mcripts = [[Manuscripts alloc] init];
+    // zc 去掉accessores属性，因为会有多个附件，共用这一个属性不易维护。改为在保存和删除附件的方法内部实例化该对象
+    self.accessoriesArry = [[NSMutableArray alloc] initWithCapacity:0];
+    
+    //button队列 (附件队列)
+    self.gridArray = [[NSMutableArray alloc] initWithCapacity:0];
+    self.addGrid = [[VideoGrid alloc] initWithFrame:CGRectMake(5, 250, kButtonWidth, kButtonHeight)];
+    self.addGrid.btnDelete.hidden = YES;
+    [self.addGrid.btnPic setTitle:@"添加" forState:UIControlStateNormal];
+    [self.addGrid.btnPic addTarget:self action:@selector(showDetailAttachment:) forControlEvents:UIControlEventTouchUpInside];
+    
+    //判断其他视图进入本视图时是否传入了稿件id，即区分“新建”还是“编辑”
+    if(![self.manuscript_id isEqualToString:@""])
+    {
+        [self.titleLabelAndImage setTitle:@"在编稿件" forState:UIControlStateNormal];
+        
+        //获取稿件信息
+        self.mcripts = [self.manuscriptsdb getManuscriptById:self.manuscript_id];
+        
+        //绑定标题、正文
+        self.tvContent.text = self.mcripts.contents;
+        self.titleField.text = self.mcripts.title;
+        
+        //将稿签的标题和正文赋值为当前稿件的标题和正文
+        self.mcripts.mTemplate.defaultTitle = self.mcripts.title;
+        self.mcripts.mTemplate.defaultContents = self.mcripts.contents;
+        
+        //获取附件信息，并存入附件列表
+        self.accessoriesArry = [self.accessoriesdb getAccessoriesListByMId:self.manuscript_id];
+        //绑定附件列表
+        for (int i = 0; i < [self.accessoriesArry count]; i++) {
+            [self renderAccessoriesView:[self.accessoriesArry objectAtIndex:i]];
+        }
+    }
+    else {
+        [self.titleLabelAndImage setTitle:@"新建稿件" forState:UIControlStateNormal];
+        
+        NSString *bodyText = @"";
+        NSString *titleText = @"";
+        ManuscriptTemplateDB *mdb = [[ManuscriptTemplateDB alloc] init];
+        ManuscriptTemplate *demanuscriptTemplate = [mdb getDefaultManuscriptTemplate:MANUSCRIPT_TEMPLATE_TYPE loginName:[USERDEFAULTS objectForKey:LOGIN_NAME]];
+        
+        //查看是否存在临时稿签，如存在即加载该稿签
+        NSString *filePath = [Utility temporaryTemplateFilePath];
+        if ([[NSFileManager defaultManager] fileExistsAtPath:filePath]) {
+            
+            //获得默认稿签模板,用来获得稿件的标题和正文
+            ManuscriptTemplateDB *mdb = [[ManuscriptTemplateDB alloc] init];
+            ManuscriptTemplate *manuscriptTemplate = [mdb getDefaultManuscriptTemplate:MANUSCRIPT_TEMPLATE_TYPE loginName:[USERDEFAULTS objectForKey:LOGIN_NAME]];
+            
+            bodyText = demanuscriptTemplate.defaultContents;//标题和正文还需要加载默认的标题和正文
+            titleText = demanuscriptTemplate.defaultTitle;
+            //加载临时稿签信息
+            NSData *data = [[NSMutableData alloc]
+                            initWithContentsOfFile:[Utility temporaryTemplateFilePath]];
+            NSKeyedUnarchiver *unarchiver = [[NSKeyedUnarchiver alloc]initForReadingWithData:data];
+            manuscriptTemplate = [unarchiver decodeObjectForKey:kTemporaryTemplateDataKey];
+            [unarchiver finishDecoding];
+            
+            self.mcripts.mTemplate = manuscriptTemplate;
+        }
+        else {
+            //获得默认稿签模板
+            self.mcripts.mTemplate = demanuscriptTemplate;
+            
+            bodyText = self.mcripts.mTemplate.defaultContents;
+            titleText = self.mcripts.mTemplate.defaultTitle;
+        }
+        self.tvContent.text = bodyText;
+        self.titleField.text = titleText;
+    }
+    
+    //页面第一次进入时，将传入的稿件id保存在缓存中。如果是“新建稿件”，则为@“”。
+    [USERDEFAULTS setObject:self.manuscript_id forKey:CURRENT_MANUSCRIPTID_SESSIONId];
+}
+
+//页面控件初始化
+- (void)initializeController
+{
+    //导航试图
+    [self.titleLabelAndImage setImage:[UIImage imageNamed:@"manuscript_logo.png"] forState:UIControlStateNormal];
+    self.titleLabelAndImage.backgroundColor = RGB(60, 90, 154);
+    
+    //zyq 静态标题二字
+    self.title_static.text = @"标题";
+    [self.title_static setTextColor:[UIColor lightGrayColor]];
+    
+    //判断当前页面是否为“查看”，并做出响应处理
+    if( [self.operationType isEqualToString:@"detail"] )
+    {
+        self.btnifly.hidden = YES;
+        self.saveBtn.hidden = YES;
+        self.addAttachBtn.hidden = YES;
+        self.locationBtn.hidden = YES;
+        self.tvContent.editable = NO;
+        self.titleField.hidden = YES;
+        
+        [self.titleLabelAndImage setTitle:@"查看稿件" forState:UIControlStateNormal];
+        
+        self.labelTitle.text = self.titleField.text;
+        self.labelTitle.hidden = NO;
+    }
+    else {//不是“查看”，就是“新建”或“编辑”
+        
+        self.labelTitle.hidden = YES;
+        
+        //添加键盘监听
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(keyboardWillShow:)
+                                                     name:UIKeyboardWillShowNotification
+                                                   object:nil];
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(keyboardWillHide:)
+                                                     name:UIKeyboardWillHideNotification
+                                                   object:nil];
+        
+        //定时器初始化
+        int autoSaveTime = 0;
+        if([[NSUserDefaults standardUserDefaults] objectForKey:kAutoSaveTime])
+        {
+            autoSaveTime = [[[NSUserDefaults standardUserDefaults] objectForKey:kAutoSaveTime] intValue];
+        }
+        
+        if( autoSaveTime > 0 )
+        {
+            self.timer=[NSTimer scheduledTimerWithTimeInterval:autoSaveTime target:self selector:@selector(autoSaveManuscript) userInfo:nil repeats:YES];
+        }
+        //添加发送按钮
+        self.rightButton.userInteractionEnabled = YES;
+        [self.rightButton setImage:[UIImage imageNamed:@"express_send.png"] forState:UIControlStateNormal];
+        [self.rightButton addTarget:self action:@selector(sendManuScript:) forControlEvents:UIControlEventTouchUpInside];
+    }
+    
+}
+
+- (void)initializeMediaCapture {
     self.assetLibrary = [[ALAssetsLibrary alloc] init];
     
     self.previewVideo = [[UIView alloc] initWithFrame:CGRectZero];
@@ -185,13 +337,23 @@ static NSString *kAutoSaveTime = @"kAutoSaveTime";
     previewFrame.size = CGSizeMake(previewWidth, self.view.frame.size.height);
     self.previewVideo.frame = previewFrame;
     
+    self.focusView = [[PBJFocusView alloc] initWithFrame:CGRectZero];
+    
     // add AV layer
-    AVCaptureVideoPreviewLayer *previewLayer = [[PBJVision sharedInstance] previewLayer];
+    self.previewLayer = [[PBJVision sharedInstance] previewLayer];
     CGRect previewBounds = self.previewVideo.layer.bounds;
-    previewLayer.bounds = previewBounds;
-    previewLayer.videoGravity = AVLayerVideoGravityResizeAspectFill;
-    previewLayer.position = CGPointMake(CGRectGetMidX(previewBounds), CGRectGetMidY(previewBounds));
-    [self.previewVideo.layer addSublayer:previewLayer];
+    self.previewLayer.bounds = previewBounds;
+    self.previewLayer.videoGravity = AVLayerVideoGravityResizeAspectFill;
+    self.previewLayer.position = CGPointMake(CGRectGetMidX(previewBounds), CGRectGetMidY(previewBounds));
+    [self.previewVideo.layer addSublayer:self.previewLayer];
+    
+    //对焦手势
+    self.focusTapGestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self
+                                                                             action:@selector(handleFocusTapGesterRecognizer:)];
+    self.focusTapGestureRecognizer.delegate = self;
+    self.focusTapGestureRecognizer.numberOfTapsRequired = 1;
+    //    self.focusTapGestureRecognizer.enabled = NO;
+    [self.previewVideo addGestureRecognizer:self.focusTapGestureRecognizer];
     
     //屏幕预览底部视图遮盖
     UIView *bottomView=[[UIView alloc] initWithFrame:CGRectMake(0, self.view.frame.size.height-80, self.view.frame.size.width, 80)];
@@ -219,8 +381,21 @@ static NSString *kAutoSaveTime = @"kAutoSaveTime";
     self.videoTimeLb.textColor=[UIColor whiteColor];
     self.videoTimeLb.font=[UIFont boldSystemFontOfSize:18];
     
-    [previewLayer addSublayer:bottomView.layer];
-    [previewLayer addSublayer:topView.layer];
+    [self.previewLayer addSublayer:bottomView.layer];
+    [self.previewLayer addSublayer:topView.layer];
+    
+}
+
+- (void)initializeLocationService {
+    self.locationManager = [[CLLocationManager alloc] init];
+    self.locationManager.delegate = self;
+    self.locationManager.desiredAccuracy = kCLLocationAccuracyBest;
+    self.locationManager.distanceFilter = kCLDistanceFilterNone;
+    if ([[UIDevice currentDevice].systemVersion integerValue] >= 8.0) {
+        [self.locationManager requestWhenInUseAuthorization];
+    }
+    
+    [self.locationManager startUpdatingLocation];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -230,12 +405,20 @@ static NSString *kAutoSaveTime = @"kAutoSaveTime";
 
 -(void)viewWillAppear:(BOOL)animated
 {
+    [super viewWillAppear:animated];
+    [self setUpToolbar];
     self.navigationController.navigationBarHidden=YES;
 }
 
 - (void)viewWillDisappear:(BOOL)animated
 {
     [self.view endEditing:YES];
+}
+
+- (void)dealloc {
+    self.focusTapGestureRecognizer.delegate = nil;
+    [PBJVision sharedInstance].delegate = nil;
+    [NOTIFICATION_CENTER removeObserver:self];
 }
 
 - (void)returnToParentView:(UIButton *)button {
@@ -307,193 +490,37 @@ static NSString *kAutoSaveTime = @"kAutoSaveTime";
 
 }
 
-#pragma mark - 初始化方法
-//页面首次进入时，初始化稿件内容
-- (void)initializeManusContent
-{
-    //调用数据库函数
-    self.manuscriptsdb = [[ManuscriptsDB alloc] init];
-    self.accessoriesdb = [[AccessoriesDB alloc] init];
-    
-    //初始化数据实体对象.此处为对象属性，在本类中各个方法中都能访问。
-    self.mcripts = [[Manuscripts alloc] init];
-    // zc 去掉accessores属性，因为会有多个附件，共用这一个属性不易维护。改为在保存和删除附件的方法内部实例化该对象
-    self.accessoriesArry = [[NSMutableArray alloc] initWithCapacity:0];
-    
-    //button队列 (附件队列)
-    self.gridArray = [[NSMutableArray alloc] initWithCapacity:0];
-    self.addGrid = [[VideoGrid alloc] initWithFrame:CGRectMake(5, 250, kButtonWidth, kButtonHeight)];
-    self.addGrid.btnDelete.hidden = YES;
-    [self.addGrid.btnPic setTitle:@"添加" forState:UIControlStateNormal];
-    [self.addGrid.btnPic addTarget:self action:@selector(showDetailAttachment:) forControlEvents:UIControlEventTouchUpInside];
-    
-    //判断其他视图进入本视图时是否传入了稿件id，即区分“新建”还是“编辑”
-    if(![self.manuscript_id isEqualToString:@""])
-    {
-        [self.titleLabelAndImage setTitle:@"在编稿件" forState:UIControlStateNormal];
-        
-        //获取稿件信息
-        self.mcripts = [self.manuscriptsdb getManuscriptById:self.manuscript_id];
-    
-        //绑定标题、正文
-        self.tvContent.text = self.mcripts.contents;
-        self.titleField.text = self.mcripts.title;
-        
-        //将稿签的标题和正文赋值为当前稿件的标题和正文
-        self.mcripts.mTemplate.defaultTitle = self.mcripts.title;
-        self.mcripts.mTemplate.defaultContents = self.mcripts.contents;
-        
-        //获取附件信息，并存入附件列表
-        self.accessoriesArry = [self.accessoriesdb getAccessoriesListByMId:self.manuscript_id];
-        //绑定附件列表
-        for (int i = 0; i < [self.accessoriesArry count]; i++) {
-            [self renderAccessoriesView:[self.accessoriesArry objectAtIndex:i]];
-        }
-    }
-    else {
-        [self.titleLabelAndImage setTitle:@"新建稿件" forState:UIControlStateNormal];
-        
-        NSString *bodyText = @"";
-        NSString *titleText = @"";
-        ManuscriptTemplateDB *mdb = [[ManuscriptTemplateDB alloc] init];
-        ManuscriptTemplate *demanuscriptTemplate = [mdb getDefaultManuscriptTemplate:MANUSCRIPT_TEMPLATE_TYPE loginName:[USERDEFAULTS objectForKey:LOGIN_NAME]];
-      
-        //查看是否存在临时稿签，如存在即加载该稿签
-        NSString *filePath = [Utility temporaryTemplateFilePath];
-        if ([[NSFileManager defaultManager] fileExistsAtPath:filePath]) {
-            
-            //获得默认稿签模板,用来获得稿件的标题和正文
-            ManuscriptTemplateDB *mdb = [[ManuscriptTemplateDB alloc] init];
-            ManuscriptTemplate *manuscriptTemplate = [mdb getDefaultManuscriptTemplate:MANUSCRIPT_TEMPLATE_TYPE loginName:[USERDEFAULTS objectForKey:LOGIN_NAME]];
-           
-            bodyText = demanuscriptTemplate.defaultContents;//标题和正文还需要加载默认的标题和正文
-            titleText = demanuscriptTemplate.defaultTitle;
-            //加载临时稿签信息
-            NSData *data = [[NSMutableData alloc]
-                            initWithContentsOfFile:[Utility temporaryTemplateFilePath]];
-            NSKeyedUnarchiver *unarchiver = [[NSKeyedUnarchiver alloc]initForReadingWithData:data];
-            manuscriptTemplate = [unarchiver decodeObjectForKey:kTemporaryTemplateDataKey];
-            [unarchiver finishDecoding];
-            
-            self.mcripts.mTemplate = manuscriptTemplate;
-        }
-        else {
-            //获得默认稿签模板
-            self.mcripts.mTemplate = demanuscriptTemplate;
-            
-            bodyText = self.mcripts.mTemplate.defaultContents;
-            titleText = self.mcripts.mTemplate.defaultTitle;
-        }
-        self.tvContent.text = bodyText;
-        self.titleField.text = titleText;
-    }
-    
-    //页面第一次进入时，将传入的稿件id保存在缓存中。如果是“新建稿件”，则为@“”。
-    [USERDEFAULTS setObject:self.manuscript_id forKey:CURRENT_MANUSCRIPTID_SESSIONId];
-}
-
-//页面控件初始化
-- (void)initializeController
-{
-    //导航试图
-    [self.titleLabelAndImage setImage:[UIImage imageNamed:@"manuscript_logo.png"] forState:UIControlStateNormal];
-    self.titleLabelAndImage.backgroundColor = [UIColor colorWithRed:154.0f/255.0f green:213.0f/255.0f blue:231.0f/255.0f alpha:1.0f];
-    
-    //zyq 静态标题二字
-    self.title_static.text = @"标题";
-    
-    //判断当前页面是否为“查看”，并做出响应处理
-    if( [self.operationType isEqualToString:@"detail"] )
-    {
-        self.btnifly.hidden = YES;
-        self.saveBtn.hidden = YES;
-        self.addAttachBtn.hidden = YES;
-        self.locationBtn.hidden = YES;
-        self.tvContent.editable = NO;
-        self.titleField.hidden = YES;
-        
-        [self.titleLabelAndImage setTitle:@"查看稿件" forState:UIControlStateNormal];
-        
-        self.labelTitle.text = self.titleField.text;
-        self.labelTitle.hidden = NO;
-    }
-    else {//不是“查看”，就是“新建”或“编辑”
-        
-        self.labelTitle.hidden = YES;
-        
-        //添加键盘监听
-        [[NSNotificationCenter defaultCenter] addObserver:self
-                                                 selector:@selector(keyboardWillShow:)
-                                                     name:UIKeyboardWillShowNotification
-                                                   object:nil];
-        [[NSNotificationCenter defaultCenter] addObserver:self
-                                                 selector:@selector(keyboardWillHide:)
-                                                     name:UIKeyboardWillHideNotification
-                                                   object:nil];
-        
-        //控制键盘按钮
-        self.keyboardHide = TRUE;
-
-        self.keyboardButton = [[UIButton alloc] initWithFrame:CGRectMake(10,self.scrollView1.frame.size.height/2,50,40)];
-        [self.keyboardButton setImage:[UIImage imageNamed:@"keyboard.png"] forState:UIControlStateNormal];
-        [self.keyboardButton addTarget:self action:@selector(controlkeyboard:) forControlEvents:UIControlEventTouchUpInside];
-        [self.view addSubview:self.keyboardButton];
-        [self.keyboardButton setHidden:YES];
-        
-        //定时器初始化
-        int autoSaveTime = 0;
-        if([[NSUserDefaults standardUserDefaults] objectForKey:kAutoSaveTime])
-        {
-            autoSaveTime = [[[NSUserDefaults standardUserDefaults] objectForKey:kAutoSaveTime] intValue];
-        }
-        
-        if( autoSaveTime > 0 )
-        {
-            self.timer=[NSTimer scheduledTimerWithTimeInterval:autoSaveTime target:self selector:@selector(autoSaveManuscript) userInfo:nil repeats:YES];
-        }
-        //添加发送按钮
-        self.rightButton.userInteractionEnabled = YES;
-        [self.rightButton setImage:[UIImage imageNamed:@"express_send.png"] forState:UIControlStateNormal];
-        [self.rightButton addTarget:self action:@selector(sendManuScript:) forControlEvents:UIControlEventTouchUpInside];
-    }
-    
-}
 
 #pragma mark - Keyboard Notification
 - (void)keyboardWillShow:(NSNotification *)notification
 {
-    UIViewAnimationCurve animationCurve	= [[[notification userInfo] valueForKey:UIKeyboardAnimationCurveUserInfoKey] intValue];
-    NSTimeInterval animationDuration = [[[notification userInfo] valueForKey:UIKeyboardAnimationDurationUserInfoKey] doubleValue];
-    [UIView beginAnimations:@"RS_showKeyboardAnimation" context:nil];
-    [UIView setAnimationCurve:animationCurve];
-    [UIView setAnimationDuration:animationDuration];
+    NSTimeInterval duration = [notification.userInfo[UIKeyboardAnimationDurationUserInfoKey] doubleValue];
+    UIViewAnimationOptions option = [notification.userInfo[UIKeyboardAnimationCurveUserInfoKey] floatValue];
+    CGSize keyboardSize = [notification.userInfo[UIKeyboardFrameEndUserInfoKey] CGRectValue].size;
     
-    CGSize kbSize = [[[notification userInfo] objectForKey:UIKeyboardFrameEndUserInfoKey] CGRectValue].size;
     
-    self.tvContent.frame = CGRectMake(11, self.title_static.frame.size.height+8+10-5, 297, self.scrollView1.frame.size.height-kbSize.height-70);
-    self.keyboardHeight = kbSize.height;
-    self.keyboardButton.alpha = 1.0;
-    self.keyboardButton.frame = CGRectMake(6,self.view.frame.size.height-self.keyboardHeight-36, 40,50);
-    [UIView commitAnimations];
-    self.keyboardHide=FALSE;
-    [self.keyboardButton setHidden:FALSE];
+    [UIView animateWithDuration:duration delay:0 options:option animations:^{
+//        self.tvContent.frame = CGRectMake(11, self.title_static.frame.size.height+8+10-5, 297, self.scrollView1.frame.size.height-keyboardSize.height-70);
+        self.floatToolbar.frame = CGRectMake(0, SCREEN_HEIGHT-keyboardSize.height-49, SCREEN_WIDTH, 49);
+        
+    } completion:nil];
 }
 
 
 - (void)keyboardWillHide:(NSNotification *)notification
 {
-    UIViewAnimationCurve animationCurve	= [[[notification userInfo] valueForKey:UIKeyboardAnimationCurveUserInfoKey] intValue];
-    NSTimeInterval animationDuration = [[[notification userInfo] valueForKey:UIKeyboardAnimationDurationUserInfoKey] doubleValue];
+    NSTimeInterval duration = [notification.userInfo[UIKeyboardAnimationDurationUserInfoKey] doubleValue];
+    UIViewAnimationOptions option = [notification.userInfo[UIKeyboardAnimationCurveUserInfoKey] floatValue];
     
-    [UIView beginAnimations:@"RS_hideKeyboardAnimation" context:nil];
-    [UIView setAnimationCurve:animationCurve];
-    [UIView setAnimationDuration:animationDuration];
-    
-    self.tvContent.frame = CGRectMake(11, self.title_static.frame.size.height+8+10-5, 297, self.scrollView1.frame.size.height-200);
-    
-    [UIView commitAnimations];
-    self.keyboardHide=TRUE;
-    [self.keyboardButton setHidden:TRUE];
+    [UIView animateWithDuration:duration delay:1 options:option animations:^{
+//        self.tvContent.frame = CGRectMake(11, self.title_static.frame.size.height+8+10-5, 297, self.scrollView1.frame.size.height-200);
+        self.floatToolbar.hidden = YES;
+        self.floatToolbar.frame = CGRectMake(0, -SCREEN_HEIGHT, SCREEN_WIDTH, 49);
+    } completion:^(BOOL finished) {
+        if (finished) {
+            self.floatToolbar.hidden = NO;
+        }
+    }];
 }
 
 
@@ -535,10 +562,12 @@ static NSString *kAutoSaveTime = @"kAutoSaveTime";
     //插入队列
     NSUInteger add_grid_index = [self.gridArray count] - 1;
     
+    CGFloat padding = (SCREEN_WIDTH-kButtonWidth*3-20)/2;
+    
     //计算add按钮的新位置
     NSUInteger row = add_grid_index / 3;
     NSUInteger column = add_grid_index % 3;
-    CGRect newAddGridFrame = CGRectMake(10+column*kButtonWidth+column*7, self.scrollView1.frame.size.height+row*kButtonHeight+row*7-100,kButtonWidth,kButtonHeight);
+    CGRect newAddGridFrame = CGRectMake(10+column*kButtonWidth+column*padding, self.scrollView1.frame.size.height+row*kButtonHeight+row*7-100,kButtonWidth,kButtonHeight);
     
     NSUInteger scrollViewHeight = self.view.frame.size.height+row*105;
     [self.scrollView1 setContentSize:CGSizeMake(320,scrollViewHeight)];
@@ -615,7 +644,11 @@ static NSString *kAutoSaveTime = @"kAutoSaveTime";
     self.mcripts.contents = [Utility trimBlankSpace:self.tvContent.text];
     self.mcripts.manuscriptsStatus = MANUSCRIPT_STATUS_EDITING;   //稿件状态。必填。
     //zyq,12/10,添加地理位置信息
-    self.mcripts.location = @"0.0,0.0"; //定位信息
+    if (self.locationStr.length > 0) {
+        self.mcripts.location = self.locationStr;
+    } else {
+        self.mcripts.location = @"0.0,0.0"; //定位信息
+    }
     self.mcripts.createTime = [Utility getLogTimeStamp];
     
     if ([self.manuscriptsdb addManuScript:self.mcripts] > 0) {
@@ -711,7 +744,7 @@ static NSString *kAutoSaveTime = @"kAutoSaveTime";
 
     //插入一条附件记录
     accessory.a_id = [Utility stringWithUUID];
-    if(![self.accessoriesdb addAccessories:accessory])
+    if([self.accessoriesdb addAccessories:accessory] == -1)
         NSLog(@"附件插入失败%@",accessory.a_id);
 
     [self.accessoriesArry addObject:accessory];
@@ -889,18 +922,11 @@ static NSString *kAutoSaveTime = @"kAutoSaveTime";
         [[AppDelegate getAppDelegate] alert:AlertTypeAlert message:@"当前网络不可用，请稍后再试!"];
     }
     else {
-        if (!self.locationManager) {
-            //定位初始化
-            self.locationManager=[[CLLocationManager alloc] init];
-            self.locationManager.delegate = self;
-            if ([self.locationManager respondsToSelector:@selector(requestAlwaysAuthorization)])
-            {
-                [self.locationManager requestAlwaysAuthorization];
-            }
-            self.locationManager.desiredAccuracy=kCLLocationAccuracyBest;
-            self.locationManager.distanceFilter = 5.0f; // in meters
+        if ([CLLocationManager locationServicesEnabled]) {
+            [self initializeLocationService];
+        } else {
+            [[AppDelegate getAppDelegate] alert:AlertTypeAlert message:@"请开启定位功能"];
         }
-        [self.locationManager startUpdatingLocation];
     }
 }
 
@@ -939,10 +965,32 @@ static NSString *kAutoSaveTime = @"kAutoSaveTime";
     [self.navigationController pushViewController:tagController animated:YES];
 }
 
+//点击对焦
+- (void)handleFocusTapGesterRecognizer:(UIGestureRecognizer *)gestRecognizer {
+    CGPoint tapPoint = [gestRecognizer locationInView:self.previewVideo];
+    
+    CGRect focusFrame = self.focusView.frame;
+#if defined(__LP64__) && __LP64__
+    focusFrame.origin.x = rint(tapPoint.x - (focusFrame.size.width * 0.5));
+    focusFrame.origin.y = rint(tapPoint.y - (focusFrame.size.height * 0.5));
+#else
+    focusFrame.origin.x = rintf(tapPoint.x - (focusFrame.size.width * 0.5f));
+    focusFrame.origin.y = rintf(tapPoint.y - (focusFrame.size.height * 0.5f));
+#endif
+    [self.focusView setFrame:focusFrame];
+    [self.previewVideo addSubview:self.focusView];
+    [self.focusView startAnimation];
+    
+    CGPoint adjustPoint = [PBJVisionUtilities convertToPointOfInterestFromViewCoordinates:tapPoint inFrame:self.previewVideo.frame];
+    [[PBJVision sharedInstance] focusExposeAndAdjustWhiteBalanceAtAdjustedPoint:adjustPoint];
+    
+}
+
 //视频捕获按钮事件
 -(void)startCapture:(id)sender
 {
     if (!self.btnTag) {
+        [UIApplication sharedApplication].idleTimerDisabled = YES;
         self.videoTimer =[NSTimer scheduledTimerWithTimeInterval:1.0 target:self selector:@selector(timerFunction:) userInfo:nil repeats:YES];
         AudioServicesPlaySystemSound(1117);
         [self.startBtn setImage:[UIImage imageNamed:@"RecordPause"] forState:UIControlStateNormal];
@@ -951,24 +999,25 @@ static NSString *kAutoSaveTime = @"kAutoSaveTime";
         formatter.dateFormat = @"ddMMYY_hhmmsss";
         NSString *originName = [NSString stringWithFormat:@"%@%@",[formatter stringFromDate:[NSDate date]],MOV_TYPE];//文件名称
         self.currentVideoPath = originName;
-#warning PBJVision开始捕获
-        [[PBJVision sharedInstance] startVideoCapture:originName];
+        [[PBJVision sharedInstance] startVideoCapture];
         
     }else
     {
+        [UIApplication sharedApplication].idleTimerDisabled = NO;
         [self.videoTimer invalidate];
-        self.videoSecond=0;
+        self.videoSecond = 0;
         self.videoTimeLb.text=@"00:00:00";
         AudioServicesPlaySystemSound(1117);
         [self.startBtn setImage:[UIImage imageNamed:@"RecordStart"] forState:UIControlStateNormal];
-        self.btnTag=false;
+        self.btnTag = false;
+        [[PBJVision sharedInstance] stopPreview];
         [[PBJVision sharedInstance] endVideoCapture];
+        [self restPBJVision];
         [self.previewVideo removeFromSuperview];
         [self.startBtn removeFromSuperview];
         [self.videoTimeLb removeFromSuperview];
-        
-        [NSThread detachNewThreadSelector:@selector(showWait) toTarget:self withObject:nil];
-        
+        [self.cancelCaptureBtn removeFromSuperview];
+       
     }
 }
 
@@ -980,6 +1029,7 @@ static NSString *kAutoSaveTime = @"kAutoSaveTime";
 
 //视频捕获取消按钮事件
 - (void)cancelCaptureBtnAction:(id)sender {
+    [UIApplication sharedApplication].idleTimerDisabled = NO;
     if (self.btnTag) {
         [self.videoTimer invalidate];
         self.videoSecond=0;
@@ -990,60 +1040,71 @@ static NSString *kAutoSaveTime = @"kAutoSaveTime";
     }
     
     [[PBJVision sharedInstance] stopPreview];
-    [[PBJVision sharedInstance] endVideoCapture];
-    self.pbvision.delegate = nil;
+    [[PBJVision sharedInstance] cancelVideoCapture];
+    [self restPBJVision];
     [self.previewVideo removeFromSuperview];
     [self.startBtn removeFromSuperview];
     [self.cancelCaptureBtn removeFromSuperview];
     [self.videoTimeLb removeFromSuperview];
 }
 
+- (void)restPBJVision {
+    PBJVision *vision = [PBJVision sharedInstance];
+    vision.delegate = self;
+    
+    vision.cameraMode = PBJCameraModePhoto; // PHOTO: uncomment to test photo capture
+    vision.focusMode = PBJFocusModeContinuousAutoFocus;
+    vision.outputFormat = PBJOutputFormatSquare;
+    vision.videoRenderingEnabled = YES;
+ 
+}
+
 //设置相机配置
-#warning 重置PBJVision,需要自定义方法？
 - (void)resetCapture
 {
-    NSInteger codeBit = [[USERDEFAULTS objectForKey:CODE_BIT] intValue];
+    NSString *codeBit = [USERDEFAULTS objectForKey:CODE_BIT];
     NSString *resolution = [USERDEFAULTS objectForKey:RESOLUTION];
     
-    self.pbvision = [PBJVision sharedInstance];
-    self.pbvision.delegate = self;
+    PBJVision *pbvision = [PBJVision sharedInstance];
+    pbvision.delegate = self;
     
     if ([resolution isEqualToString:@"标清480p"]) {
-        self.pbvision.captureSessionPreset = AVCaptureSessionPreset640x480;
-        self.pbvision.outputFormat = PBJOutputFormatStandard;
-        self.pbvision.videoBitRate = PBJVideoBitRate640x480;
-        self.pbvision.additionalCompressionProperties = @{AVVideoProfileLevelKey:AVVideoProfileLevelH264HighAutoLevel};
+        pbvision.captureSessionPreset = AVCaptureSessionPreset640x480;
+        pbvision.outputFormat = PBJOutputFormatStandard;
+        pbvision.videoBitRate = PBJVideoBitRate640x480;
+        pbvision.additionalCompressionProperties = @{AVVideoProfileLevelKey:AVVideoProfileLevelH264HighAutoLevel};
     }
     if ([resolution isEqualToString:@"高清720p"]) {
-        self.pbvision.captureSessionPreset = AVCaptureSessionPreset1280x720;
-        self.pbvision.outputFormat = PBJOutputFormatWidescreen;
-        self.pbvision.videoBitRate = PBJVideoBitRate1280x720;
-        self.pbvision.additionalCompressionProperties = @{AVVideoProfileLevelKey:AVVideoProfileLevelH264High40};
+        pbvision.captureSessionPreset = AVCaptureSessionPreset1280x720;
+        pbvision.outputFormat = PBJOutputFormatWidescreen;
+        pbvision.videoBitRate = PBJVideoBitRate1280x720;
+        pbvision.additionalCompressionProperties = @{AVVideoProfileLevelKey:AVVideoProfileLevelH264High40};
     }
     if ([resolution isEqualToString:@"全高清1080p"]) {
-        self.pbvision.captureSessionPreset = AVCaptureSessionPreset1920x1080;
-        self.pbvision.outputFormat = PBJOutputFormatWidescreen;
-        self.pbvision.videoBitRate = PBJVideoBitRate1920x1080;
-        self.pbvision.additionalCompressionProperties = @{AVVideoProfileLevelKey:AVVideoProfileLevelH264High41};
+        pbvision.captureSessionPreset = AVCaptureSessionPreset1920x1080;
+        pbvision.outputFormat = PBJOutputFormatWidescreen;
+        pbvision.videoBitRate = PBJVideoBitRate1920x1080;
+        pbvision.additionalCompressionProperties = @{AVVideoProfileLevelKey:AVVideoProfileLevelH264High41};
 
     }
     
-    if ([resolution isEqualToString:@"24FPS"]) {
-        self.pbvision.videoFrameRate = 24;
-    } else if ([resolution isEqualToString:@"25FPS"]) {
-        self.pbvision.videoFrameRate = 25;
-    } else if ([resolution isEqualToString:@"30FPS"] || [resolution isEqualToString:@""]) {
-        self.pbvision.videoFrameRate = 30;
-    } else if ([resolution isEqualToString:@"60FPS"]) {
-        self.pbvision.videoFrameRate = 60;
+    if ([codeBit isEqualToString:@"24FPS"]) {
+        pbvision.videoFrameRate = 24;
+    } else if ([codeBit isEqualToString:@"25FPS"]) {
+        pbvision.videoFrameRate = 25;
+    } else if ([codeBit isEqualToString:@"30FPS"] || [codeBit isEqualToString:@""]) {
+        pbvision.videoFrameRate = 30;
+    } else if ([codeBit isEqualToString:@"60FPS"]) {
+        pbvision.videoFrameRate = 60;
     }
     
-    [self.pbvision setCameraMode:PBJCameraModeVideo];    //设置📷模式
-    [self.pbvision setCameraDevice:PBJCameraDeviceBack];   //设置📷设备
-    [self.pbvision setCameraOrientation:PBJCameraOrientationPortrait]; //设置📷其方向
-    [self.pbvision setFocusMode:PBJFocusModeAutoFocus];
+    [pbvision setCameraMode:PBJCameraModeVideo];    //设置📷模式
+    [pbvision setCameraDevice:PBJCameraDeviceBack];   //设置📷设备
+    [pbvision setCameraOrientation:PBJCameraOrientationPortrait]; //设置📷其方向
+    [pbvision setFocusMode:PBJFocusModeAutoFocus];
+    pbvision.videoRenderingEnabled = YES;
     
-    [self.pbvision startPreview];
+    [pbvision startPreview];
     
 }
 
@@ -1102,7 +1163,8 @@ static NSString *kAutoSaveTime = @"kAutoSaveTime";
     if(![[Utility trimBlankSpace:self.titleField.text] isEqualToString:@""])//&&![[Utility trimBlankSpace:tvContent.text] isEqualToString:@""]
     {
         //异步加载等待对话框，完成发送前的准备工作后予以关闭
-        [NSThread detachNewThreadSelector:@selector(showWait) toTarget:self withObject:nil];
+//        [NSThread detachNewThreadSelector:@selector(showWait) toTarget:self withObject:nil];
+        [self showWait];
        
         //保存稿件到在编稿库
         [self saveManuscript];
@@ -1146,12 +1208,10 @@ static NSString *kAutoSaveTime = @"kAutoSaveTime";
         [self hideWaiting];
         [self.navigationController popToViewController:[self.navigationController.viewControllers objectAtIndex:0]
                                               animated:YES];
-    }
-    else {
+    } else {
         [self hideWaiting];
         [[AppDelegate getAppDelegate] alert:AlertTypeAlert message:@"标题不能为空"];
     }
-    
 }
 
 //删除附件
@@ -1177,7 +1237,6 @@ static NSString *kAutoSaveTime = @"kAutoSaveTime";
                    type:FileNameTagsPhoto
              originName:[filedic objectForKey:@"OriginName"]
               imageInfo:[filedic objectForKey:@"ImageInfo"]];
-        
     }
     
     //保存视频
@@ -1204,21 +1263,20 @@ static NSString *kAutoSaveTime = @"kAutoSaveTime";
                  originName:[filedic objectForKey:@"OriginName"]
                   imageInfo:@""];
         }
-        
-        
     }
     [self hideWaiting];
 }
 
+
 #pragma mark - PBJVisionDelegate
 - (void)vision:(PBJVision *)vision capturedVideo:(NSDictionary *)videoDict error:(NSError *)error {
     
-    [self hideWaiting];
-    [self.pbvision stopPreview];
-    self.pbvision.delegate = nil;
+//    [NSThread detachNewThreadSelector:@selector(showWait) toTarget:self withObject:nil];
+    [self showWait];
 
-    if (!error) {
-        // NSLog(@"encounted an error in video capture (%@)", error);
+
+    if (error) {
+         NSLog(@"encounted an error in video capture (%@)", [error localizedDescription]);
         return;
     }
     
@@ -1232,8 +1290,20 @@ static NSString *kAutoSaveTime = @"kAutoSaveTime";
                               @"savefilepath",MOV_TYPE,@"filename",nil];
     
     [NSThread detachNewThreadSelector:@selector(albumThreadTask:) toTarget:self withObject:albumsave];
-
 }
+
+- (void)visionDidChangeExposure:(PBJVision *)vision {
+    if (self.focusView && [self.focusView superview]) {
+        [self.focusView stopAnimation];
+    }
+}
+
+- (void)visionDidStopFocus:(PBJVision *)vision {
+    if (self.focusView && [self.focusView superview]) {
+        [self.focusView stopAnimation];
+    }
+}
+
 
 #pragma mark - IFlyRecognizeControlDelegate
 //	识别结束回调
@@ -1255,29 +1325,6 @@ static NSString *kAutoSaveTime = @"kAutoSaveTime";
     [self enableButton];
 }
 
-
-#pragma mark - CLLocationManager delegate
-- (void)locationManager:(CLLocationManager *)manager
-    didUpdateToLocation:(CLLocation *)newLocation
-           fromLocation:(CLLocation *)oldLocation;
-{
-    if (newLocation!=nil) {
-        [self.locationManager stopUpdatingLocation];
-        NSString *latitudeStr=[[NSString alloc] initWithFormat:@"%f",newLocation.coordinate.latitude];
-        NSString *longitudeStr=[[NSString alloc] initWithFormat:@"%f",newLocation.coordinate.longitude];
-        
-        self.mcripts.location = [NSString stringWithFormat:@"%@,%@",latitudeStr,longitudeStr];
-        
-        [self saveManuscript];
-        [[AppDelegate getAppDelegate] alert:AlertTypeSuccess message:self.mcripts.location];
-        
-    }
-}
-
-- (void)locationManager:(CLLocationManager *)manager didFailWithError:(NSError *)error
-{
-    [[AppDelegate getAppDelegate] alert:AlertTypeError message:@"当前定位不可用！"];
-}
 
 #pragma mark - UIAlertViewDelegate
 - (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
@@ -1313,7 +1360,6 @@ static NSString *kAutoSaveTime = @"kAutoSaveTime";
         }
         [UIView commitAnimations];
     }
-
 }
 
 #pragma mark - UIActionSheetDelegate
@@ -1322,98 +1368,118 @@ static NSString *kAutoSaveTime = @"kAutoSaveTime";
             //用户拍摄
         case 0:
         {
-            self.isCamera = TRUE;
-            UIImagePickerController *imagePicker = [[UIImagePickerController alloc]init];
-            
-            if([UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypeCamera])
-            {
-                imagePicker.sourceType = UIImagePickerControllerSourceTypeCamera;
-                imagePicker.mediaTypes = [NSArray arrayWithObjects:(NSString *)kUTTypeImage,nil];
-                [imagePicker setAllowsEditing:NO];
-                imagePicker.delegate = self;
-                [self presentViewController:imagePicker animated:YES completion:nil];
-            }
-            else
-            {
-                UIAlertView *alert=[[UIAlertView alloc]initWithTitle:nil
-                                                             message:@"摄像头不可用"
-                                                            delegate:self
-                                                   cancelButtonTitle:@"确定"
-                                                   otherButtonTitles:nil];
-                [alert show];
-    
-            }
-
+            [self captureImageWithCamera];
             break;
         }
         case 1:
         {
-            self.isCamera = TRUE;
-            
-            if([UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypeCamera])
-            {
-                
-                [self.view addSubview:self.startBtn];
-                [self.view addSubview:self.cancelCaptureBtn];
-                [self.view addSubview:self.videoTimeLb];
-                [self.view addSubview:self.previewVideo];
-                [self.view bringSubviewToFront:self.startBtn];
-                [self.view bringSubviewToFront:self.cancelCaptureBtn];
-                [self.view bringSubviewToFront:self.videoTimeLb];
-                [self resetCapture];
-                
-            }
-            else
-            {
-                UIAlertView *alert=[[UIAlertView alloc]initWithTitle:nil
-                                                             message:@"摄像头不可用"
-                                                            delegate:self
-                                                   cancelButtonTitle:@"确定"
-                                                   otherButtonTitles:nil];
-                [alert show];
-            }
-
+            [self captureVideoWithCamera];
             break;
         }
             //用户相册
         case 2:
         {
-            self.isCamera = FALSE;
-            UIImagePickerController *imagePicker = [[UIImagePickerController alloc]init];
-            
-            if([UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypePhotoLibrary])
-            {
-                imagePicker.sourceType = UIImagePickerControllerSourceTypePhotoLibrary;
-                imagePicker.mediaTypes = [NSArray arrayWithObjects:(NSString *)kUTTypeMovie,(NSString *)kUTTypeImage,nil];
-                [imagePicker setAllowsEditing:NO];
-                imagePicker.delegate = self;
-                [self presentViewController:imagePicker animated:YES completion:nil];
-                
-            }
-            else
-            {
-                UIAlertView *alert=[[UIAlertView alloc]initWithTitle:nil
-                                                             message:@"摄像头不可用"
-                                                            delegate:nil
-                                                   cancelButtonTitle:@"确定"
-                                                   otherButtonTitles:nil];
-                [alert show];
-            }
+            [self pickerMediaFromLibrary];
             break;
             
         }
             //录音
         case 3:
         {
-            RecordVoiceController *rvController = [[RecordVoiceController alloc] init];
-            [self.navigationController pushViewController:rvController animated:YES];
-            rvController.delegate = self;
+            [self recordAudio];
             break;
         }
         default:
             break;
     }
 
+}
+
+//用户相机
+- (void)captureImageWithCamera {
+    self.isCamera = TRUE;
+    UIImagePickerController *imagePicker = [[UIImagePickerController alloc]init];
+    
+    if([UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypeCamera])
+    {
+        imagePicker.sourceType = UIImagePickerControllerSourceTypeCamera;
+        imagePicker.mediaTypes = [NSArray arrayWithObjects:(NSString *)kUTTypeImage,nil];
+        [imagePicker setAllowsEditing:NO];
+        imagePicker.delegate = self;
+        [self presentViewController:imagePicker animated:YES completion:nil];
+    }
+    else
+    {
+        UIAlertView *alert=[[UIAlertView alloc]initWithTitle:nil
+                                                     message:@"摄像头不可用"
+                                                    delegate:self
+                                           cancelButtonTitle:@"确定"
+                                           otherButtonTitles:nil];
+        [alert show];
+        
+    }
+
+}
+
+//从媒体库选择文件
+- (void)pickerMediaFromLibrary {
+    self.isCamera = FALSE;
+    UIImagePickerController *imagePicker = [[UIImagePickerController alloc]init];
+    
+    if([UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypePhotoLibrary])
+    {
+        imagePicker.sourceType = UIImagePickerControllerSourceTypePhotoLibrary;
+        imagePicker.mediaTypes = [NSArray arrayWithObjects:(NSString *)kUTTypeMovie,(NSString *)kUTTypeImage,nil];
+        [imagePicker setAllowsEditing:NO];
+        imagePicker.delegate = self;
+        [self presentViewController:imagePicker animated:YES completion:nil];
+        
+    }
+    else
+    {
+        UIAlertView *alert=[[UIAlertView alloc]initWithTitle:nil
+                                                     message:@"摄像头不可用"
+                                                    delegate:nil
+                                           cancelButtonTitle:@"确定"
+                                           otherButtonTitles:nil];
+        [alert show];
+    }
+
+}
+
+//通过相机捕获视频
+- (void)captureVideoWithCamera {
+    self.isCamera = TRUE;
+    
+    if([UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypeCamera])
+    {
+        
+        [self.view addSubview:self.startBtn];
+        [self.view addSubview:self.cancelCaptureBtn];
+        [self.view addSubview:self.videoTimeLb];
+        [self.view addSubview:self.previewVideo];
+        [self.view bringSubviewToFront:self.startBtn];
+        [self.view bringSubviewToFront:self.cancelCaptureBtn];
+        [self.view bringSubviewToFront:self.videoTimeLb];
+        [self resetCapture];
+        
+    }
+    else
+    {
+        UIAlertView *alert=[[UIAlertView alloc]initWithTitle:nil
+                                                     message:@"摄像头不可用"
+                                                    delegate:self
+                                           cancelButtonTitle:@"确定"
+                                           otherButtonTitles:nil];
+        [alert show];
+    }
+
+}
+
+- (void)recordAudio {
+    RecordVoiceController *rvController = [[RecordVoiceController alloc] init];
+    [self.navigationController pushViewController:rvController animated:YES];
+    rvController.delegate = self;
 }
 
 #pragma mark - UIImagePickerControllerDelegate
@@ -1431,7 +1497,9 @@ static NSString *kAutoSaveTime = @"kAutoSaveTime";
     //switch action by type
     if ([mediaType isEqualToString:@"public.image"])
     {
-        [NSThread detachNewThreadSelector:@selector(showWait) toTarget:self withObject:nil];
+//        [NSThread detachNewThreadSelector:@selector(showWait) toTarget:self withObject:nil];
+        [self showWait];
+
         UIImage *image = [info objectForKey:UIImagePickerControllerOriginalImage];
         NSDictionary *metaDic = [info objectForKey:UIImagePickerControllerMediaMetadata];
         //获取图片的长、宽、分辨率
@@ -1469,7 +1537,9 @@ static NSString *kAutoSaveTime = @"kAutoSaveTime";
         //保存路径
         NSString *originName = [NSString stringWithFormat:@"%@%@",[formatter stringFromDate:[NSDate date]],MOV_TYPE];//文件名称
         NSString *savefilepath = [FILE_PATH_IN_PHONE stringByAppendingPathComponent:originName];//保存路径
-        [NSThread detachNewThreadSelector:@selector(showWait) toTarget:self withObject:nil];
+//        [NSThread detachNewThreadSelector:@selector(showWait) toTarget:self withObject:nil];
+        [self showWait];
+
         
         NSString *compress = [USERDEFAULTS objectForKey:COMPRESS];
         
@@ -1544,8 +1614,8 @@ static NSString *kAutoSaveTime = @"kAutoSaveTime";
 #pragma mark - UITestFiedDelegate
 - (BOOL)textFieldShouldReturn:(UITextField *)textField
 {
-    textField.returnKeyType = UIReturnKeyDefault;
-    [self.tvContent becomeFirstResponder];
+    [self.view endEditing:YES];
+    
     return YES;
 }
 
@@ -1555,17 +1625,77 @@ static NSString *kAutoSaveTime = @"kAutoSaveTime";
     return YES;
 }
 
--(void)textFieldDoneEditing:(id)sender
-{
-    [self.tvContent becomeFirstResponder];
+
+#pragma mark - NewArticlesToolbarDelegate
+//在线语音转文字
+- (void)newArticlesToolbar:(UIToolbar *)toolbar recordButtonDidClicked:(id)button {
+    [self.view endEditing:YES];
+    [self onButtonRecognize];
 }
 
+//打开媒体库
+- (void)newArticlesToolbar:(UIToolbar *)toolbar mediaLibraryButtonDidClicked:(id)button {
+    [self.view endEditing:YES];
+    if (toolbar == self.fixedToolbar) {
+        [self addAttachment:nil];
+    } else if (toolbar == self.floatToolbar) {
+        [self pickerMediaFromLibrary];
+    }
+    
+}
 
+//定位
+- (void)newArticlesToolbar:(UIToolbar *)toolbar locationButtonDidClicked:(id)button {
+    [self.view endEditing:YES];
+    [self attachLocationInfo:nil];
+}
 
+//保存稿件
+- (void)newArticlesToolbar:(UIToolbar *)toolbar saveFileButtonDidClicked:(id)button {
+    [self.view endEditing:YES];
+    [self saveManuscriptAction:nil];
+}
 
+//录制视频
+- (void)newArticlesToolbar:(UIToolbar *)toolbar videoCaptureButtonDidClicked:(id)button {
+    [self.view endEditing:YES];
+    [self captureVideoWithCamera];
+}
 
+//拍照
+- (void)newArticlesToolbar:(UIToolbar *)toolbar imageCaptureButtonDidClicked:(id)button {
+    [self.view endEditing:YES];
+    [self captureImageWithCamera];
+}
 
+//关闭键盘
+- (void)newArticlesToolbar:(UIToolbar *)toolbar closeKeyboardButtonDidClicked:(id)button {
+    [self.view endEditing:YES];
+    [self.view endEditing:YES];
+}
 
+#pragma mark - CLLocationManagerDelegate
+- (void)locationManager:(CLLocationManager *)manager didUpdateLocations:(nonnull NSArray<CLLocation *> *)locations {
+    
+    if (locations.count > 0) {
+       CLLocation *location = [locations firstObject];
+        if (location) {
+            NSString *latitudeStr = [[NSString alloc] initWithFormat:@"%f",location.coordinate.latitude];
+            NSString *longitudeStr = [[NSString alloc] initWithFormat:@"%f",location.coordinate.longitude];
+            
+            self.locationStr = [NSString stringWithFormat:@"%@,%@",latitudeStr,longitudeStr];
+            [self saveManuscript];
+            
+            [[AppDelegate getAppDelegate] alert:AlertTypeSuccess message:self.mcripts.location];
+        }
+    }
+    
+    [self.locationManager stopUpdatingLocation];
+}
+
+- (void)locationManager:(CLLocationManager *)manager didFailWithError:(NSError *)error {
+    [[AppDelegate getAppDelegate] alert:AlertTypeError message:@"定位失败"];
+}
 
 
 @end

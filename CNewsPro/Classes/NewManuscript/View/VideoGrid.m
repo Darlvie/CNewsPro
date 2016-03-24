@@ -20,7 +20,7 @@
         //删除按钮
         _btnDelete = [UIButton buttonWithType:UIButtonTypeCustom];
         [_btnDelete setImage:[UIImage imageNamed:@"manuscript_delete"] forState:UIControlStateNormal];
-        _btnDelete.frame = CGRectMake(-3, -3, 25, 25);
+        _btnDelete.frame = CGRectMake(-3, -3, 32, 32);
         [self addSubview:_btnDelete];
     }
     return self;

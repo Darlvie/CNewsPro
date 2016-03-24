@@ -16,8 +16,8 @@
 #import "Utility.h"
 #import "Accessories.h"
 #import "AccessoriesDB.h"
-#import "ScriptCell.h"
 #import "ManuscriptTemplate.h"
+#import "MultipleScriptCell.h"
 #import "NewArticlesController.h"
 
 static const CGFloat kCellHeight = 105.0f;
@@ -25,7 +25,6 @@ static const CGFloat kCellHeight = 105.0f;
 @interface TaskManagementViewController () <UITableViewDelegate,UITableViewDataSource>
 @property (nonatomic,strong) NSMutableDictionary *selectDic;
 @property (nonatomic,strong)  NSMutableArray *imageList;
-@property (nonatomic,strong) UIButton *cancelButton;
 @property (nonatomic,strong) UIButton *deleteButton;
 @property (nonatomic,strong) UIButton *pauseButton;
 @property (nonatomic,strong) UIButton *startButton;
@@ -35,8 +34,8 @@ static const CGFloat kCellHeight = 105.0f;
 @property (nonatomic,strong) UITableView *tableView;
 @property (nonatomic,strong) UILabel *noDataLabel;
 @property (nonatomic,strong) NSMutableArray *scriptItems;
-@property (nonatomic,strong) UIImageView *checkImageView;
 @property (nonatomic,assign) BOOL		allSelected;
+@property (nonatomic,strong) UIButton *selectedButton;
 @end
 
 @implementation TaskManagementViewController
@@ -52,36 +51,38 @@ static const CGFloat kCellHeight = 105.0f;
     //导航试图
     [self.titleLabelAndImage setImage:[UIImage imageNamed:@"SendingScript_titleimge"] forState:UIControlStateNormal];
     [self.titleLabelAndImage setTitle:@"待发稿件" forState:UIControlStateNormal];
-    self.titleLabelAndImage.backgroundColor=[UIColor colorWithRed:219.0f/255.0f green:210.0f/255.0f blue:178.0f/225.0f alpha:1.0f];
+    self.titleLabelAndImage.backgroundColor = RGB(60, 90, 154);
     
     self.imageList = [[NSMutableArray alloc] init];
     [self.imageList addObject:[UIImage imageNamed:@"bigpicholder.png"]];
     [self.imageList addObject:[UIImage imageNamed:@"audioBg.png"]];
     [self.imageList addObject:[UIImage imageNamed:@"videoBg.png"]];
  
-    self.viewAboveTableView = [[UIView alloc]initWithFrame:CGRectMake(0.0f,CGRectGetMaxY(self.titleLabelAndImage.frame),self.widthOfMainView,34.0f)];
+    self.viewAboveTableView = [[UIView alloc]initWithFrame:CGRectMake(0.0f,CGRectGetMaxY(self.titleLabelAndImage.frame),SCREEN_WIDTH,34.0f)];
+    self.viewAboveTableView.backgroundColor = [UIColor whiteColor];
     
     //edit button
     self.editButton=[[UIButton alloc]initWithFrame:CGRectMake(40, 1, 58, 30)];
     [self.editButton setTitle:@"编辑" forState:UIControlStateNormal];
     [self.editButton setTitleColor:[UIColor whiteColor]forState:UIControlStateNormal];
-    [self.editButton setBackgroundImage:[UIImage imageNamed:@"SendingScript_Editbg"] forState:UIControlStateNormal];
-    [self.editButton addTarget:self action:@selector(editButtonFunction) forControlEvents:UIControlEventTouchUpInside];
+    [self.editButton setBackgroundColor:RGB(60, 90, 154)];
+    self.editButton.layer.cornerRadius = 3.0f;
+    self.editButton.layer.masksToBounds = YES;
+    [self.editButton addTarget:self action:@selector(editButtonClicked:) forControlEvents:UIControlEventTouchUpInside];
     [self.viewAboveTableView addSubview:self.editButton];
     
-    self.cancelButton=[[UIButton alloc]initWithFrame:CGRectMake(40,1,58,30)];
-    self.cancelButton.hidden = YES;
-    [self.cancelButton setTitle:@"取消" forState:UIControlStateNormal];
-    [self.cancelButton setTitleColor:[UIColor whiteColor]forState:UIControlStateNormal];
-    [self.cancelButton setBackgroundImage:[UIImage imageNamed:@"SendingScript_Editbg"] forState:UIControlStateNormal];
-    [self.cancelButton addTarget:self action:@selector(cancelFunction) forControlEvents:UIControlEventTouchUpInside];
-    [self.viewAboveTableView addSubview:self.cancelButton];
+    self.selectedButton = [[UIButton alloc] initWithFrame:CGRectMake(5, 0, 32, 32)];
+    [self.selectedButton setImage:[UIImage imageNamed:@"checked_2-1"] forState:UIControlStateNormal];
+    [self.selectedButton setImage:[UIImage imageNamed:@"checked_2_filled"] forState:UIControlStateSelected];
+    [self.selectedButton addTarget:self action:@selector(allSelect) forControlEvents:UIControlEventTouchUpInside];
+    self.selectedButton.hidden = YES;
+    [self.viewAboveTableView addSubview:self.selectedButton];
     
     //cancelButton init,hidden
     self.pauseButton=[[UIButton alloc]initWithFrame:CGRectMake(140,0,32,32)];
     [self.pauseButton setTitleColor:[UIColor whiteColor]forState:UIControlStateNormal];
     self.pauseButton.hidden=YES;
-    [self.pauseButton setImage:[UIImage imageNamed:@"SendingScript_pause"] forState:UIControlStateNormal];
+    [self.pauseButton setImage:[UIImage imageNamed:@"pause_filled"] forState:UIControlStateNormal];
     [self.pauseButton setContentMode:UIViewContentModeCenter];
     [self.pauseButton addTarget:self action:@selector(pause) forControlEvents:UIControlEventTouchUpInside];
     [self.pauseButton setShowsTouchWhenHighlighted:YES];
@@ -90,7 +91,7 @@ static const CGFloat kCellHeight = 105.0f;
     self.startButton=[[UIButton alloc]initWithFrame:CGRectMake(203,0,32,32)];
     self.startButton.hidden=YES;
     [self.startButton setTitleColor:[UIColor whiteColor]forState:UIControlStateNormal];
-    [self.startButton setImage:[UIImage imageNamed:@"SendingScript_Start"] forState:UIControlStateNormal];
+    [self.startButton setImage:[UIImage imageNamed:@"play_filled"] forState:UIControlStateNormal];
     [self.startButton addTarget:self action:@selector(start) forControlEvents:UIControlEventTouchUpInside];
     [self.startButton setShowsTouchWhenHighlighted:YES];
     [self.viewAboveTableView addSubview:self.startButton];
@@ -98,21 +99,21 @@ static const CGFloat kCellHeight = 105.0f;
     //delete button
     self.deleteButton=[[UIButton alloc]initWithFrame:CGRectMake(260,-2,35,35)];//CGRectMake(110,10,25,22)
     self.deleteButton.hidden=YES;
-    [self.deleteButton setImage:[UIImage imageNamed:@"SendingScript_Delete"] forState:UIControlStateNormal];
+    [self.deleteButton setImage:[UIImage imageNamed:@"delete_sign_filled"] forState:UIControlStateNormal];
     [self.deleteButton addTarget:self action:@selector(deleteFuntion) forControlEvents:UIControlEventTouchUpInside];
     [self.deleteButton setShowsTouchWhenHighlighted:YES];
     [self.viewAboveTableView addSubview:self.deleteButton];
     
     //separated Line
-    UILabel * sLine = [[UILabel alloc] initWithFrame:CGRectMake(40,36,self.widthOfMainView-40.0,1)];
-    sLine.backgroundColor =[UIColor colorWithRed:205.0f/255.0f green:212.0f/255.0f blue:217.0f/255.0f alpha:1];
+    UILabel * sLine = [[UILabel alloc] initWithFrame:CGRectMake(40,32,self.widthOfMainView-40.0,1)];
+    sLine.backgroundColor =[UIColor lightGrayColor];
     [self.viewAboveTableView addSubview:sLine];
     
     //total number
     self.totalNumber = [[UILabel alloc]initWithFrame:CGRectMake(400,1,55,30)];//CGRectMake(300,10,20,22)
     self.totalNumber.font = [UIFont boldSystemFontOfSize:20];
     self.totalNumber.textAlignment = NSTextAlignmentRight;
-    self.totalNumber.textColor =[UIColor colorWithRed:57.0f/255.0f green:131.0f/255.0f blue:208.0f/225.0f alpha:1.0f];
+    self.totalNumber.textColor = RGB(60, 90, 154);
     self.totalNumber.backgroundColor=[UIColor clearColor];
     [self.viewAboveTableView addSubview:self.totalNumber];
     [self.view addSubview:self.viewAboveTableView];
@@ -132,17 +133,16 @@ static const CGFloat kCellHeight = 105.0f;
     self.tableView = [[UITableView alloc] initWithFrame:CGRectMake(0.0f,CGRectGetMaxY(self.viewAboveTableView.frame),self.widthOfMainView,HEIGH_TO_FMAIN_VIEW(self.heightOfMainView, CGRectGetHeight(self.viewAboveTableView.frame), 0.0)) style:UITableViewStylePlain];
     self.tableView.delegate = self;
     self.tableView.dataSource = self;
-    self.tableView.separatorStyle = NO;
+    self.tableView.backgroundColor = RGB(245, 245, 245);
+    self.tableView.separatorStyle = UITableViewCellSeparatorStyleSingleLine;
+    self.tableView.tableFooterView = [[UIView alloc] init];
     self.tableView.allowsSelectionDuringEditing=YES;
     [self.view addSubview:self.tableView];
     
     //no data label
-    UILabel *labelObject=[[UILabel alloc]initWithFrame:CGRectMake(40,3,100,30)];
-
-    self.noDataLabel=labelObject;
-
+    self.noDataLabel= [[UILabel alloc]initWithFrame:CGRectMake(40,3,100,30)];
     [self.noDataLabel setText:@"暂无数据"];
-    self.noDataLabel.textColor = [UIColor grayColor];
+    self.noDataLabel.textColor = RGB(60, 90, 154);
     self.noDataLabel.hidden = NO;
     [self.tableView addSubview:self.noDataLabel];
     self.noDataLabel.backgroundColor = [UIColor clearColor];
@@ -163,9 +163,7 @@ static const CGFloat kCellHeight = 105.0f;
     // [self.tableView reloadData];
     
     self.totalNumber.text = [NSString stringWithFormat:@"%ld",[[UploadManager sharedManager] uploadClientCount]];
-    
-    self.tableView.backgroundColor=[UIColor clearColor];
-
+    [self loadTableView];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -214,7 +212,6 @@ static const CGFloat kCellHeight = 105.0f;
     NSIndexPath *i  = [NSIndexPath indexPathForRow:a.currentIndexPath inSection:0];
     UploadTaskCell *cell = (UploadTaskCell*)[self.tableView cellForRowAtIndexPath:i];
     cell.progressView.progress = a.progress;
-    
     NSString *filepath = [[UploadManager sharedManager] attachmentPathAtQueueIndex:i.row];
     double totalSize = (double)[Utility getFileLengthByPath:filepath]/1024.0;
     double speed = (double)[[USERDEFAULTS objectForKey:FILE_BLOCK] intValue]*1000/a.blockTime;
@@ -240,18 +237,18 @@ static const CGFloat kCellHeight = 105.0f;
     {
         cell.progressView.progress=0;//进度清0
         [cell.btnSwitch setTitle:@"2" forState:UIControlStateNormal];
-        [cell.btnSwitch setImage:[UIImage imageNamed:@"SendingScript_reload"] forState:UIControlStateNormal];
+        [cell.btnSwitch setImage:[UIImage imageNamed:@"recurring_appointment_filled"] forState:UIControlStateNormal];
         
     }
     if ([clientstatus isEqualToString:REQUEST_FAIL])
     {
-        [cell.btnSwitch setImage:[UIImage imageNamed:@"SendingScript_Start"] forState:UIControlStateNormal];
+        [cell.btnSwitch setImage:[UIImage imageNamed:@"play_filled"] forState:UIControlStateNormal];
         [cell.btnSwitch setTitle:@"1" forState:UIControlStateNormal];
         [[UploadManager sharedManager] pauseUploadClientAtQueueIndex:i.row];
         
     }
     if (!a.paused && a.running) {
-        [cell.btnSwitch setImage:[UIImage imageNamed:@"SendingScript_pause"] forState:UIControlStateNormal];
+        [cell.btnSwitch setImage:[UIImage imageNamed:@"pause_filled"] forState:UIControlStateNormal];
         [cell.btnSwitch setTitle:@"1" forState:UIControlStateNormal];
         
     }
@@ -261,31 +258,30 @@ static const CGFloat kCellHeight = 105.0f;
 
 #pragma mark - Private Method
 //进入编辑模式添加的动画
-- (void)setCheckImageViewCenter:(CGPoint)pt alpha:(CGFloat)alpha animated:(BOOL)animated
-{
-    if (animated)
-    {
-        [UIView beginAnimations:nil context:nil];
-        [UIView setAnimationBeginsFromCurrentState:YES];
-        [UIView setAnimationCurve:UIViewAnimationCurveEaseInOut];
-        [UIView setAnimationDuration:0.3];
-        
-        self.checkImageView.center = pt;
-        self.checkImageView.alpha = alpha;
-        
-        [UIView commitAnimations];
-    }
-    else
-    {
-        self.checkImageView.center = pt;
-        self.checkImageView.alpha = alpha;
-    }
-}
+//- (void)setCheckImageViewCenter:(CGPoint)pt alpha:(CGFloat)alpha animated:(BOOL)animated
+//{
+//    if (animated)
+//    {
+//        [UIView beginAnimations:nil context:nil];
+//        [UIView setAnimationBeginsFromCurrentState:YES];
+//        [UIView setAnimationCurve:UIViewAnimationCurveEaseInOut];
+//        [UIView setAnimationDuration:0.3];
+//        
+//        self.checkImageView.center = pt;
+//        self.checkImageView.alpha = alpha;
+//        
+//        [UIView commitAnimations];
+//    }
+//    else
+//    {
+//        self.checkImageView.center = pt;
+//        self.checkImageView.alpha = alpha;
+//    }
+//}
 
 //点击编辑按钮之后点击取消时，取消全选
 - (void)allSelectCancel
 {
-    self.checkImageView.image = [UIImage imageNamed:@"SendingScript_Uncheck.png"];
     
     for (ScriptItem* item in self.scriptItems)
     {
@@ -301,11 +297,10 @@ static const CGFloat kCellHeight = 105.0f;
     ManuscriptsDB *Mdb = [[ManuscriptsDB alloc] init];
     self.scriptItems = [Mdb getManuscriptsByStatus:[USERDEFAULTS objectForKey:LOGIN_NAME] status:MANUSCRIPT_STATUS_STAND_TO];
     if ([[UploadManager sharedManager] uploadClientCount]>0) {
-        
+        self.tableView.backgroundColor = RGB(245, 245, 245);
         self.noDataLabel.hidden = YES;
-        
     }else {
-        
+        self.tableView.backgroundColor = [UIColor whiteColor];
         self.noDataLabel.hidden = NO;
     }
     [self.tableView reloadData];
@@ -315,43 +310,38 @@ static const CGFloat kCellHeight = 105.0f;
 
 
 #pragma mark - Action Method
-//编辑按钮关联方法
-- (void)editButtonFunction
-{
-    self.editButton.hidden = YES;
-    self.cancelButton.hidden=NO;
-    self.pauseButton.hidden = NO;
-    self.deleteButton.hidden=NO;
-    self.startButton.hidden = NO;
-    
-    //imageView点击事件
-    if (self.checkImageView == nil)
-    {
-        self.checkImageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"SendingScript_Uncheck.png"]];
-        [self.viewAboveTableView addSubview:self.checkImageView];
+- (void)editButtonClicked:(UIButton *)sender {
+    sender.selected = !sender.selected;
+    if (sender.selected) {
+        [self.editButton setTitle:@"取消" forState:UIControlStateNormal];
+        self.pauseButton.hidden = NO;
+        self.deleteButton.hidden=NO;
+        self.startButton.hidden = NO;
+        self.selectedButton.hidden = NO;
+        [self.tableView setEditing:YES animated:YES];
+        self.allSelected = NO;
+        [self.tableView reloadData];
+    } else {
+        [self.editButton setTitle:@"编辑" forState:UIControlStateNormal];
+        self.deleteButton.hidden = YES;
+        self.pauseButton.hidden=YES;
+        self.startButton.hidden=YES;
+        self.selectedButton.hidden = YES;
+        //列表恢复原始状态
+        [self allSelectCancel];
+        //checkbox in tableview
+        [self.tableView setEditing:NO animated:NO];
+        self.allSelected = NO;
+        [self.tableView reloadData];
     }
-    self.checkImageView.image = [UIImage imageNamed:@"SendingScript_Uncheck.png"];
-    self.checkImageView.frame = CGRectMake(0,0,25,24);
-    self.checkImageView.center = CGPointMake(-CGRectGetWidth(self.checkImageView.frame) * 0.5,CGRectGetHeight(self.viewAboveTableView.bounds) * 0.5);
-    self.checkImageView.alpha = 0.0;
-    [self setCheckImageViewCenter:CGPointMake(20.5, CGRectGetHeight(self.viewAboveTableView.bounds) * 0.5) alpha:1.0 animated:YES];
-    self.checkImageView.userInteractionEnabled = YES;
-    UITapGestureRecognizer *singleTap = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(allSelect)];
-    [self.checkImageView addGestureRecognizer:singleTap];
-    self.checkImageView.hidden = NO;
-    
-    [self.tableView setEditing:YES animated:YES];
-    self.allSelected = NO;
-    [self.tableView reloadData];
 }
 
 //全部选择
 - (void)allSelect
 {
+    self.selectedButton.selected = !self.selectedButton.selected;
     self.allSelected = !self.allSelected;
     if (!self.allSelected) {
-        
-        self.checkImageView.image = [UIImage imageNamed:@"SendingScript_Uncheck.png"];
         
         for (ScriptItem* item in self.scriptItems)
         {
@@ -360,8 +350,6 @@ static const CGFloat kCellHeight = 105.0f;
         [self.selectDic removeAllObjects];
     }
     else {
-        self.checkImageView.image = [UIImage imageNamed:@"SendingScript_Checked.png"];
-
         for (int i=0; i<[self.scriptItems count]; i++) {
             ScriptItem* item =[self.scriptItems objectAtIndex:i];
             item.indexPath = i;
@@ -372,21 +360,6 @@ static const CGFloat kCellHeight = 105.0f;
         
     }
     
-    [self.tableView reloadData];
-}
-
--(void)cancelFunction{
-    self.checkImageView.hidden = YES;
-    self.cancelButton.hidden = YES;
-    self.editButton.hidden = NO;
-    self.deleteButton.hidden = YES;
-    self.pauseButton.hidden=YES;
-    self.startButton.hidden=YES;
-    //列表恢复原始状态
-    [self allSelectCancel];
-    //checkbox in tableview
-    [self.tableView setEditing:NO animated:NO];
-    self.allSelected = NO;
     [self.tableView reloadData];
 }
 
@@ -438,7 +411,6 @@ static const CGFloat kCellHeight = 105.0f;
         [[UploadManager  sharedManager] removeClientByClient:[ClientArray objectAtIndex:i]];
     }
     [self.selectDic removeAllObjects];
-    self.checkImageView.image = [UIImage imageNamed:@"ManulistCheckBox"];
     self.allSelected = NO;
     [self loadTableView];
     
@@ -453,19 +425,19 @@ static const CGFloat kCellHeight = 105.0f;
     if ([clientstatus isEqualToString:LAST_FAIL]) {
         uclient.reloadCount = 1;//手动开始重传
         [uclient startUpload];
-        [sender setImage:[UIImage imageNamed:@"SendingScript_pause"] forState:UIControlStateNormal];
+        [sender setImage:[UIImage imageNamed:@"pause_filled"] forState:UIControlStateNormal];
         return;
     }
     //任务正在运行，则暂停
-    if (!uclient.paused&&uclient.running) {
+    if (!uclient.paused && uclient.running) {
         [[UploadManager sharedManager] pauseUploadClientAtQueueIndex:[sender tag]];
-        [sender setImage:[UIImage imageNamed:@"SendingScript_Start"] forState:UIControlStateNormal];
+        [sender setImage:[UIImage imageNamed:@"play_filled"] forState:UIControlStateNormal];
         return;
     }
     //任务正暂停，则运行
-    if (uclient.paused&&!uclient.running) {
+    if (uclient.paused && !uclient.running) {
         [[UploadManager sharedManager] continueUploadClientAtQueueIndex:[sender tag]];
-        [sender setImage:[UIImage imageNamed:@"SendingScript_pause"] forState:UIControlStateNormal];
+        [sender setImage:[UIImage imageNamed:@"pause_filled"] forState:UIControlStateNormal];
         return;
     }
 }
@@ -495,13 +467,14 @@ static const CGFloat kCellHeight = 105.0f;
     
     Manuscripts *manuscripts = [[UploadManager sharedManager] objectAtQueueIndex:indexPath.row];
     NSString *filepath = [[UploadManager sharedManager] attachmentPathAtQueueIndex:indexPath.row];
+    
     if (cell==nil)
     {
-        cell = [[UploadTaskCell alloc] initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:cellIdentifier];
+        cell = [[UploadTaskCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellIdentifier];
     }
     cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
     
-    if (indexPath.row==[[UploadManager sharedManager] uploadClientCount]) {
+    if (indexPath.row == [[UploadManager sharedManager] uploadClientCount]) {
         return cell ;
     }
     
@@ -536,11 +509,11 @@ static const CGFloat kCellHeight = 105.0f;
     UploadClient *uclient = [[UploadManager sharedManager] getClientAtIndex:indexPath.row];
     uclient.currentIndexPath=indexPath.row;
     if (uclient.running) {
-        [cell.btnSwitch setImage:[UIImage imageNamed:@"SendingScript_pause"] forState:UIControlStateNormal];
+        [cell.btnSwitch setImage:[UIImage imageNamed:@"pause_filled"] forState:UIControlStateNormal];
         [cell.btnSwitch setTitle:@"0" forState:UIControlStateNormal];
     }
     else if(uclient.paused){
-        [cell.btnSwitch setImage:[UIImage imageNamed:@"SendingScript_Start"] forState:UIControlStateNormal];
+        [cell.btnSwitch setImage:[UIImage imageNamed:@"play_filled"] forState:UIControlStateNormal];
         [cell.btnSwitch setTitle:@"1" forState:UIControlStateNormal];
     }
     else
@@ -549,7 +522,7 @@ static const CGFloat kCellHeight = 105.0f;
         
     }
     //为控件赋值
-    cell.progressView.progress = [[UploadManager sharedManager] uploadProgressAtQueueIndex:indexPath.row];
+   cell.progressView.progress = [[UploadManager sharedManager] uploadProgressAtQueueIndex:indexPath.row];
     cell.manuscriptsContent.text = manuscripts.mTemplate.address;
     if ([manuscripts.title isEqualToString:@""]) {
         NSLog(@"manuscripts is null");
@@ -562,7 +535,7 @@ static const CGFloat kCellHeight = 105.0f;
     NSString *clientstatus=[[UploadManager sharedManager] getUploadRequestStatus:indexPath.row];
     if ([clientstatus isEqualToString:LAST_FAIL]) {
         [cell.btnSwitch setTitle:@"2" forState:UIControlStateNormal];
-        [cell.btnSwitch setImage:[UIImage imageNamed:@"SendingScript_reload"] forState:UIControlStateNormal];
+        [cell.btnSwitch setImage:[UIImage imageNamed:@"recurring_appointment_filled"] forState:UIControlStateNormal];
     }
     if (indexPath.row < MAX_CLIENT_COUNT) {
         cell.btnSwitch.hidden = NO;
@@ -592,7 +565,7 @@ static const CGFloat kCellHeight = 105.0f;
     {
         ScriptItem* scriptItem = [self.scriptItems objectAtIndex:indexPath.row];
         scriptItem.indexPath = indexPath.row;
-        ScriptCell *cell = (ScriptCell*)[tableView cellForRowAtIndexPath:indexPath];
+        MultipleScriptCell *cell = (MultipleScriptCell *)[tableView cellForRowAtIndexPath:indexPath];
         scriptItem.checked = !scriptItem.checked;
         [cell setChecked:scriptItem.checked];
         if (scriptItem.checked) {
@@ -611,6 +584,7 @@ static const CGFloat kCellHeight = 105.0f;
         postViewController.indexPath = indexPath;
         [self.navigationController pushViewController:postViewController animated:YES];
         [tableView deselectRowAtIndexPath:indexPath animated:YES];
+//        [self switchUploadStatus:nil];
        
     }
     [tableView deselectRowAtIndexPath:indexPath animated:YES];

@@ -34,44 +34,45 @@ static const NSInteger kXmax = 20;
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
-    
-    self.view.backgroundColor = [UIColor whiteColor];
 
     self.view.backgroundColor = [UIColor whiteColor];
     self.navigationController.navigationBarHidden=NO;
     self.navigationController.navigationBar.tintColor = [UIColor blackColor];
+    self.navigationController.navigationBar.barTintColor = RGB(60, 90, 154);
+    [self.navigationController.navigationBar setTitleTextAttributes:@{NSForegroundColorAttributeName:[UIColor whiteColor]}];
     self.title = @"RecordVoice";
     
     if ([self startAudioSession])
     {
         self.navigationItem.rightBarButtonItem = BARBUTTON(@"录音", @selector(record));
+        [self.navigationItem.rightBarButtonItem setTintColor:[UIColor whiteColor]];
         self.navigationItem.leftBarButtonItem = BARBUTTON(@"返回", @selector(returnToParent));
-        
+        [self.navigationItem.leftBarButtonItem setTintColor:[UIColor whiteColor]];
     }
     else
         self.title = @"No Audio Input Available";
     
     //liying
-    UILabel *labelAverage=[[UILabel alloc]initWithFrame:CGRectMake(20, self.view.frame.size.height-down-kProgressViewHeight*2-kLabelHeight-5-45, 200, 21)];
+    UILabel *labelAverage=[[UILabel alloc]initWithFrame:CGRectMake(20, self.view.frame.size.height-down-kProgressViewHeight*2-kLabelHeight-5-45, SCREEN_WIDTH-40, 21)];
     labelAverage.text=@"Average";
     labelAverage.font=[UIFont fontWithName:@"Helvetica Bold" size:17.0f];
     labelAverage.backgroundColor=[UIColor clearColor];
     [self.view addSubview:labelAverage];
     
     //liying
-    UILabel *labelPeak=[[UILabel alloc]initWithFrame:CGRectMake(20, self.view.frame.size.height-down-kProgressViewHeight-kLabelHeight-5, 200, 21)];
+    UILabel *labelPeak=[[UILabel alloc]initWithFrame:CGRectMake(20, self.view.frame.size.height-down-kProgressViewHeight-kLabelHeight-5, SCREEN_WIDTH-40, 21)];
     labelPeak.text=@"Peak";
     labelPeak.font=[UIFont fontWithName:@"Helvetica Bold" size:17.0f];
     labelPeak.backgroundColor=[UIColor clearColor];
     [self.view addSubview:labelPeak];
     
     //liying
-    self.meter1=[[UIProgressView alloc]initWithFrame:CGRectMake(20, self.view.frame.size.height-down-kProgressViewHeight*2-45, 280, kProgressViewHeight)];
+    self.meter1=[[UIProgressView alloc]initWithFrame:CGRectMake(20, self.view.frame.size.height-down-kProgressViewHeight*2-45, SCREEN_WIDTH-40, kProgressViewHeight)];
     [self.view addSubview:self.meter1];
     
     
     //liying
-    self.meter2=[[UIProgressView alloc]initWithFrame:CGRectMake(20, self.view.frame.size.height-down-kProgressViewHeight, 280, kProgressViewHeight)];
+    self.meter2=[[UIProgressView alloc]initWithFrame:CGRectMake(20, self.view.frame.size.height-down-kProgressViewHeight, SCREEN_WIDTH-40, kProgressViewHeight)];
     [self.view addSubview:self.meter2];
 
 }
@@ -170,7 +171,8 @@ static const NSInteger kXmax = 20;
     // Update the navigation bar
     self.navigationItem.rightBarButtonItem = BARBUTTON(@"完成", @selector(stopRecording));
     self.navigationItem.leftBarButtonItem = SYSBARBUTTON(UIBarButtonSystemItemPause, self, @selector(pauseRecording));
-    
+    [self.navigationItem.rightBarButtonItem setTintColor:[UIColor whiteColor]];
+    [self.navigationItem.leftBarButtonItem setTintColor:[UIColor whiteColor]];
     return YES;
 }
 

@@ -33,6 +33,9 @@
     //检查更新
     //[self checkVersionGCD];
     
+    //设置状态栏颜色
+    [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleLightContent animated:NO];
+    
     NSString *initString = [[NSString alloc] initWithFormat:@"appid=%@",APP_ID];
     [IFlySpeechUtility createUtility:initString];
     

@@ -40,7 +40,7 @@ static const NSInteger kLableHeight = 30;
     //导航试图
     [self.titleLabelAndImage setImage:[UIImage imageNamed:@"manuscript_logo.png"] forState:UIControlStateNormal];
     [self.titleLabelAndImage setTitle:@"附件详情" forState:UIControlStateNormal];
-    self.titleLabelAndImage.backgroundColor=[UIColor colorWithRed:0.0f/255.0f green:137.0f/255.0f blue:185.0f/225.0f alpha:1.0f];
+    self.titleLabelAndImage.backgroundColor = RGB(60, 90, 154);
     
     //liying
     self.scrollView=[[UIScrollView alloc]initWithFrame:CGRectMake(0, CGRectGetMaxY(self.titleLabelAndImage.frame), self.widthOfMainView, self.heightOfMainView)];
@@ -112,12 +112,12 @@ static const NSInteger kLableHeight = 30;
     }
     
     //liying
-    UIImageView *imageUp=[[UIImageView alloc]initWithFrame:CGRectMake(12, self.view.frame.size.height-TV_HEIGHT-DOWN-2, 297, 1)];
+    UIImageView *imageUp=[[UIImageView alloc]initWithFrame:CGRectMake(12, self.view.frame.size.height-TV_HEIGHT-DOWN-2, SCREEN_WIDTH-24, 1)];
     [imageUp setImage:[UIImage imageNamed:@"TempleView_line"]];
     [self.scrollView addSubview:imageUp];
     
     //liying
-    UIImageView *imageDown=[[UIImageView alloc]initWithFrame:CGRectMake(12, self.view.frame.size.height-DOWN-1, 297, 1)];
+    UIImageView *imageDown=[[UIImageView alloc]initWithFrame:CGRectMake(12, self.view.frame.size.height-DOWN-1, SCREEN_WIDTH-24, 1)];
     [imageDown setImage:[UIImage imageNamed:@"TempleView_line"]];
     [self.scrollView addSubview:imageDown];
     

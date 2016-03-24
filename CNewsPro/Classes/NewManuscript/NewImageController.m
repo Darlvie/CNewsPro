@@ -20,10 +20,12 @@
 #import <CoreLocation/CoreLocation.h>
 #import "AttachDetailController.h"
 #import <MobileCoreServices/MobileCoreServices.h>
+#import "FixedToolbar.h"
+#import "NewArticlesToolbarDelegate.h"
 
-@interface NewImageController () <UIActionSheetDelegate,CLLocationManagerDelegate,UIImagePickerControllerDelegate,UINavigationControllerDelegate,UIAlertViewDelegate,UITextFieldDelegate>
+@interface NewImageController () <UIActionSheetDelegate,CLLocationManagerDelegate,UIImagePickerControllerDelegate,UINavigationControllerDelegate,UIAlertViewDelegate,UITextFieldDelegate,NewArticlesToolbarDelegate>
 
-@property (strong,nonatomic) UITextView *titleField;
+@property (strong,nonatomic) UITextField *titleField;
 @property (strong,nonatomic) UILabel *static_title;
 @property (strong,nonatomic) Manuscripts *mcripts;
 @property (strong,nonatomic) ManuscriptsDB *manuscriptsdb;
@@ -38,6 +40,8 @@
 @property (nonatomic,assign) NSInteger selectAccessoryIndex;
 @property (nonatomic,strong) UIButton *selectAccessorySender;
 @property (nonatomic,assign) BOOL isCamera;
+@property (nonatomic,strong) FixedToolbar *toolbar;
+@property (nonatomic,copy) NSString *locationStr;
 
 @end
 
@@ -57,6 +61,7 @@
 -(void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
+    [self setUpToolbar];
     [self.navigationController setNavigationBarHidden:YES];
 }
 
@@ -64,6 +69,17 @@
 {
     [super viewWillDisappear:animated];
     [self.view endEditing:YES];
+}
+
+- (void)setUpToolbar {
+    self.toolbar = [FixedToolbar  fixedToolbar];
+    NSMutableArray *subItems = [self.toolbar.items mutableCopy];
+    NSRange range = NSMakeRange(0, 2);
+    [subItems removeObjectsInRange:range];
+    [self.toolbar setItems:subItems];
+    self.toolbar.frame = CGRectMake(0, SCREEN_HEIGHT - 49, SCREEN_WIDTH, 49);
+    self.toolbar.toobarDelegate = self;
+    [self.view addSubview:self.toolbar];
 }
 
 - (void)returnToParentView:(UIButton *)button {
@@ -109,10 +125,11 @@
 //页面初始化
 -(void)initializeController
 {
-    self.titleField = [[UITextView alloc] initWithFrame:CGRectMake(55, CGRectGetMaxY(self.titleLabelAndImage.frame), self.widthOfMainView-55, 30)];
+    self.titleField = [[UITextField alloc] initWithFrame:CGRectMake(55, CGRectGetMaxY(self.titleLabelAndImage.frame), self.widthOfMainView-55, 30)];
     self.titleField.font = [UIFont systemFontOfSize:14];
     self.titleField.textAlignment = NSTextAlignmentLeft;
     self.titleField.returnKeyType = UIReturnKeyDone;
+    self.titleField.delegate = self;
     [self.view addSubview:self.titleField];
     
     self.static_title = [[UILabel alloc] initWithFrame:CGRectMake(10, CGRectGetMaxY(self.titleLabelAndImage.frame)+5.0, 52, 21)];
@@ -157,16 +174,7 @@
     //导航试图
     [self.titleLabelAndImage setImage:[UIImage imageNamed:@"express_photo"] forState:UIControlStateNormal];
     [self.titleLabelAndImage setTitle:@"图片快讯" forState:UIControlStateNormal];
-    self.titleLabelAndImage.backgroundColor=[UIColor colorWithRed:154.0f/255.0f green:213.0f/255.0f blue:231.0f/255.0f alpha:1.0f];
-    
-    UIButton *showDetailBtn = [[UIButton alloc] initWithFrame:CGRectMake(self.view.frame.size.width-25, self.view.frame.size.height/2-55, 25, 60)];
-    [showDetailBtn setTitleColor:[UIColor whiteColor]forState:UIControlStateNormal];
-    [showDetailBtn setImage:[UIImage imageNamed:@"switch"] forState:UIControlStateNormal];
-    showDetailBtn.userInteractionEnabled = YES;
-    [showDetailBtn addTarget:self action:@selector(showTemplateView:) forControlEvents:UIControlEventTouchUpInside];
-    [showDetailBtn setContentMode:UIViewContentModeCenter];
-    [showDetailBtn setShowsTouchWhenHighlighted:YES];
-    [self.view addSubview:showDetailBtn];
+    self.titleLabelAndImage.backgroundColor = RGB(60, 90, 154);
     
     //添加发送按钮
     self.rightButton.userInteractionEnabled = YES;
@@ -175,13 +183,14 @@
     
     //zyq 国际化
     self.static_title.text = @"标题";
+    [self.static_title setTextColor:[UIColor lightGrayColor]];
     
     UILabel *topLine = [[UILabel alloc] initWithFrame:CGRectMake(10,  CGRectGetMaxY(self.static_title.frame)+5.0, self.widthOfMainView-20.0, 1)];
-    topLine.backgroundColor = [UIColor colorWithRed:106.0f/255.0f green:174.0f/255.0f blue:211.0f/255.0f alpha:1.0f];
+    topLine.backgroundColor = [UIColor lightGrayColor];
     [self.view addSubview:topLine];
     
     //表格视图
-    self.imageListScrollView = [[UIScrollView alloc] initWithFrame:CGRectMake(10, CGRectGetMaxY(topLine.frame), self.widthOfMainView-20, self.heightOfMainView-34.0-70)];
+    self.imageListScrollView = [[UIScrollView alloc] initWithFrame:CGRectMake(10, CGRectGetMaxY(topLine.frame)+44, self.widthOfMainView-20, self.heightOfMainView-34.0-70)];
     self.imageListScrollView.backgroundColor = [UIColor whiteColor];
     [self.view addSubview:self.imageListScrollView];
     
@@ -208,29 +217,35 @@
     }
     
     
-    UIButton *addAttachBtn = [[UIButton alloc] initWithFrame:CGRectMake(58, self.view.frame.size.height-70+10, 35, 35)];
-    [addAttachBtn setTitleColor:[UIColor whiteColor]forState:UIControlStateNormal];
-    [addAttachBtn setImage:[UIImage imageNamed:@"express_location.png"] forState:UIControlStateNormal];
-    addAttachBtn.userInteractionEnabled = YES;
-    [addAttachBtn addTarget:self action:@selector(attachLocationInfo:) forControlEvents:UIControlEventTouchUpInside];
-    [addAttachBtn setContentMode:UIViewContentModeCenter];
-    [addAttachBtn setShowsTouchWhenHighlighted:YES];
-    [self.view addSubview:addAttachBtn];
+    UIView *templeView = [[UIView alloc] initWithFrame:CGRectMake(10, CGRectGetMaxY(self.titleLabelAndImage.frame)+35.0, SCREEN_WIDTH - 22, 44)];
+    [self.view addSubview:templeView];
+    UIButton *infoButton = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 100, templeView.bounds.size.height)];
+    [infoButton setImage:[UIImage imageNamed:@"quill_with_ink"] forState:UIControlStateNormal];
     
-    UIButton *saveBtn = [[UIButton alloc] initWithFrame:CGRectMake(229, self.view.frame.size.height-70+10, 35, 35)];
-    [saveBtn setTitleColor:[UIColor whiteColor]forState:UIControlStateNormal];
-    [saveBtn setImage:[UIImage imageNamed:@"express_save"] forState:UIControlStateNormal];
-    saveBtn.userInteractionEnabled = YES;
-    [saveBtn addTarget:self action:@selector(saveExpress:) forControlEvents:UIControlEventTouchUpInside];
-    [saveBtn setContentMode:UIViewContentModeCenter];
-    [saveBtn setShowsTouchWhenHighlighted:YES];
-    [self.view addSubview:saveBtn];
+    [infoButton setTitle:@"编辑稿签" forState:UIControlStateNormal];
+    [infoButton.titleLabel setFont:[UIFont systemFontOfSize:15]];
+    [infoButton setTitleColor:RGB(60, 90, 154) forState:UIControlStateNormal];
+    [infoButton addTarget:self action:@selector(showTemplateView:) forControlEvents:UIControlEventTouchUpInside];
+    [templeView addSubview:infoButton];
     
-    UILabel *bottomLine = [[UILabel alloc] initWithFrame:CGRectMake(10, self.view.frame.size.height-80+10, 300, 1)];
-    bottomLine.backgroundColor = [UIColor colorWithRed:106.0f/255.0f green:174.0f/255.0f blue:211.0f/255.0f alpha:1.0f];
-    [self.view addSubview:bottomLine];
+    UIButton *showTemple = [[UIButton alloc] initWithFrame:CGRectMake(templeView.bounds.size.width - 50, 0,50, templeView.bounds.size.height)];
+    [showTemple setImage:[UIImage imageNamed:@"info"] forState:UIControlStateNormal];
+    [showTemple addTarget:self action:@selector(showTemplateView:) forControlEvents:UIControlEventTouchUpInside];
+    [templeView addSubview:showTemple];
+
 }
 
+- (void)initializeLocationService {
+    self.locationManager = [[CLLocationManager alloc] init];
+    self.locationManager.delegate = self;
+    self.locationManager.desiredAccuracy = kCLLocationAccuracyBest;
+    self.locationManager.distanceFilter = kCLDistanceFilterNone;
+    if ([[UIDevice currentDevice].systemVersion integerValue] >= 8.0) {
+        [self.locationManager requestWhenInUseAuthorization];
+    }
+    
+    [self.locationManager startUpdatingLocation];
+}
 
 #pragma mark - Private
 //添加和绑定已有附件时，更新视图显示
@@ -288,7 +303,9 @@
         return;
     }
     //异步加载等待对话框，完成发送前的准备工作后予以关闭
-    [NSThread detachNewThreadSelector:@selector(showWait) toTarget:self withObject:nil];
+//    [NSThread detachNewThreadSelector:@selector(showWait) toTarget:self withObject:nil];
+    [self showWait];
+
     
     //保存到在编稿件
     [self saveManuscript];
@@ -359,7 +376,11 @@
     
     self.mcripts.manuscriptsStatus = MANUSCRIPT_STATUS_EDITING;   //稿件状态。必填。
     //zyq,12/10,添加地理位置信息
-    self.mcripts.location = @"0.0,0.0"; //定位信息
+    if (self.locationStr.length > 0) {
+        self.mcripts.location = self.locationStr;
+    } else {
+        self.mcripts.location = @"0.0,0.0"; //定位信息
+    }
     
     self.mcripts.createTime = [Utility getLogTimeStamp];
     
@@ -438,18 +459,11 @@
         [[AppDelegate getAppDelegate] alert:AlertTypeAlert message:@"当前网络不可用，请稍后再试!"];
     }
     else {
-        if (!self.locationManager) {
-            //定位初始化
-            self.locationManager=[[CLLocationManager alloc] init];
-            self.locationManager.delegate = self;
-            if ([self.locationManager respondsToSelector:@selector(requestAlwaysAuthorization)])
-            {
-                [self.locationManager requestAlwaysAuthorization];
-            }
-            self.locationManager.desiredAccuracy = kCLLocationAccuracyBest;
-            self.locationManager.distanceFilter = 5.0f; // in meters
+        if ([CLLocationManager locationServicesEnabled]) {
+            [self initializeLocationService];
+        } else {
+            [[AppDelegate getAppDelegate] alert:AlertTypeAlert message:@"请开启定位功能"];
         }
-        [self.locationManager startUpdatingLocation];
     }
 }
 
@@ -582,27 +596,26 @@
 }
 
 #pragma mark CLLocationManager delegate
-- (void)locationManager:(CLLocationManager *)manager
-    didUpdateToLocation:(CLLocation *)newLocation
-           fromLocation:(CLLocation *)oldLocation;
-{
-    if (newLocation!=nil) {
-        [self.locationManager stopUpdatingLocation];
-        NSString *latitudeStr=[[NSString alloc] initWithFormat:@"%f",newLocation.coordinate.latitude];
-        NSString *longitudeStr=[[NSString alloc] initWithFormat:@"%f",newLocation.coordinate.longitude];
-        
-        self.mcripts.location = [NSString stringWithFormat:@"%@,%@",latitudeStr,longitudeStr];
-        
-        [self saveManuscript];
-        
-        [[AppDelegate getAppDelegate] alert:AlertTypeSuccess message:self.mcripts.location];
- 
+- (void)locationManager:(CLLocationManager *)manager didUpdateLocations:(nonnull NSArray<CLLocation *> *)locations {
+    
+    if (locations.count > 0) {
+        CLLocation *location = [locations firstObject];
+        if (location) {
+            NSString *latitudeStr = [[NSString alloc] initWithFormat:@"%f",location.coordinate.latitude];
+            NSString *longitudeStr = [[NSString alloc] initWithFormat:@"%f",location.coordinate.longitude];
+            
+            self.locationStr = [NSString stringWithFormat:@"%@,%@",latitudeStr,longitudeStr];
+            [self saveManuscript];
+            
+            [[AppDelegate getAppDelegate] alert:AlertTypeSuccess message:self.mcripts.location];
+        }
     }
+    
+    [self.locationManager stopUpdatingLocation];
 }
 
-- (void)locationManager:(CLLocationManager *)manager didFailWithError:(NSError *)error
-{
-    [[AppDelegate getAppDelegate] alert:AlertTypeError message:@"当前定位不可用！"];
+- (void)locationManager:(CLLocationManager *)manager didFailWithError:(NSError *)error {
+    [[AppDelegate getAppDelegate] alert:AlertTypeError message:@"定位失败"];
 }
 
 #pragma mark - UIActionSheetDelegate
@@ -613,54 +626,13 @@
             //用户拍摄
         case 0:
         {
-            self.isCamera=TRUE;
-            UIImagePickerController *imagePicker = [[UIImagePickerController alloc]init];
-            
-            if([UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypeCamera])
-            {
-                imagePicker.sourceType=UIImagePickerControllerSourceTypeCamera;
-                imagePicker.mediaTypes = [NSArray arrayWithObjects:(NSString *)kUTTypeImage,nil];
-                [imagePicker setAllowsEditing:NO];
-                imagePicker.delegate = self;
-                [self presentViewController:imagePicker animated:YES completion:nil];
-            }
-            else
-            {
-                UIAlertView *alert=[[UIAlertView alloc]initWithTitle:nil
-                                                             message:@"摄像头不可用"
-                                                            delegate:self
-                                                   cancelButtonTitle:@"确认"
-                                                   otherButtonTitles:nil];
-                [alert show];
-                
-            }
-            break;
+            [self captureImageWithCamrea];
+           break;
         }
             //用户相册
         case 1:
         {
-            self.isCamera=false;
-            UIImagePickerController *imagePicker = [[UIImagePickerController alloc]init];
-            
-            if([UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypePhotoLibrary])
-            {
-                imagePicker.sourceType = UIImagePickerControllerSourceTypePhotoLibrary;
-                imagePicker.mediaTypes = [NSArray arrayWithObjects:(NSString *)kUTTypeImage,nil];
-                [imagePicker setAllowsEditing:NO];
-                imagePicker.delegate = self;
-                [self presentViewController:imagePicker animated:YES completion:nil];
-                
-            }
-            else
-            {
-                UIAlertView *alert=[[UIAlertView alloc]initWithTitle:nil
-                                                             message:@"访问错误"
-                                                            delegate:nil
-                                                   cancelButtonTitle:@"关闭"
-                                                   otherButtonTitles:nil];
-                [alert show];
-            }
-
+            [self pickerImageFromMediaLibrary];
             break;
             
         }
@@ -670,6 +642,55 @@
     
 }
 
+- (void)captureImageWithCamrea {
+    self.isCamera=TRUE;
+    UIImagePickerController *imagePicker = [[UIImagePickerController alloc]init];
+    
+    if([UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypeCamera])
+    {
+        imagePicker.sourceType=UIImagePickerControllerSourceTypeCamera;
+        imagePicker.mediaTypes = [NSArray arrayWithObjects:(NSString *)kUTTypeImage,nil];
+        [imagePicker setAllowsEditing:NO];
+        imagePicker.delegate = self;
+        [self presentViewController:imagePicker animated:YES completion:nil];
+    }
+    else
+    {
+        UIAlertView *alert=[[UIAlertView alloc]initWithTitle:nil
+                                                     message:@"摄像头不可用"
+                                                    delegate:self
+                                           cancelButtonTitle:@"确认"
+                                           otherButtonTitles:nil];
+        [alert show];
+        
+    }
+
+}
+
+- (void)pickerImageFromMediaLibrary {
+    self.isCamera=false;
+    UIImagePickerController *imagePicker = [[UIImagePickerController alloc]init];
+    
+    if([UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypePhotoLibrary])
+    {
+        imagePicker.sourceType = UIImagePickerControllerSourceTypePhotoLibrary;
+        imagePicker.mediaTypes = [NSArray arrayWithObjects:(NSString *)kUTTypeImage,nil];
+        [imagePicker setAllowsEditing:NO];
+        imagePicker.delegate = self;
+        [self presentViewController:imagePicker animated:YES completion:nil];
+        
+    }
+    else
+    {
+        UIAlertView *alert=[[UIAlertView alloc]initWithTitle:nil
+                                                     message:@"访问错误"
+                                                    delegate:nil
+                                           cancelButtonTitle:@"关闭"
+                                           otherButtonTitles:nil];
+        [alert show];
+    }
+
+}
 
 #pragma mark  imagePickerController
 -(void)imagePickerControllerDidCancel:(UIImagePickerController *)picker
@@ -777,12 +798,26 @@
 }
 
 #pragma mark - UITextFieldDelegate
-- (void)textFieldDoneEditing:(id)sender {
+- (BOOL)textFieldShouldReturn:(UITextField *)textField {
     [self.titleField resignFirstResponder];
+    return YES;
 }
 
+#pragma mark - NewArticlesToolbarDelegate
+- (void)newArticlesToolbar:(UIToolbar *)toolbar mediaLibraryButtonDidClicked:(id)button {
+    [self.view endEditing:YES];
+    [self pickerImageFromMediaLibrary];
+}
 
+- (void)newArticlesToolbar:(UIToolbar *)toolbar locationButtonDidClicked:(id)button {
+    [self.view endEditing:YES];
+    [self attachLocationInfo:nil];
+}
 
+- (void)newArticlesToolbar:(UIToolbar *)toolbar saveFileButtonDidClicked:(id)button {
+    [self.view endEditing:YES];
+    [self saveExpress:nil];
+}
 
 
 

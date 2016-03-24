@@ -184,6 +184,7 @@
     self.templateDetailView.dataSource = self;
     self.templateDetailView.separatorStyle = NO;
     self.templateDetailView.allowsSelectionDuringEditing=YES;
+    self.templateDetailView.backgroundColor = RGB(245, 245, 245);
     [self.view addSubview:self.templateDetailView];
     
     self.templateDetailView.hidden=NO;
@@ -195,19 +196,19 @@
     self.saveAsbtn = [[UIButton alloc] initWithFrame:CGRectMake(150, self.view.frame.size.height-40, 71, 30)];
     [self.saveAsbtn addTarget:self action:@selector(saveAs:) forControlEvents:UIControlEventTouchUpInside];
     [self.saveAsbtn setTitle:@"另存为" forState:0];
-    [self.saveAsbtn setBackgroundImage:[UIImage imageNamed:@"TempleView_btnSelect"] forState:UIControlStateNormal];
+    [self.saveAsbtn setBackgroundColor:RGB(60, 90, 154)];
     [self.view addSubview:self.saveAsbtn];
     
     self.applybtn = [[UIButton alloc] initWithFrame:CGRectMake(SCREEN_WIDTH-91, self.view.frame.size.height-40, 71, 30)];
     [self.applybtn addTarget:self action:@selector(applybtn:) forControlEvents:UIControlEventTouchUpInside];
     [self.applybtn setTitle:@"套用" forState:0];
-    [self.applybtn setBackgroundImage:[UIImage imageNamed:@"TempleView_btnSelect"] forState:UIControlStateNormal];
+    [self.applybtn setBackgroundColor:RGB(60, 90, 154)];
     [self.view addSubview:self.applybtn];
     
     //导航试图
     [self.titleLabelAndImage setImage:[UIImage imageNamed:@"TempleView－titlebg.png"] forState:UIControlStateNormal];
-    self.titleLabelAndImage.backgroundColor = [UIColor colorWithRed:245.0f/255.0f green:245.0f/255.0f blue:245.0f/255.0f alpha:1.0f];
-    [self.titleLabelAndImage setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
+    self.titleLabelAndImage.backgroundColor = RGB(60, 90, 154);
+    [self.titleLabelAndImage setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
 
     if (self.templateType == TemplateTypeNew || self.templateType == TemplateTypeExist) {
         [self.titleLabelAndImage setTitle:@"稿签编辑" forState:UIControlStateNormal];
@@ -218,7 +219,7 @@
     //添加确认按钮
     if (self.templateType == TemplateTypeNew || self.templateType == TemplateTypeExist) {
         self.rightButton.userInteractionEnabled = YES;
-        [self.rightButton setImage:[UIImage imageNamed:@"confirm"] forState:UIControlStateNormal];
+        [self.rightButton setImage:[UIImage imageNamed:@"checked_2"] forState:UIControlStateNormal];
         [self.rightButton addTarget:self action:@selector(complete) forControlEvents:UIControlEventTouchUpInside];
     }
 
@@ -233,7 +234,7 @@
         }
  
         //liying
-        UIView *view = [[UIView alloc]initWithFrame:CGRectMake(0, self.view.frame.size.height-50, 320, 50)];
+        UIView *view = [[UIView alloc]initWithFrame:CGRectMake(0, self.view.frame.size.height-50, SCREEN_WIDTH, 50)];
         view.backgroundColor = [UIColor whiteColor];
         [self.view addSubview:view];
         
@@ -527,6 +528,7 @@
         return SEND_ADDRESS_SECTION_NUM;
     }
 }
+
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
     if (tableView==self.templateDetailView) {

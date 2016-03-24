@@ -23,13 +23,13 @@
     // Do any additional setup after loading the view.
     self.tableView = [[UITableView alloc] initWithFrame:CGRectMake(0, CGRectGetMaxY(self.titleLabelAndImage.frame), self.widthOfMainView, self.heightOfMainView) style:UITableViewStyleGrouped];
     self.tableView.backgroundView = nil;
-    self.tableView.backgroundColor = [UIColor lightGrayColor];
+    self.tableView.backgroundColor = RGB(245, 245, 245);
     self.tableView.delegate = self;
     self.tableView.dataSource = self;
     [self.view addSubview:self.tableView];
     
     //导航试图
-    self.titleLabelAndImage.backgroundColor = [UIColor colorWithRed:71.0f/255.0f green:67.0f/255.0f blue:66.0f/225.0f alpha:1.0f];
+    self.titleLabelAndImage.backgroundColor = RGB(60, 90, 154);
     
     if (self.viewTemplate == ViewTemplateEdit) {
         [self.titleLabelAndImage setTitle:@"稿签管理" forState:UIControlStateNormal];
@@ -88,13 +88,11 @@
     cell.selectionStyle=UITableViewCellSelectionStyleGray;
     if(self.viewTemplate == ViewTemplateEdit)
     {
-        UIImageView *imageView = [[UIImageView alloc ] initWithImage:[UIImage imageNamed:@"TempleView_detail"]];
-        imageView.frame = CGRectMake(0, 0, 25, 25);
-        cell.accessoryView = imageView;
+        cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
     }
     UILabel *titleLabel = [[UILabel alloc]init];
     titleLabel.backgroundColor=[UIColor clearColor];
-    titleLabel.textColor=[UIColor blackColor];
+    titleLabel.textColor = [UIColor blackColor];
     
     cell.textLabel.font = [UIFont fontWithName:@"Georgia-Bold" size:16];
     UIButton *isdefaultButton = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 70, 45)];
@@ -144,8 +142,6 @@
             [self.delegate  returnManuscriptTemplate:[self.customTagArray objectAtIndex:indexPath.row]];
             [self dismissViewControllerAnimated:YES completion:nil];
         }
-        
-        
     }
     else {
         NewTagDetailViewController *tagDetailController = [[NewTagDetailViewController alloc] init];
@@ -190,7 +186,7 @@
     }
     else {
         UIView *headview = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 320, 40)];
-        headview.backgroundColor = [UIColor lightGrayColor];
+        headview.backgroundColor = RGB(235, 235, 235);
         
         UILabel *lbText = [[UILabel alloc] initWithFrame:CGRectMake(12, 12, 200, 20)];
         

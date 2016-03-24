@@ -18,10 +18,13 @@
 #import "UIView+FirstResponder.h"
 #import <iflyMSC/iflyMSC.h>
 #import "IATConfig.h"
+#import "LTTextView.h"
+#import "NewTextToolbar.h"
+#import "NewArticlesToolbarDelegate.h"
 
-@interface NewTextController () <CLLocationManagerDelegate,UITextFieldDelegate,IFlyRecognizerViewDelegate>
+@interface NewTextController () <CLLocationManagerDelegate,UITextFieldDelegate,IFlyRecognizerViewDelegate,NewArticlesToolbarDelegate>
 
-@property(strong, nonatomic) UITextView *bodyTextView;
+@property(strong, nonatomic) LTTextView *bodyTextView;
 @property(strong, nonatomic) UITextView *titleField;
 @property(strong, nonatomic) UILabel *static_title;
 @property(strong, nonatomic) UILabel *labelBottom;
@@ -38,6 +41,8 @@
 @property(nonatomic,strong)  NSTimer *timer;//自动保存定时器
 @property(nonatomic,strong) NSMutableArray *accessoriesArry;
 @property(nonatomic,strong) IFlyRecognizerView *iflyRecognizerView;
+@property (nonatomic,strong) NewTextToolbar *toolbar;
+@property (nonatomic,copy) NSString *locationStr;
 
 @end
 
@@ -46,66 +51,46 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
-    self.static_title = [[UILabel alloc] initWithFrame:CGRectMake(10, CGRectGetMaxY(self.titleLabelAndImage.frame)+5.0, 52, 21)];
+    self.static_title = [[UILabel alloc] initWithFrame:CGRectMake(10, CGRectGetMaxY(self.titleLabelAndImage.frame)+5.0, 50, 21)];
     self.static_title.font = [UIFont systemFontOfSize:16];
     self.static_title.textAlignment = NSTextAlignmentLeft;
     [self.view addSubview:self.static_title];
     
-    self.titleField = [[UITextView alloc] initWithFrame:CGRectMake(53, CGRectGetMinY(self.static_title.frame)+5.0, 257, 21)];
-    [self.titleField becomeFirstResponder];
+    self.titleField = [[UITextView alloc] initWithFrame:CGRectMake(53, CGRectGetMinY(self.static_title.frame)+5.0, SCREEN_WIDTH-70, 21)];
     self.titleField.font = [UIFont systemFontOfSize:14];
     self.titleField.textAlignment = NSTextAlignmentLeft;
     self.titleField.returnKeyType = UIReturnKeyDone;
     [self.view addSubview:self.titleField];
     
-    UILabel *topLine = [[UILabel alloc] initWithFrame:CGRectMake(10, CGRectGetMaxY(self.static_title.frame)+5.0, 300, 1)];
-    topLine.backgroundColor = [UIColor colorWithRed:106.0f/255.0f green:174.0f/255.0f blue:211.0f/255.0f alpha:1.0f];
+    UILabel *topLine = [[UILabel alloc] initWithFrame:CGRectMake(10, CGRectGetMaxY(self.static_title.frame)+5.0, SCREEN_WIDTH-20, 1)];
+    topLine.backgroundColor = [UIColor lightGrayColor];
     [self.view addSubview:topLine];
     
-    self.bodyTextView = [[UITextView alloc] initWithFrame:CGRectMake(10, CGRectGetMaxY(self.titleLabelAndImage.frame)+35.0, 290, self.view.frame.size.height-130-CGRectGetMaxY(self.titleLabelAndImage.frame))];
+    self.bodyTextView = [[LTTextView alloc] initWithFrame:CGRectMake(10, CGRectGetMaxY(self.titleLabelAndImage.frame)+35.0+44, SCREEN_WIDTH-20, self.view.frame.size.height-130-CGRectGetMaxY(self.titleLabelAndImage.frame))];
     self.bodyTextView.font = [UIFont systemFontOfSize:14];
     self.bodyTextView.userInteractionEnabled = YES;
     self.bodyTextView.multipleTouchEnabled = YES;
     self.bodyTextView.scrollEnabled=YES;
+    self.bodyTextView.placeholder = @"添加稿件内容";
+    self.bodyTextView.placeholderColor = [UIColor lightGrayColor];
     [self.view addSubview:self.bodyTextView];
     
-    self.showDetailBtn = [[UIButton alloc] initWithFrame:CGRectMake(self.view.frame.size.width-25, self.view.frame.size.height/2-55, 25, 60)];
-    [self.showDetailBtn setTitleColor:[UIColor whiteColor]forState:UIControlStateNormal];
-    [self.showDetailBtn setImage:[UIImage imageNamed:@"switch.png"] forState:UIControlStateNormal];
-    self.showDetailBtn.userInteractionEnabled = YES;
-    [self.showDetailBtn addTarget:self action:@selector(showTemplateView:) forControlEvents:UIControlEventTouchUpInside];
-    [self.showDetailBtn setContentMode:UIViewContentModeCenter];
-    [self.showDetailBtn setShowsTouchWhenHighlighted:YES];
-    [self.view addSubview:self.showDetailBtn];
+    UIView *templeView = [[UIView alloc] initWithFrame:CGRectMake(10, CGRectGetMaxY(self.titleLabelAndImage.frame)+35.0, SCREEN_WIDTH - 22, 44)];
+    [self.view addSubview:templeView];
+    UIButton *infoButton = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 100, templeView.bounds.size.height)];
+    [infoButton setImage:[UIImage imageNamed:@"quill_with_ink"] forState:UIControlStateNormal];
     
-    self.btnifly = [[UIButton alloc]initWithFrame:CGRectMake(self.view.frame.size.width/4.0-35./2., self.view.frame.size.height-70+10, 35, 35)];
-    [self.btnifly setImage:[UIImage imageNamed:@"express_iflyButton"] forState:UIControlStateNormal];
-    [self.btnifly addTarget:self action:@selector(onButtonRecognize) forControlEvents:UIControlEventTouchUpInside];
-    [self.view addSubview:self.btnifly];
+    [infoButton setTitle:@"编辑稿签" forState:UIControlStateNormal];
+    [infoButton.titleLabel setFont:[UIFont systemFontOfSize:15]];
+    [infoButton setTitleColor:RGB(60, 90, 154) forState:UIControlStateNormal];
+    [infoButton addTarget:self action:@selector(showTemplateView:) forControlEvents:UIControlEventTouchUpInside];
+    [templeView addSubview:infoButton];
     
-    self.btnLocation = [[UIButton alloc] initWithFrame:CGRectMake(self.view.frame.size.width/4.0*2-35./2., self.view.frame.size.height-70+10, 35, 35)];
-    [self.btnLocation setTitleColor:[UIColor whiteColor]forState:UIControlStateNormal];
-    [self.btnLocation setImage:[UIImage imageNamed:@"express_location.png"] forState:UIControlStateNormal];
-    self.btnLocation.userInteractionEnabled = YES;
-    [self.btnLocation addTarget:self action:@selector(attachLocationInfo:) forControlEvents:UIControlEventTouchUpInside];
-    [self.btnLocation setContentMode:UIViewContentModeCenter];
-    [self.btnLocation setShowsTouchWhenHighlighted:YES];
-    [self.view addSubview:self.btnLocation];
-    
-    self.btnSave = [[UIButton alloc] initWithFrame:CGRectMake(self.view.frame.size.width/4.0*3-35./2. , self.view.frame.size.height-70+10, 35, 35)];
-    [self.btnSave setTitleColor:[UIColor whiteColor]forState:UIControlStateNormal];
-    [self.btnSave setImage:[UIImage imageNamed:@"express_save.png"] forState:UIControlStateNormal];
-    self.btnSave.userInteractionEnabled = YES;
-    [self.btnSave addTarget:self action:@selector(saveExpress:) forControlEvents:UIControlEventTouchUpInside];
-    [self.btnSave setContentMode:UIViewContentModeCenter];
-    [self.btnSave setShowsTouchWhenHighlighted:YES];
-    [self.view addSubview:self.btnSave];
-    
-    self.labelBottom = [[UILabel alloc] initWithFrame:CGRectMake(10, self.view.frame.size.height-80+10, 300, 1)];
-    //bottomLine.textColor=[UIColor blueColor];
-    self.labelBottom.backgroundColor = [UIColor colorWithRed:106.0f/255.0f green:174.0f/255.0f blue:211.0f/255.0f alpha:1.0f];
-    [self.view addSubview:self.labelBottom];
-    
+    UIButton *showTemple = [[UIButton alloc] initWithFrame:CGRectMake(templeView.bounds.size.width - 50, 0,50, templeView.bounds.size.height)];
+    [showTemple setImage:[UIImage imageNamed:@"info"] forState:UIControlStateNormal];
+    [showTemple addTarget:self action:@selector(showTemplateView:) forControlEvents:UIControlEventTouchUpInside];
+    [templeView addSubview:showTemple];
+
     [self initializeController];
 }
 
@@ -113,7 +98,7 @@
 {
     [super viewWillAppear:animated];
     [self.navigationController setNavigationBarHidden:YES];
-    
+    [self setUpToolbar];
     //添加键盘监听
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillShow:) name:UIKeyboardWillShowNotification object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillHide:) name:UIKeyboardWillHideNotification object:nil];
@@ -133,6 +118,13 @@
 
 - (void)dealloc {
     [NOTIFICATION_CENTER removeObserver:self];
+}
+
+- (void)setUpToolbar {
+    self.toolbar = [NewTextToolbar newTextToolbar];
+    self.toolbar.frame = CGRectMake(0, SCREEN_HEIGHT - 49, SCREEN_WIDTH, 49);
+    self.toolbar.textToolbarDelegate = self;
+    [self.view addSubview:self.toolbar];
 }
 
 -(void)returnToParentView:(id)sender
@@ -180,43 +172,24 @@
 #pragma mark - Keyboard Notification
 - (void)keyboardWillShow:(NSNotification *)notification
 {
-    UIViewAnimationCurve animationCurve	= [[[notification userInfo] valueForKey:UIKeyboardAnimationCurveUserInfoKey] intValue];
-    NSTimeInterval animationDuration = [[[notification userInfo] valueForKey:UIKeyboardAnimationDurationUserInfoKey] doubleValue];
 
-    [UIView beginAnimations:@"RS_showKeyboardAnimation" context:nil];
-    [UIView setAnimationCurve:animationCurve];
-    [UIView setAnimationDuration:animationDuration];
+    NSTimeInterval duration = [notification.userInfo[UIKeyboardAnimationDurationUserInfoKey] doubleValue];
+    UIViewAnimationOptions option = [notification.userInfo[UIKeyboardAnimationCurveUserInfoKey] floatValue];
+    CGSize keyboardSize = [notification.userInfo[UIKeyboardFrameEndUserInfoKey] CGRectValue].size;
     
-    CGSize kbSize = [[[notification userInfo] objectForKey:UIKeyboardFrameEndUserInfoKey] CGRectValue].size;
-    self.labelBottom.frame = CGRectMake(10, self.view.frame.size.height-kbSize.height-36-3, 300, 1);
-    self.btnifly.frame = CGRectMake(self.view.frame.size.width/4.0-35./2., self.view.frame.size.height-kbSize.height-36, 35, 35);
-    self.btnLocation.frame = CGRectMake(self.view.frame.size.width/4.0*2-35./2., self.view.frame.size.height-kbSize.height-36, 35, 35);
-    self.btnSave.frame = CGRectMake(self.view.frame.size.width/4.0*3-35./2., self.view.frame.size.height-kbSize.height-36, 35, 35);
-    //设置textview的高度，以保证用户可以看到全部的内容，不受键盘遮挡
-    self.bodyTextView.frame = CGRectMake(10, CGRectGetMaxY(self.titleLabelAndImage.frame)+35.0, 290, self.view.frame.size.height-kbSize.height-50-30-CGRectGetMaxY(self.titleLabelAndImage.frame));
-    self.showDetailBtn.frame = CGRectMake(self.view.frame.size.width-25, self.view.frame.size.height-kbSize.height-60-35-20, 25, 60);
-    self.keyboardButton.alpha = 1.0;
-    self.keyboardButton.frame = CGRectMake(6, self.view.frame.size.height-kbSize.height-36, 40, 50);
-    [UIView commitAnimations];
-    self.keyboardHide=FALSE;
-    [self.keyboardButton setHidden:FALSE];
+    [UIView animateWithDuration:duration delay:0 options:option animations:^{
+        self.toolbar.frame = CGRectMake(0, SCREEN_HEIGHT-keyboardSize.height-49, SCREEN_WIDTH, 49);
+    } completion:nil];
 }
 
 - (void)keyboardWillHide:(NSNotification *)notification
 {
+    NSTimeInterval duration = [notification.userInfo[UIKeyboardAnimationDurationUserInfoKey] doubleValue];
+    UIViewAnimationOptions option = [notification.userInfo[UIKeyboardAnimationCurveUserInfoKey] floatValue];
     
-    self.labelBottom.frame = CGRectMake(10, self.view.frame.size.height-80, 300, 1);
-    self.btnifly.frame = CGRectMake(self.view.frame.size.width/4.0-35./2., self.view.frame.size.height-70, 35, 35);
-    self.btnLocation.frame = CGRectMake(self.view.frame.size.width/4.0*2-35./2., self.view.frame.size.height-70, 35, 35);
-    self.btnSave.frame = CGRectMake(self.view.frame.size.width/4.0*3-35./2. , self.view.frame.size.height-70, 35, 35);
-    //设置textview的高度，以保证用户可以看到全部的内容，不受键盘遮挡
-    self.bodyTextView.frame = CGRectMake(10, CGRectGetMaxY(self.titleLabelAndImage.frame)+35.0, 290, self.view.frame.size.height-130-CGRectGetMaxY(self.titleLabelAndImage.frame));
-    
-    self.showDetailBtn.frame = CGRectMake(self.view.frame.size.width-25, self.view.frame.size.height/2-55, 25, 60);
-    [UIView commitAnimations];
-    self.keyboardHide=TRUE;
-    self.keyboardButton.alpha = 0.0;
-    [self.keyboardButton setHidden:TRUE];
+    [UIView animateWithDuration:duration delay:0 options:option animations:^{
+        self.toolbar.frame = CGRectMake(0, SCREEN_HEIGHT-49, SCREEN_WIDTH, 49);
+    } completion:nil];
     
 }
 
@@ -235,6 +208,19 @@
 }
 
 #pragma mark - Private
+- (void)initializeLocationService {
+    self.locationManager = [[CLLocationManager alloc] init];
+    self.locationManager.delegate = self;
+    self.locationManager.desiredAccuracy = kCLLocationAccuracyBest;
+    self.locationManager.distanceFilter = kCLDistanceFilterNone;
+    if ([[UIDevice currentDevice].systemVersion integerValue] >= 8.0) {
+        [self.locationManager requestWhenInUseAuthorization];
+    }
+    
+    [self.locationManager startUpdatingLocation];
+}
+
+
 //页面初始化
 - (void)initializeController {
     //初始化数据库连接
@@ -268,7 +254,7 @@
     //导航试图
     [self.titleLabelAndImage setImage:[UIImage imageNamed:@"express_text"] forState:UIControlStateNormal];
     [self.titleLabelAndImage setTitle:@"文字快讯" forState:UIControlStateNormal];
-    self.titleLabelAndImage.backgroundColor=[UIColor colorWithRed:154.0f/255.0f green:213.0f/255.0f blue:231.0f/255.0f alpha:1.0f];
+    self.titleLabelAndImage.backgroundColor = RGB(60, 90, 154);
     
     //添加发送按钮
     self.rightButton.userInteractionEnabled = YES;
@@ -277,6 +263,7 @@
     
     //zyq 国际化
     self.static_title.text = @"标题";
+    [self.static_title setTextColor:[UIColor lightGrayColor]];
     
     //控制键盘按钮
     self.keyboardHide = FALSE;
@@ -306,7 +293,9 @@
     }
     
     //异步加载等待对话框，完成发送前的准备工作后予以关闭
-    [NSThread detachNewThreadSelector:@selector(showWait) toTarget:self withObject:nil];
+//    [NSThread detachNewThreadSelector:@selector(showWait) toTarget:self withObject:nil];
+    [self showWait];
+
     
     //保存到在编稿件
     [self saveManuscript];
@@ -373,7 +362,11 @@
     
     self.mcripts.manuscriptsStatus = MANUSCRIPT_STATUS_EDITING;   //稿件状态。必填。
     //zyq,12/10,添加地理位置信息
-    self.mcripts.location = @"0.0,0.0"; //定位信息
+    if (self.locationStr.length > 0) {
+        self.mcripts.location = self.locationStr;
+    } else {
+        self.mcripts.location = @"0.0,0.0"; //定位信息
+    }
     
     self.mcripts.createTime = [Utility getLogTimeStamp];
     
@@ -511,18 +504,11 @@
         [[AppDelegate getAppDelegate] alert:AlertTypeAlert message:@"当前网络不可用，请稍后再试!"];
     }
     else {
-        if (!self.locationManager) {
-            //定位初始化
-            self.locationManager=[[CLLocationManager alloc] init];
-            self.locationManager.delegate = self;
-            if ([self.locationManager respondsToSelector:@selector(requestAlwaysAuthorization)])
-            {
-                [self.locationManager requestAlwaysAuthorization];
-            }
-            self.locationManager.desiredAccuracy=kCLLocationAccuracyBest;
-            self.locationManager.distanceFilter = 5.0f; // in meters
+        if ([CLLocationManager locationServicesEnabled]) {
+            [self initializeLocationService];
+        } else {
+            [[AppDelegate getAppDelegate] alert:AlertTypeAlert message:@"请开启定位功能"];
         }
-        [self.locationManager startUpdatingLocation];
     }
 }
 
@@ -607,27 +593,26 @@
 
 
 #pragma mark - CLLocationManagerDelegate
-- (void)locationManager:(CLLocationManager *)manager
-    didUpdateToLocation:(CLLocation *)newLocation
-           fromLocation:(CLLocation *)oldLocation;
-{
-    if (newLocation!=nil) {
-        [self.locationManager stopUpdatingLocation];
-        NSString *latitudeStr = [[NSString alloc] initWithFormat:@"%f",newLocation.coordinate.latitude];
-        NSString *longitudeStr = [[NSString alloc] initWithFormat:@"%f",newLocation.coordinate.longitude];
-        
-        self.mcripts.location = [NSString stringWithFormat:@"%@,%@",latitudeStr,longitudeStr];
-        
-        [self saveManuscript];
-        
-        [[AppDelegate getAppDelegate] alert:AlertTypeSuccess message:self.mcripts.location];
-       
+- (void)locationManager:(CLLocationManager *)manager didUpdateLocations:(nonnull NSArray<CLLocation *> *)locations {
+    
+    if (locations.count > 0) {
+        CLLocation *location = [locations firstObject];
+        if (location) {
+            NSString *latitudeStr = [[NSString alloc] initWithFormat:@"%f",location.coordinate.latitude];
+            NSString *longitudeStr = [[NSString alloc] initWithFormat:@"%f",location.coordinate.longitude];
+            
+            self.locationStr = [NSString stringWithFormat:@"%@,%@",latitudeStr,longitudeStr];
+            [self saveManuscript];
+            
+            [[AppDelegate getAppDelegate] alert:AlertTypeSuccess message:self.mcripts.location];
+        }
     }
+    
+    [self.locationManager stopUpdatingLocation];
 }
 
-- (void)locationManager:(CLLocationManager *)manager didFailWithError:(NSError *)error
-{
-    [[AppDelegate getAppDelegate] alert:AlertTypeError message:@"当前定位不可用！"];
+- (void)locationManager:(CLLocationManager *)manager didFailWithError:(NSError *)error {
+    [[AppDelegate getAppDelegate] alert:AlertTypeError message:@"定位失败"];
 }
 
 #pragma mark - IFlyRecognizeControlDelegate
@@ -651,5 +636,24 @@
     [self enableButton];
 }
 
+#pragma mark - NewArticlesToolbarDelegate
+- (void)newArticlesToolbar:(UIToolbar *)toolbar recordButtonDidClicked:(id)button {
+    [self.view endEditing:YES];
+    [self onButtonRecognize];
+}
+
+- (void)newArticlesToolbar:(UIToolbar *)toolbar locationButtonDidClicked:(id)button {
+    [self.view endEditing:YES];
+    [self attachLocationInfo:nil];
+}
+
+- (void)newArticlesToolbar:(UIToolbar *)toolbar saveFileButtonDidClicked:(id)button {
+    [self.view endEditing:YES];
+    [self saveExpress:nil];
+}
+
+- (void)newArticlesToolbar:(UIToolbar *)toolbar closeKeyboardButtonDidClicked:(id)button {
+    [self.view endEditing:YES];
+}
 
 @end

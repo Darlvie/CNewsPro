@@ -16,29 +16,20 @@
 #import "LoginManagermentController.h"
 #import "ManuscriptTemplateDB.h"
 #import "ManuscriptTemplate.h"
-
-static const CGFloat kTextWidth = 255;
-static const CGFloat kTextHeight = 71;
-static const CGFloat kDown = 110;
-
+#import "SVProgressHUD.h"
 
 @interface LoginViewController () <UITextFieldDelegate,UIAlertViewDelegate>
-
-@property (nonatomic,strong) UIButton *logoButton;
-
-@property (nonatomic,strong) UIView *backView;
-
-@property (nonatomic,strong) UITextField *textUserName;
-
-@property (nonatomic,strong) UITextField *textPassword;
+@property (weak, nonatomic) IBOutlet UIButton *logoButton;
+@property (weak, nonatomic) IBOutlet UITextField *userNameTextField;
+@property (weak, nonatomic) IBOutlet UITextField *passwordTextField;
+@property (weak, nonatomic) IBOutlet UIButton *loginButton;
+@property (weak, nonatomic) IBOutlet NSLayoutConstraint *inputViewConstraint;
+@property (nonatomic,assign) CGFloat constant;
 
 @property (nonatomic,assign) NSInteger loginStatus;
 
 @property (nonatomic,assign) BOOL IMEIisRegistered;
 
-@property (nonatomic,strong) UIButton *loginButton;
-
-@property (nonatomic,assign) CGRect originFrame;
 @end
 
 @implementation LoginViewController
@@ -46,85 +37,26 @@ static const CGFloat kDown = 110;
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
-    self.leftButton.userInteractionEnabled = NO;
     self.leftButton.hidden = YES;
+    self.logoButton.hidden = NO;
     
-    self.view.backgroundColor = [UIColor colorWithWhite:243.0/255.0 alpha:1];
+    [self configureButton];
     
-    self.logoButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    self.logoButton.userInteractionEnabled = NO;
-    self.logoButton.frame = CGRectMake(0, CGRectGetMaxY(self.titleLabelAndImage.frame) + 44.0, self.widthOfMainView, 60.0);
-    [self.logoButton setImage:[UIImage imageNamed:@"login_logo"] forState:UIControlStateNormal];
-    [self.logoButton setTitle:@"迅媒无限" forState:UIControlStateNormal];
-    [self.logoButton setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
-    self.logoButton.titleLabel.font = [UIFont systemFontOfSize:26.0];
-    [self.view addSubview:self.logoButton];
-    
-    self.backView = [[UIView alloc] initWithFrame:CGRectMake((SCREEN_WIDTH - kTextWidth) / 2, 200, kTextWidth, kTextHeight)];
-    self.backView.backgroundColor = [UIColor whiteColor];
-    [self.view addSubview:self.backView];
-    
-    UILabel *userNameLabel = [[UILabel alloc] initWithFrame:CGRectMake(10, 10, 60, 27)];
-    userNameLabel.text = @"用户名:";
-    [userNameLabel setFont:[UIFont fontWithName:@"黑体-简 细体" size:16.0]];
-    userNameLabel.backgroundColor = [UIColor clearColor];
-    [self.backView addSubview:userNameLabel];
-    
-    self.textUserName = [[UITextField alloc] initWithFrame:CGRectMake(CGRectGetMaxX(userNameLabel.frame), CGRectGetMinY(userNameLabel.frame), kTextWidth - CGRectGetMaxX(userNameLabel.frame), CGRectGetHeight(userNameLabel.frame))];
-    self.textUserName.contentVerticalAlignment = UIControlContentVerticalAlignmentCenter;
-    [self.textUserName setFont:[UIFont fontWithName:@"黑体-简 细体" size:12.0]];
-    self.textUserName.delegate = self;
-    self.textUserName.autocapitalizationType = UITextAutocapitalizationTypeNone;
-    self.textUserName.returnKeyType = UIReturnKeyNext;
-    self.textUserName.clearButtonMode = UITextFieldViewModeWhileEditing;
-    [self.backView addSubview:self.textUserName];
-    
-    UIView *separateLine = [[UIView alloc] initWithFrame:CGRectMake(0, CGRectGetMaxY(userNameLabel.frame), kTextWidth, 1)];
-    separateLine.backgroundColor = RGBA(236.f, 236.f, 236.f, 1);
-    [self.backView addSubview:separateLine];
-    
-    UILabel *passwordLabel = [[UILabel alloc] initWithFrame:CGRectMake(CGRectGetMinX(userNameLabel.frame), CGRectGetHeight(self.backView.frame)-CGRectGetHeight(userNameLabel.frame), CGRectGetWidth(userNameLabel.frame), CGRectGetHeight(userNameLabel.frame))];
-    passwordLabel.text = @"密   码:";
-    [passwordLabel setFont:[UIFont fontWithName:@"黑体-简 细体" size:16.0]];
-    passwordLabel.backgroundColor = [UIColor clearColor];
-    [self.backView addSubview:passwordLabel];
-    
-    self.textPassword = [[UITextField alloc] initWithFrame:CGRectMake(CGRectGetMaxX(passwordLabel.frame), CGRectGetMinY(passwordLabel.frame), CGRectGetWidth(self.textUserName.frame), CGRectGetHeight(self.textUserName.frame))];
-    self.textPassword.contentVerticalAlignment = UIControlContentVerticalAlignmentCenter;
-    [self.textPassword setFont:[UIFont fontWithName:@"黑体-简 细体" size:12.0]];
-    self.textPassword.secureTextEntry = YES;
-    self.textPassword.returnKeyType = UIReturnKeyDone;
-    self.textPassword.clearButtonMode = UITextFieldViewModeWhileEditing;
-    self.textPassword.delegate = self;
-    [self.backView addSubview:self.textPassword];
-    
-    CGFloat margin = (SCREEN_WIDTH - 135*2 - 20) / 2.0;
-    self.loginButton = [[UIButton alloc] initWithFrame:CGRectMake(margin + 155, SCREEN_HEIGHT - kDown, 135, 35)];
-    [self.loginButton setTitle:@"登录" forState:UIControlStateNormal];
-    [self.loginButton setBackgroundImage:[UIImage imageNamed:@"loginbtn"] forState:UIControlStateNormal];
-    [self.loginButton addTarget:self action:@selector(loginAction:) forControlEvents:UIControlEventTouchUpInside];
-    [self.view addSubview:self.loginButton];
-    
-    UIButton *settingBtn = [[UIButton alloc] initWithFrame:CGRectMake(margin, SCREEN_HEIGHT - kDown, 135, 35)];
-    [settingBtn setBackgroundImage:[UIImage imageNamed:@"SystemSet"] forState:UIControlStateNormal];
-    [settingBtn setTitle:@"设置" forState:UIControlStateNormal];
-    [settingBtn.titleLabel setBackgroundColor:[UIColor clearColor]];
-    settingBtn.titleLabel.font = [UIFont fontWithName:@"System" size:15.0 ];
-    [settingBtn setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
-    [settingBtn addTarget:self action:@selector(loginMangermentSet:) forControlEvents:UIControlEventTouchUpInside];
-    [self.view addSubview:settingBtn];
-    
+    [self resetTextField:self.userNameTextField];
+    [self resetTextField:self.passwordTextField];
+
+    self.constant = self.inputViewConstraint.constant;
     
     NSString *uName = [USERDEFAULTS objectForKey:LOGIN_NAME];
     NSString *pwd = [USERDEFAULTS objectForKey:PASSWORD];
-    self.textUserName.text = @"";
-    self.textPassword.text = @"";
+    self.userNameTextField.text = @"";
+    self.passwordTextField.text = @"";
     if (uName) {
-        self.textUserName.text = uName;
+        self.userNameTextField.text = uName;
     }
     
     if (pwd) {
-        self.textPassword.text = pwd;
+        self.passwordTextField.text = pwd;
     }
     
 }
@@ -148,66 +80,92 @@ static const CGFloat kDown = 110;
 
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
-    self.originFrame = self.backView.frame;
+//    self.originFrame = self.backView.frame;
 }
 
 - (void)dealloc {
     [NOTIFICATION_CENTER removeObserver:self];
 }
 
+#pragma mark - Configure Method
+- (void)configureButton {
+    //设置logo样式
+    NSShadow *titleShadow = [[NSShadow alloc] init];
+    titleShadow.shadowColor = RGBA(0, 0, 0, 0.8);
+    titleShadow.shadowOffset = CGSizeMake(0, 1.5);
+    NSDictionary *attributes = [NSDictionary dictionaryWithObjectsAndKeys:RGB(245, 245, 245),NSForegroundColorAttributeName,titleShadow,NSShadowAttributeName,[UIFont boldSystemFontOfSize:35.0f],NSFontAttributeName, nil];
+    NSAttributedString *attStr = [[NSAttributedString alloc] initWithString:@"迅媒无限"
+                                                                 attributes:attributes];
+    [self.logoButton.titleLabel setAttributedText:attStr];
+    self.logoButton.userInteractionEnabled = NO;
+    
+    //设置登陆按钮样式
+    self.loginButton.layer.borderWidth = 1.0f;
+    self.loginButton.layer.borderColor = [UIColor whiteColor].CGColor;
+    self.loginButton.layer.cornerRadius = 3.0f;
+    self.loginButton.layer.masksToBounds = YES;
+    
+    //设置textField
+    self.userNameTextField.returnKeyType = UIReturnKeyNext;
+    self.passwordTextField.returnKeyType = UIReturnKeyDone;
+}
+
+- (void)resetTextField:(UITextField *)textField {
+    textField.tintColor = [UIColor whiteColor];
+    [textField setValue:UIColorFromRGBA(0xffffff, 0.6f) forKeyPath:@"_placeholderLabel.textColor"];
+    UIButton *clearButton = [textField valueForKey:@"_clearButton"];
+    [clearButton setImage:[UIImage imageNamed:@"login_icon_clear"] forState:UIControlStateNormal];
+}
+
+#pragma mark - Notification
 #pragma mark - Notification
 - (void)keyboardWillShow:(NSNotification *)notification {
-    NSDictionary *info = [notification userInfo];
-    NSValue *value = [info objectForKey:@"UIKeyboardBoundsUserInfoKey"];
-    CGFloat keyboardHeight = [value CGRectValue].size.height;
-    
-    if ((CGRectGetHeight(self.view.frame) - CGRectGetMaxY(self.backView.frame)) > keyboardHeight) {
-        return;
-    } else {
-        NSTimeInterval duration = [[info objectForKey:UIKeyboardAnimationDurationUserInfoKey] floatValue];
-        [UIView beginAnimations:@"ResizeView" context:nil];
-        [UIView setAnimationDuration:duration];
-        
-        CGRect tempFrame = self.originFrame;
-        tempFrame.origin.y -= 64;
-        self.backView.frame = tempFrame;
-        self.logoButton.alpha = 0.3;
-        [UIView commitAnimations];
-    }
+    CGRect keyboardFrame = [notification.userInfo[UIKeyboardFrameEndUserInfoKey] CGRectValue];
+    NSTimeInterval duration = [notification.userInfo[UIKeyboardAnimationDurationUserInfoKey] floatValue];
+    UIViewAnimationOptions options = [notification.userInfo[UIKeyboardAnimationCurveUserInfoKey] floatValue];
+    self.inputViewConstraint.constant = keyboardFrame.size.height;
+    self.logoButton.hidden = YES;
+
+    [UIView animateWithDuration:duration delay:0 options:options animations:^{
+        [self.view layoutIfNeeded];
+    } completion:nil];
 }
 
 - (void)keyboardWillHide:(NSNotification *)notification {
-    self.backView.frame = self.originFrame;
-    self.logoButton.alpha = 1.0;
-}
-
-- (BOOL)textFieldShouldReturn:(UITextField *)textField {
-    [textField resignFirstResponder];
-    return YES;
+    NSTimeInterval duration = [notification.userInfo[UIKeyboardAnimationDurationUserInfoKey] floatValue];
+    UIViewAnimationOptions options = [notification.userInfo[UIKeyboardAnimationCurveUserInfoKey] floatValue];
+    self.logoButton.hidden = NO;
+    
+    self.inputViewConstraint.constant = self.constant;
+    [UIView animateWithDuration:duration delay:0 options:options animations:^{
+        [self.view layoutIfNeeded];
+    } completion:nil];
 }
 
 #pragma mark - Action
-- (void)loginAction:(id)sender {
-    if ([self.textUserName.text isEqualToString:@""]) {
+- (IBAction)loginAction:(id)sender {
+    if ([self.userNameTextField.text isEqualToString:@""]) {
         [self showAlertWithType:AlertTypeAlert withString:@"请输入用户名"];
         return;
-    } else if ([self.textPassword.text isEqualToString:@""]) {
+    } else if ([self.passwordTextField.text isEqualToString:@""]) {
         [self showAlertWithType:AlertTypeAlert withString:@"请输入密码"];
         return;
     }
     
-    [NSThread detachNewThreadSelector:@selector(showWait) toTarget:self withObject:nil];
+//    [NSThread detachNewThreadSelector:@selector(showWait) toTarget:self withObject:nil];
+    [self showWait];
+
     if (![Utility testConnection]) {
         UserDB *userDB = [[UserDB alloc] init];
         //检测是否可以离线登录
-        if ([userDB getUserAndPassword:self.textUserName.text password:self.textPassword.text]) {
+        if ([userDB getUserAndPassword:self.userNameTextField.text password:self.passwordTextField.text]) {
             //创建用户文件夹
             [self createFile];
             //离线登录的情况下，从文件中读取userinfo的信息
             [Utility getUserInfoFromFile];
             [USERDEFAULTS setObject:@"" forKey:SESSION_ID];
-            [USERDEFAULTS setObject:self.textUserName.text forKey:LOGIN_NAME];
-            [USERDEFAULTS setObject:self.textPassword.text forKey:PASSWORD];
+            [USERDEFAULTS setObject:self.userNameTextField.text forKey:LOGIN_NAME];
+            [USERDEFAULTS setObject:self.passwordTextField.text forKey:PASSWORD];
             [USERDEFAULTS synchronize];
             
             [[AppDelegate getAppDelegate] alert:AlertTypeSuccess message:@"当前网络不佳，您已离线登录!"];
@@ -219,7 +177,7 @@ static const CGFloat kDown = 110;
         [self hideWaiting];
         return;
     }
-    [RequestMaker loginWithUsername:self.textUserName.text password:self.textPassword.text delegate:self];
+    [RequestMaker loginWithUsername:self.userNameTextField.text password:self.passwordTextField.text delegate:self];
 }
 
 - (void)loginMangermentSet:(id)sender {
@@ -259,8 +217,8 @@ static const CGFloat kDown = 110;
         if ([[[responseStr componentsSeparatedByString:@"||"] objectAtIndex:0] isEqualToString:@"0"]) {
             NSString *sessionId = [[responseStr componentsSeparatedByString:@"||"] lastObject];
             [USERDEFAULTS setObject:sessionId forKey:SESSION_ID];
-            [USERDEFAULTS setObject:self.textUserName.text forKey:LOGIN_NAME];
-            [USERDEFAULTS setObject:self.textPassword.text forKey:PASSWORD];
+            [USERDEFAULTS setObject:self.userNameTextField.text forKey:LOGIN_NAME];
+            [USERDEFAULTS setObject:self.passwordTextField.text forKey:PASSWORD];
             [USERDEFAULTS synchronize];
             
             //创建用户文件
@@ -272,10 +230,10 @@ static const CGFloat kDown = 110;
             [self addSystemTemplate];
             
             UserDB *userDB = [[UserDB alloc] init];
-            if (![userDB getUserAndPassword:self.textUserName.text password:self.textPassword.text]) {
+            if (![userDB getUserAndPassword:self.userNameTextField.text password:self.passwordTextField.text]) {
                 User *userInfo = [[User alloc] init];
-                userInfo.loginName = self.textUserName.text;
-                userInfo.password = self.textPassword.text;
+                userInfo.loginName = self.userNameTextField.text;
+                userInfo.password = self.passwordTextField.text;
                 [userDB addUser:userInfo];
             }
             [Utility sendUnFinishedTaskToQueue];
@@ -302,12 +260,12 @@ static const CGFloat kDown = 110;
         }else {
             //登录失败，检查是否可以离线登录
             UserDB *userDB = [[UserDB alloc] init];
-            if ([userDB getUserAndPassword:self.textUserName.text password:self.textPassword.text]) {
+            if ([userDB getUserAndPassword:self.userNameTextField.text password:self.passwordTextField.text]) {
                 [self createFile];
                 [Utility initializeUserInfo];
                 [USERDEFAULTS setObject:@"" forKey:SESSION_ID];
-                [USERDEFAULTS setObject:self.textUserName.text forKey:LOGIN_NAME];
-                [USERDEFAULTS setObject:self.textPassword.text forKey:PASSWORD];
+                [USERDEFAULTS setObject:self.userNameTextField.text forKey:LOGIN_NAME];
+                [USERDEFAULTS setObject:self.passwordTextField.text forKey:PASSWORD];
                 [Utility sendUnFinishedTaskToQueue];
                 [self.navigationController popToRootViewControllerAnimated:NO];
             } else {
@@ -369,7 +327,7 @@ static const CGFloat kDown = 110;
     if (!self.IMEIisRegistered) {
         return;
     }
-    [RequestMaker loginWithUsername:self.textUserName.text password:self.textPassword.text delegate:self];
+    [RequestMaker loginWithUsername:self.userNameTextField.text password:self.passwordTextField.text delegate:self];
     [Utility checkVersion];//保存最低版本号
 }
 
@@ -379,17 +337,22 @@ static const CGFloat kDown = 110;
     [self.view endEditing:YES];
 }
 
+#pragma mark - UITextFieldDelegate
 
+- (BOOL)textFieldShouldReturn:(UITextField *)textField {
+    if (textField == self.userNameTextField) {
+        [self.userNameTextField resignFirstResponder];
+        [self.passwordTextField becomeFirstResponder];
+    } else if (textField == self.passwordTextField) {
+        [self.view endEditing:YES];
+        [self loginAction:nil];
+    }
+    return YES;
+}
 
-
-
-
-
-
-
-
-
-
+- (UIStatusBarStyle)preferredStatusBarStyle {
+    return UIStatusBarStyleLightContent;
+}
 
 
 @end

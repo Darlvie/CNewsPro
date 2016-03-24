@@ -34,18 +34,18 @@
     
     self.sysTableView = [[UITableView alloc] initWithFrame:CGRectMake(0, CGRectGetMaxY(self.titleLabelAndImage.frame), self.widthOfMainView, self.heightOfMainView) style:UITableViewStyleGrouped];
     self.sysTableView.backgroundView = nil;
-    [self.sysTableView setBackgroundColor:[UIColor lightGrayColor]];
+    [self.sysTableView setBackgroundColor:RGB(245, 245, 245)];
     self.sysTableView.delegate = self;
     self.sysTableView.dataSource = self;
     [self.view addSubview:self.sysTableView];
     
     //导航试图
     [self.titleLabelAndImage setTitle:@"系统设置" forState:UIControlStateNormal];
-    self.titleLabelAndImage.backgroundColor=[UIColor colorWithRed:71.0f/255.0f green:67.0f/255.0f blue:66.0f/225.0f alpha:1.0f];
+    self.titleLabelAndImage.backgroundColor = RGB(60, 90, 154);
     
     //添加登出按钮
     self.rightButton.userInteractionEnabled = YES;
-    [self.rightButton setImage:[UIImage imageNamed:@"Exit"] forState:UIControlStateNormal];
+    [self.rightButton setImage:[UIImage imageNamed:@"exit.png"] forState:UIControlStateNormal];
     [self.rightButton addTarget:self action:@selector(LogOut:) forControlEvents:UIControlEventTouchUpInside];
     
     self.networkSettingItems = [[NSArray alloc]initWithObjects:@"当前账号",@"登录服务器",@"更新基础数据",@"系统版本",@"设备标识号",nil];
@@ -318,8 +318,8 @@
         }
         else if (indexPath.row == 1) {
             //当前服务器
-            ServerAddressDB *sDB = [[ServerAddressDB alloc]init];
-            ServerAddress *sAddr = [sDB getDefaultServer];
+//            ServerAddressDB *sDB = [[ServerAddressDB alloc]init];
+//            ServerAddress *sAddr = [sDB getDefaultServer];
             self.currentserver = MITI_IP;
             
             detailLabel.frame = CGRectMake(145, 0, 125, 45);
@@ -343,9 +343,10 @@
         titleLabel.frame = LOCAL_TITLE_CGRECT;
         titleLabel.text = [self.localSettingItems objectAtIndex:indexPath.row];
         if (indexPath.row !=3) {
-            UIImageView *imageView = [[UIImageView alloc ] initWithImage:[UIImage imageNamed:@"TempleView_detail"]];
-            imageView.frame = CGRectMake(0, 0, 25, 25);
-            cell.accessoryView = imageView;
+//            UIImageView *imageView = [[UIImageView alloc ] initWithImage:[UIImage imageNamed:@"TempleView_detail"]];
+//            imageView.frame = CGRectMake(0, 0, 25, 25);
+//            cell.accessoryView = imageView;
+            cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
             if (indexPath.row == 0) {
                 detailLabel.frame = LOCAL_DETAIL_CGRECT;
                 detailLabel.text = self.currentFileBlock;
@@ -387,7 +388,9 @@
                 [self.switchOfSavePassword setOn:YES animated:NO];
             }
             [cell addSubview:self.switchOfSavePassword];
-            [self.switchOfSavePassword addTarget:self action:@selector(switchValueChanged:) forControlEvents:UIControlEventValueChanged];
+            [self.switchOfSavePassword addTarget:self
+                                          action:@selector(switchValueChanged:)
+                                forControlEvents:UIControlEventValueChanged];
         }
     }
     [cell addSubview:detailLabel];
@@ -477,7 +480,7 @@
             //定义选择按钮
             UISegmentedControl *closeButton = [[UISegmentedControl alloc] initWithItems:[NSArray arrayWithObject:@"选择"]];
             closeButton.momentary = YES;
-            closeButton.frame = CGRectMake(260, 7.0f, 50.0f, 30.0f);
+            closeButton.frame = CGRectMake(SCREEN_WIDTH-60, 7.0f, 50.0f, 30.0f);
             closeButton.segmentedControlStyle = UISegmentedControlStyleBar;
             closeButton.tintColor = [UIColor blackColor];
             closeButton.tag = FILE_BLOCK_TAG;
@@ -502,7 +505,7 @@
             //定义选择按钮
             UISegmentedControl *closeButton = [[UISegmentedControl alloc] initWithItems:[NSArray arrayWithObject:@"选择"]];
             closeButton.momentary = YES;
-            closeButton.frame = CGRectMake(260, 7.0f, 50.0f, 30.0f);
+            closeButton.frame = CGRectMake(SCREEN_WIDTH-60, 7.0f, 50.0f, 30.0f);
             closeButton.segmentedControlStyle = UISegmentedControlStyleBar;
             closeButton.tintColor = [UIColor blackColor];
             closeButton.tag = AUTO_SAVE_TIME_TAG;
@@ -525,7 +528,7 @@
             //定义选择按钮
             UISegmentedControl *closeButton = [[UISegmentedControl alloc] initWithItems:[NSArray arrayWithObject:@"选择"]];
             closeButton.momentary = YES;
-            closeButton.frame = CGRectMake(260, 7.0f, 50.0f, 30.0f);
+            closeButton.frame = CGRectMake(SCREEN_WIDTH-60, 7.0f, 50.0f, 30.0f);
             closeButton.segmentedControlStyle = UISegmentedControlStyleBar;
             closeButton.tintColor = [UIColor blackColor];
             closeButton.tag = AUTO_SAVE_TIME_TAG;
@@ -549,7 +552,7 @@
             //定义选择按钮
             UISegmentedControl *closeButton = [[UISegmentedControl alloc] initWithItems:[NSArray arrayWithObject:@"选择"]];
             closeButton.momentary = YES;
-            closeButton.frame = CGRectMake(260, 7.0f, 50.0f, 30.0f);
+            closeButton.frame = CGRectMake(SCREEN_WIDTH-60, 7.0f, 50.0f, 30.0f);
             closeButton.segmentedControlStyle = UISegmentedControlStyleBar;
             closeButton.tintColor = [UIColor blackColor];
             closeButton.tag = COMPRESS_TAG;
@@ -572,7 +575,7 @@
             //定义选择按钮
             UISegmentedControl *closeButton = [[UISegmentedControl alloc] initWithItems:[NSArray arrayWithObject:@"选择"]];
             closeButton.momentary = YES;
-            closeButton.frame = CGRectMake(260, 7.0f, 50.0f, 30.0f);
+            closeButton.frame = CGRectMake(SCREEN_WIDTH-60, 7.0f, 50.0f, 30.0f);
             closeButton.segmentedControlStyle = UISegmentedControlStyleBar;
             closeButton.tintColor = [UIColor blackColor];
             closeButton.tag = RESOLUTION_TAG;
@@ -596,7 +599,7 @@
             //定义选择按钮
             UISegmentedControl *closeButton = [[UISegmentedControl alloc] initWithItems:[NSArray arrayWithObject:@"选择"]];
             closeButton.momentary = YES;
-            closeButton.frame = CGRectMake(260, 7.0f, 50.0f, 30.0f);
+            closeButton.frame = CGRectMake(SCREEN_WIDTH-60, 7.0f, 50.0f, 30.0f);
             closeButton.segmentedControlStyle = UISegmentedControlStyleBar;
             closeButton.tintColor = [UIColor blackColor];
             closeButton.tag = CODE_BIT_TAG;

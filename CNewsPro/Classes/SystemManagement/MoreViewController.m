@@ -24,11 +24,11 @@
     
     //导航视图
     [self.titleLabelAndImage setTitle:@"更多" forState:UIControlStateNormal];
-    self.titleLabelAndImage.backgroundColor = [UIColor colorWithRed:71.0f/255.0f green:67.0f/255.0f blue:66.0f/225.0f alpha:1.0f];
+    self.titleLabelAndImage.backgroundColor = RGB(60, 90, 154);
     
     self.moreTableView = [[UITableView alloc] initWithFrame:CGRectMake(0, CGRectGetMaxY(self.titleLabelAndImage.frame), self.widthOfMainView, self.heightOfMainView) style:UITableViewStyleGrouped];
     self.moreTableView.backgroundView = nil;
-    self.moreTableView.backgroundColor = [UIColor lightGrayColor];
+    self.moreTableView.backgroundColor = RGB(245, 245, 245);
     self.moreTableView.delegate = self;
     self.moreTableView.dataSource = self;
     [self.view addSubview:self.moreTableView];

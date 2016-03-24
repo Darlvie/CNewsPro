@@ -32,7 +32,7 @@ static const CGFloat kTableViewCellHeight = 50;
     [self.view addSubview:self.sendToAddressView];
     
     //导航试图
-    self.titleLabelAndImage.backgroundColor=[UIColor colorWithRed:154.0f/255.0f green:213.0f/255.0f blue:231.0f/255.0f alpha:1.0f];
+    self.titleLabelAndImage.backgroundColor = RGB(60, 90, 154);
     
     if (self.sendToAddressType == SendToAddressTypeCustom) {
         [self.titleLabelAndImage setTitle:@"发稿通道" forState:UIControlStateNormal];
@@ -40,7 +40,7 @@ static const CGFloat kTableViewCellHeight = 50;
    
     //添加保存按钮
     self.rightButton.userInteractionEnabled = YES;
-    [self.rightButton setImage:[UIImage imageNamed:@"confirm"] forState:UIControlStateNormal];
+    [self.rightButton setImage:[UIImage imageNamed:@"checked_2"] forState:UIControlStateNormal];
     [self.rightButton addTarget:self action:@selector(complete) forControlEvents:UIControlEventTouchUpInside];
     
     self.sendToAddressDictionary = [[NSMutableDictionary alloc]init];

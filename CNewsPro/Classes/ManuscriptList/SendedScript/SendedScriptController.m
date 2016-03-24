@@ -12,8 +12,8 @@
 #import "AccessoriesDB.h"
 #import "Accessories.h"
 #import "AppDelegate.h"
-#import "ScriptCell.h"
 #import "Utility.h"
+#import "MultipleScriptCell.h"
 #import "NewArticlesController.h"
 
 static const NSInteger kPageSize = 50;
@@ -29,15 +29,14 @@ static const NSInteger kTableCellHeight = 70;
 @property (nonatomic,strong) UITableView *scriptTableView;
 @property (nonatomic,strong) UIButton *editButton;
 @property (nonatomic,strong) UIButton *deleteButton;
-@property (nonatomic,strong) UIButton *cancelButton;
 @property (nonatomic,strong) UILabel *totalNumber;
 @property (nonatomic,strong) UIButton *nextBtn;
 @property (nonatomic,strong) UIButton *lastBtn;
 @property (nonatomic,strong) UILabel *pageStatusLabel;
 @property (nonatomic,strong) UILabel *noDataLabel;
 @property (nonatomic,strong) NSMutableArray *scriptItems;
-@property (nonatomic,retain) UIImageView*	checkImageView;
 @property (nonatomic,assign) BOOL allSelected;
+@property (nonatomic,strong) UIButton *selectedButton;
 @end
 
 @implementation SendedScriptController
@@ -58,56 +57,60 @@ static const NSInteger kTableCellHeight = 70;
     //导航试图
     [self.titleLabelAndImage setImage:[UIImage imageNamed:@"sent_icon.png"] forState:UIControlStateNormal];
     [self.titleLabelAndImage setTitle:@"已发列表" forState:UIControlStateNormal];
-    self.titleLabelAndImage.backgroundColor=[UIColor colorWithRed:229.0f/255.0f green:180.0f/255.0f blue:169.0f/255.0f alpha:1.0f];
+    self.titleLabelAndImage.backgroundColor = RGB(60, 90, 154);
     
     //table header view
     self.viewAboveTableView = [[UIView alloc]initWithFrame:CGRectMake(0.0f,CGRectGetMaxY(self.titleLabelAndImage.frame),self.widthOfMainView,34.0f)];
+    self.viewAboveTableView.backgroundColor = [UIColor whiteColor];
     
     //edit Button
-    self.editButton=[[UIButton alloc]initWithFrame:CGRectMake(40,1,58,30)];//CGRectMake(40,10,48,22)
+    self.editButton=[[UIButton alloc]initWithFrame:CGRectMake(40,1,60,30)];//CGRectMake(40,10,48,22)
     [self.editButton setTitle:@"编辑" forState:UIControlStateNormal];
     [self.editButton setTitleColor:[UIColor whiteColor]forState:UIControlStateNormal];
-    [self.editButton setBackgroundImage:[UIImage imageNamed:@"sent_editButton.png"] forState:UIControlStateNormal];
-    [self.editButton addTarget:self action:@selector(editButtonFunction) forControlEvents:UIControlEventTouchUpInside];
+    [self.editButton setBackgroundColor:RGB(60, 90, 154)];
+    self.editButton.layer.cornerRadius = 3.0f;
+    self.editButton.layer.masksToBounds = YES;
+    [self.editButton addTarget:self action:@selector(editButtonClicked:) forControlEvents:UIControlEventTouchUpInside];
     [self.viewAboveTableView addSubview:self.editButton];
     
-    //cancelButton init,hidden
-    self.cancelButton=[[UIButton alloc]initWithFrame:CGRectMake(40,1,58,30)];
-    self.cancelButton.hidden = YES;
-    [self.cancelButton setTitle:@"取消" forState:UIControlStateNormal];
-    [self.cancelButton setTitleColor:[UIColor whiteColor]forState:UIControlStateNormal];
-    [self.cancelButton setBackgroundImage:[UIImage imageNamed:@"sent_editButton.png"] forState:UIControlStateNormal];
-    [self.cancelButton addTarget:self action:@selector(cancelFunction) forControlEvents:UIControlEventTouchUpInside];
-    [self.viewAboveTableView addSubview:self.cancelButton];
+    self.selectedButton = [[UIButton alloc] initWithFrame:CGRectMake(5, 0, 32, 32)];
+    [self.selectedButton setImage:[UIImage imageNamed:@"checked_2-1"] forState:UIControlStateNormal];
+    [self.selectedButton setImage:[UIImage imageNamed:@"checked_2_filled"] forState:UIControlStateSelected];
+    [self.selectedButton addTarget:self action:@selector(allSelect) forControlEvents:UIControlEventTouchUpInside];
+    self.selectedButton.hidden = YES;
+    [self.viewAboveTableView addSubview:self.selectedButton];
     
     //delete button
     self.deleteButton=[[UIButton alloc]initWithFrame:CGRectMake(112,1,22,30)];
     self.deleteButton.hidden = YES;
-    [self.deleteButton setImage:[UIImage imageNamed:@"sent_deleteButton.png"] forState:UIControlStateNormal];
+    [self.deleteButton setImage:[UIImage imageNamed:@"delete_filled"] forState:UIControlStateNormal];
     [self.deleteButton addTarget:self action:@selector(deleteFuntion) forControlEvents:UIControlEventTouchUpInside];
     [self.viewAboveTableView addSubview:self.deleteButton];
     
     //separated Line
     UILabel * sLine = [[UILabel alloc] initWithFrame:CGRectMake(40,32,self.widthOfMainView-40.0,1)];
-    sLine.backgroundColor = [UIColor colorWithRed:8.0f/255.0f green:132.0f/255.0f blue:5.0f/225.0f alpha:1.0f];
+    sLine.backgroundColor = [UIColor lightGrayColor];
     [self.viewAboveTableView addSubview:sLine];
     
     //total number
     self.totalNumber = [[UILabel alloc]initWithFrame:CGRectMake(263,1,55,30)];
     self.totalNumber.font = [UIFont boldSystemFontOfSize:20];
-    self.totalNumber.textColor = [UIColor colorWithRed:8.0f/255.0f green:132.0f/255.0f blue:5.0f/225.0f alpha:1.0f];
+    self.totalNumber.textColor = RGB(60, 90, 154);
     self.totalNumber.textAlignment=NSTextAlignmentRight;
     [self.viewAboveTableView addSubview:self.totalNumber];
     [self.view addSubview:self.viewAboveTableView];
     
     //table below view
-    self.viewBelowTableView = [[UIView alloc]initWithFrame:CGRectMake(0.0f,self.view.frame.size.height-40,320.0f,40.0f)];
+    self.viewBelowTableView = [[UIView alloc]initWithFrame:CGRectMake(0.0f,self.view.frame.size.height-40,SCREEN_WIDTH,40.0f)];
+    self.viewBelowTableView.backgroundColor = [UIColor whiteColor];
     
     //next Button
     self.nextBtn=[[UIButton alloc]initWithFrame:CGRectMake(40, 2, 80, 29)];
     [self.nextBtn setTitle:@"上一页" forState:UIControlStateNormal];
     [self.nextBtn setTitleColor:[UIColor whiteColor]forState:UIControlStateNormal];
-    [self.nextBtn setBackgroundImage:[UIImage imageNamed:@"sent_editButton.png"] forState:UIControlStateNormal];
+    [self.nextBtn setBackgroundColor:RGB(60, 90, 154)];
+    self.nextBtn.layer.cornerRadius = 3.0f;
+    self.nextBtn.layer.masksToBounds = YES;
     [self.nextBtn addTarget:self action:@selector(lastPage) forControlEvents:UIControlEventTouchUpInside];
     [self.viewBelowTableView addSubview:self.nextBtn];
     
@@ -115,19 +118,21 @@ static const NSInteger kTableCellHeight = 70;
     self.lastBtn=[[UIButton alloc]initWithFrame:CGRectMake(130, 2, 80, 29)];
     [self.lastBtn setTitle:@"下一页" forState:UIControlStateNormal];
     [self.lastBtn setTitleColor:[UIColor whiteColor]forState:UIControlStateNormal];
-    [self.lastBtn setBackgroundImage:[UIImage imageNamed:@"sent_editButton.png"] forState:UIControlStateNormal];
+    [self.lastBtn setBackgroundColor:RGB(60, 90, 154)];
+    self.lastBtn.layer.cornerRadius = 3.0f;
+    self.lastBtn.layer.masksToBounds = YES;
     [self.lastBtn addTarget:self action:@selector(nextPage) forControlEvents:UIControlEventTouchUpInside];
     [self.viewBelowTableView addSubview:self.lastBtn];
     
     //pagestatus label
     self.pageStatusLabel = [[UILabel alloc]initWithFrame:CGRectMake(285,1,32,29)];
     self.pageStatusLabel.font = [UIFont boldSystemFontOfSize:20];
-    self.pageStatusLabel.textColor = [UIColor colorWithRed:8.0f/255.0f green:132.0f/255.0f blue:5.0f/225.0f alpha:1.0f];
+    self.pageStatusLabel.textColor = RGB(60, 90, 154);
     [self.viewBelowTableView addSubview:self.pageStatusLabel];
     
     //separated Line
     UILabel * sLine1 = [[UILabel alloc] initWithFrame:CGRectMake(40,0,self.widthOfMainView-40.0,1)];
-    sLine1.backgroundColor = [UIColor colorWithRed:8.0f/255.0f green:132.0f/255.0f blue:5.0f/225.0f alpha:1.0f];
+    sLine1.backgroundColor = [UIColor lightGrayColor];
     [self.viewBelowTableView addSubview:sLine1];
     
     [self.view addSubview:self.viewBelowTableView];
@@ -135,14 +140,16 @@ static const NSInteger kTableCellHeight = 70;
     self.scriptTableView = [[UITableView alloc] initWithFrame:CGRectMake(0.0f,CGRectGetMaxY(self.viewAboveTableView.frame),self.widthOfMainView,HEIGH_TO_FMAIN_VIEW(self.heightOfMainView, CGRectGetHeight(self.viewAboveTableView.frame), CGRectGetHeight(self.viewBelowTableView.frame))) style:UITableViewStylePlain];
     self.scriptTableView.delegate=self;
     self.scriptTableView.dataSource=self;
-    self.scriptTableView.separatorStyle = NO;
+    self.scriptTableView.separatorStyle = UITableViewCellSeparatorStyleSingleLine;
+    self.scriptTableView.backgroundColor = RGB(245, 245, 245);
+    self.scriptTableView.tableFooterView = [[UIView alloc] init];
     self.scriptTableView.allowsSelectionDuringEditing=YES;
     [self.view addSubview:self.scriptTableView];
     
     //no data label
     self.noDataLabel = [[UILabel alloc]initWithFrame:CGRectMake(40,-3,100,30)];
     [self.noDataLabel setText:@"暂无数据"];
-    self.noDataLabel.textColor = [UIColor colorWithRed:8.0f/255.0f green:132.0f/255.0f blue:5.0f/225.0f alpha:1.0f];
+    self.noDataLabel.textColor = RGB(60, 90, 154);
     self.noDataLabel.hidden= NO;
     [self.scriptTableView addSubview:self.noDataLabel];
 
@@ -173,13 +180,13 @@ static const NSInteger kTableCellHeight = 70;
     if([self getTotalNum]>0){
         
         self.viewBelowTableView.hidden = NO;
-        
+        self.scriptTableView.backgroundColor = RGB(245, 245, 245);
         self.noDataLabel.hidden = YES;
     }
     else {
         
         self.viewBelowTableView.hidden = YES;
-        
+        self.scriptTableView.backgroundColor = [UIColor whiteColor];
         self.noDataLabel.hidden = NO;
    
     }
@@ -207,26 +214,26 @@ static const NSInteger kTableCellHeight = 70;
 }
 
 //进入编辑模式添加的动画
-- (void)setCheckImageViewCenter:(CGPoint)pt alpha:(CGFloat)alpha animated:(BOOL)animated
-{
-    if (animated)
-    {
-        [UIView beginAnimations:nil context:nil];
-        [UIView setAnimationBeginsFromCurrentState:YES];
-        [UIView setAnimationCurve:UIViewAnimationCurveEaseInOut];
-        [UIView setAnimationDuration:0.3];
-        
-        self.checkImageView.center = pt;
-        self.checkImageView.alpha = alpha;
-        
-        [UIView commitAnimations];
-    }
-    else
-    {
-        self.checkImageView.center = pt;
-        self.checkImageView.alpha = alpha;
-    }
-}
+//- (void)setCheckImageViewCenter:(CGPoint)pt alpha:(CGFloat)alpha animated:(BOOL)animated
+//{
+//    if (animated)
+//    {
+//        [UIView beginAnimations:nil context:nil];
+//        [UIView setAnimationBeginsFromCurrentState:YES];
+//        [UIView setAnimationCurve:UIViewAnimationCurveEaseInOut];
+//        [UIView setAnimationDuration:0.3];
+//        
+//        self.checkImageView.center = pt;
+//        self.checkImageView.alpha = alpha;
+//        
+//        [UIView commitAnimations];
+//    }
+//    else
+//    {
+//        self.checkImageView.center = pt;
+//        self.checkImageView.alpha = alpha;
+//    }
+//}
 
 //表格进入编辑状态
 - (void)setEditing:(BOOL)editting animated:(BOOL)animated
@@ -267,46 +274,37 @@ static const NSInteger kTableCellHeight = 70;
 
 
 #pragma mark - Action Method
-//编辑按钮关联方法
-- (void)editButtonFunction
-{
-    //edit button
-    self.editButton.hidden = YES;
-    //cancel buttono
-    self.cancelButton.hidden = NO;
-    //delete button
-    self.deleteButton.hidden = NO;
-    
-    //imageView点击事件
-    if (self.checkImageView == nil)
-    {
-        self.checkImageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"sent_unselectBg.png"]];
-        [self.viewAboveTableView addSubview:self.checkImageView];
+- (void)editButtonClicked:(UIButton *)sender {
+    sender.selected = !sender.selected;
+    if (sender.selected) {
+        [self.editButton setTitle:@"取消" forState:UIControlStateNormal];
+        self.deleteButton.hidden = NO;
+        self.selectedButton.hidden = NO;
+        
+        [self.scriptTableView setEditing:YES animated:YES];
+        self.allSelected = NO;
+        [self.scriptTableView reloadData];
+    } else {
+        [self.editButton setTitle:@"编辑" forState:UIControlStateNormal];
+        self.deleteButton.hidden = YES;;
+        self.selectedButton.hidden = YES;
+        
+        //列表恢复原始状态
+        [self allSelectCancel];
+        //checkbox in tableview
+        [self.scriptTableView setEditing:NO animated:NO];
+        self.allSelected = NO;
+        [self.scriptTableView reloadData];
     }
-    self.checkImageView.image = [UIImage imageNamed:@"sent_unselectBg.png"];
-    self.checkImageView.frame = CGRectMake(0,0,25,24);
-    self.checkImageView.center = CGPointMake(-CGRectGetWidth(self.checkImageView.frame) * 0.5,CGRectGetHeight(self.viewAboveTableView.bounds) * 0.5);
-    self.checkImageView.alpha = 0.0;
-    [self setCheckImageViewCenter:CGPointMake(20.5, CGRectGetHeight(self.viewAboveTableView.bounds) * 0.5) alpha:1.0 animated:YES];
-    
-    self.checkImageView.userInteractionEnabled = YES;
-    UITapGestureRecognizer *singleTap = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(allSelect)];
-    [self.checkImageView addGestureRecognizer:singleTap];
-
-    self.checkImageView.hidden = NO;
-    
-    [self.scriptTableView setEditing:YES animated:YES];
-    self.allSelected = NO;
-    [self.scriptTableView reloadData];
-    
 }
+
 
 //全部选择
 - (void)allSelect
 {
+    self.selectedButton.selected = !self.selectedButton.selected;
     self.allSelected = !self.allSelected;
     if (!self.allSelected) {
-        self.checkImageView.image = [UIImage imageNamed:@"sent_unselectBg.png"];
         [self.deleteDic removeAllObjects];
         for (ScriptItem* item in self.scriptItems)
         {
@@ -315,7 +313,6 @@ static const NSInteger kTableCellHeight = 70;
         }
     }
     else {
-        self.checkImageView.image = [UIImage imageNamed:@"sent_selectBg.png"];
         for (ScriptItem* item in self.scriptItems)
         {
             item.checked = YES;
@@ -326,26 +323,10 @@ static const NSInteger kTableCellHeight = 70;
     [self.scriptTableView reloadData];
 }
 
-//取消按钮
-- (void)cancelFunction{
-    self.checkImageView.hidden = YES;
-    self.cancelButton.hidden = YES;
-    self.editButton.hidden = NO;
-    self.deleteButton.hidden = YES;
-    //列表恢复原始状态
-    [self allSelectCancel];
-    //checkbox in tableview
-    [self.scriptTableView setEditing:NO animated:NO];
-    
-    self.allSelected = NO;
-    [self.scriptTableView reloadData];
-}
 
 //点击编辑按钮之后点击取消时，取消全选
 - (void)allSelectCancel
 {
-    self.checkImageView.image = [UIImage imageNamed:@"ManulistCheckBox.png"];
-    
     for (ScriptItem* item in self.scriptItems)
     {
         item.checked = NO;
@@ -372,7 +353,6 @@ static const NSInteger kTableCellHeight = 70;
       
         //全选框  恢复"未选中"
         self.allSelected = NO;
-        self.checkImageView.image = [UIImage imageNamed:@"sent_unselectBg.png"];
     }
 }
 
@@ -422,28 +402,14 @@ static const NSInteger kTableCellHeight = 70;
     static NSString *CellIdentifier = @"scriptItemCell";
     
     //使用自定义cell
-    ScriptCell *cell = (ScriptCell*)[tableView dequeueReusableCellWithIdentifier:CellIdentifier];
+    MultipleScriptCell *cell = (MultipleScriptCell *)[tableView dequeueReusableCellWithIdentifier:CellIdentifier];
     if (cell == nil) {
-        cell = [[ScriptCell alloc] initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:CellIdentifier];
-        //cell backgroundImage
-        
-        UIView *backgrdView = [[UIView alloc] initWithFrame:cell.frame];
-        UILabel * grayBg = [[UILabel alloc] initWithFrame:CGRectMake(1,1,319,kTableCellHeight-2)];
-        grayBg.backgroundColor = [UIColor colorWithRed:238.0f/255.0f green:239.0f/255.0f blue:239.0f/255.0f alpha:1.0f];
-        [backgrdView addSubview:grayBg];
-        cell.backgroundView = backgrdView;
-        
-        [cell updateCell];
+        cell = [[MultipleScriptCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier];
     }
 
-    cell.backgroundColor=[UIColor whiteColor];//改变Cell背景颜色
-    
     cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
     ScriptItem* scriptItem = [self.scriptItems objectAtIndex:indexPath.row];
-    cell.lbText1.text = scriptItem.title;
-    cell.lbText2.text = scriptItem.contents;
-    cell.lbText3.text = [Utility getLocalTimeStamp:scriptItem.sentTime];
-    
+    cell.scriptItem = scriptItem;
     
     // Only load cached images; defer new downloads until scrolling ends
     if (!scriptItem.image)
@@ -464,7 +430,7 @@ static const NSInteger kTableCellHeight = 70;
             }
             else {
                 
-                cell.accessaryView.image=nil;
+                cell.cellImageView.image=nil;
                 
                 if ([accessType isEqualToString:@"PHOTO"]) {
                     
@@ -473,15 +439,15 @@ static const NSInteger kTableCellHeight = 70;
                         [self startIconDownload:scriptItem  forIndexPath:indexPath];
                     }
                     // if a download is deferred or in progress, return a placeholder image
-                    cell.accessaryView.image = [self.imageList objectAtIndex:0];
+                    cell.cellImageView.image = [self.imageList objectAtIndex:0];
                 }
                 else if([accessType isEqualToString:@"VIDEO"]){
                     scriptItem.image = [self.imageList objectAtIndex:1];
-                    cell.accessaryView.image = [self.imageList objectAtIndex:1];
+                    cell.cellImageView.image = [self.imageList objectAtIndex:1];
                 }
                 else if([accessType isEqualToString:@"AUDIO"]){
                     scriptItem.image = [self.imageList objectAtIndex:2];
-                    cell.accessaryView.image =[self.imageList objectAtIndex:2];
+                    cell.cellImageView.image =[self.imageList objectAtIndex:2];
                 }
             }
         }
@@ -489,7 +455,7 @@ static const NSInteger kTableCellHeight = 70;
     }
     else
     {
-        cell.accessaryView.image = scriptItem.image;
+        cell.cellImageView.image = scriptItem.image;
     }
     
     [cell setChecked:scriptItem.checked];
@@ -508,7 +474,7 @@ static const NSInteger kTableCellHeight = 70;
     if (self.scriptTableView.editing)
     {
         ScriptItem* scriptItem = [self.scriptItems objectAtIndex:indexPath.row];
-        ScriptCell *cell = (ScriptCell*)[tableView cellForRowAtIndexPath:indexPath];
+        MultipleScriptCell *cell = (MultipleScriptCell *)[tableView cellForRowAtIndexPath:indexPath];
         scriptItem.checked = !scriptItem.checked;
         [cell setChecked:scriptItem.checked];
         if (scriptItem.checked) {
@@ -615,10 +581,10 @@ static const NSInteger kTableCellHeight = 70;
         ScriptItem *iconDownloader = [self.scriptItems objectAtIndex:indexPath.row];
         if (iconDownloader.image != nil)
         {
-            ScriptCell *cell = (ScriptCell *)[self.scriptTableView cellForRowAtIndexPath:indexPath];
+            MultipleScriptCell *cell = (MultipleScriptCell *)[self.scriptTableView cellForRowAtIndexPath:indexPath];
             
             // Display the newly loaded image
-            cell.accessaryView.image = iconDownloader.image;
+            cell.cellImageView.image = iconDownloader.image;
         }
         
     }

@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="9531" systemVersion="15C50" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="9532" systemVersion="15D21" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="9529"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="9530"/>
     </dependencies>
     <objects>
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="XinHuaManuscriptController">
@@ -35,7 +35,7 @@
                         <constraint firstAttribute="width" constant="55" id="E6E-o9-2KO"/>
                         <constraint firstAttribute="height" constant="55" id="oE4-sx-rPx"/>
                     </constraints>
-                    <state key="normal" image="SystemManager"/>
+                    <state key="normal" image="settings"/>
                     <connections>
                         <action selector="showSystemSet:" destination="-1" eventType="touchUpInside" id="oSV-di-sJl"/>
                     </connections>
@@ -57,7 +57,7 @@
                         <constraint firstAttribute="height" constant="55" id="Mkr-z3-mPB"/>
                         <constraint firstAttribute="width" constant="55" id="wvm-Xw-u85"/>
                     </constraints>
-                    <state key="normal" image="SystemMore"/>
+                    <state key="normal" image="more"/>
                     <connections>
                         <action selector="showMoreViewController:" destination="-1" eventType="touchUpInside" id="EwM-Jt-lRw"/>
                     </connections>
@@ -117,8 +117,8 @@
     <resources>
         <image name="FirstBg" width="320" height="480"/>
         <image name="NewManuscript1" width="282" height="131"/>
-        <image name="SystemManager" width="40" height="31"/>
-        <image name="SystemMore" width="52" height="15"/>
         <image name="auditNews" width="33" height="30"/>
+        <image name="more" width="50" height="50"/>
+        <image name="settings" width="50" height="50"/>
     </resources>
 </document>
